@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "BattleField/BattleField.h"
+
 #include <QMainWindow>
 
 namespace Ui {
@@ -15,8 +17,12 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     
+protected:
+    void resizeEvent(QResizeEvent *);
+
 private:
     Ui::MainWindow *ui;
+    BattleField *bf;
 };
 
 #endif // MAINWINDOW_H

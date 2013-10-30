@@ -1,7 +1,7 @@
 #ifndef BFOBJECT_H
 #define BFOBJECT_H
 
-#include <QPainter>
+#include <QGLWidget>
 //#include "BFManager.h"
 
 class BFManager;
@@ -18,8 +18,10 @@ public:
 
     BFObject(BFManager *_manager);
     virtual ~BFObject();
-    virtual void draw(QPainter *) = 0;
+    virtual void draw(QGLWidget *) = 0;
     virtual BFObjectType getType() const = 0;
+    virtual double getRoughRadius() const = 0;
+    virtual double getPosition() const = 0;
 
     bool intersectWith(BFObject *);
     bool operator <(BFObject &b)
@@ -33,6 +35,6 @@ private:
 
 };
 
-#include "BFManager.h"
+#include "../BFManager.h"
 
 #endif // BFOBJECT_H

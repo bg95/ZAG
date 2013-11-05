@@ -25,5 +25,8 @@ Vector2d operator *(double b, Vector2d a);
 Vector2d operator *(Vector2d a, double b);
 Vector2d operator /(Vector2d a, double b);
 double operator &(Vector2d a, Vector2d b);
+//the following are used in QuardTree
+bool operator <(Vector2d a, Vector2d b);
+bool operator >=(Vector2d a, Vector2d b);
 
 #endif // VECTOR2D_H

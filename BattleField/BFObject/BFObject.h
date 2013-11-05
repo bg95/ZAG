@@ -2,6 +2,7 @@
 #define BFOBJECT_H
 
 #include <QGLWidget>
+#include "../Vector2d.h"
 //#include "BFManager.h"
 
 class BFManager;
@@ -21,7 +22,7 @@ public:
     virtual void draw(QGLWidget *) = 0;
     virtual BFObjectType getType() const = 0;
     virtual double getRoughRadius() const = 0;
-    virtual double getPosition() const = 0;
+    virtual Vector2d getPosition() const = 0;
 
     bool intersectWith(BFObject *);
     bool operator <(BFObject &b)

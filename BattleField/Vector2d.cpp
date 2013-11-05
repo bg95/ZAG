@@ -43,3 +43,12 @@ double operator &(Vector2d a, Vector2d b)
 {
     return a.x * b.x + a.y * b.y;
 }
+
+bool operator <(Vector2d a, Vector2d b)
+{
+    return a.x < b.x && a.y < b.y;
+}
+bool operator >=(Vector2d a, Vector2d b)
+{
+    return !(a < b);
+}

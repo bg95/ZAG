@@ -5,7 +5,8 @@
 
 double BFManager::epsi = 0.01;
 
-BFManager::BFManager()
+BFManager::BFManager() :
+    qtree(this)
 {
     left = -1.0;
     right = 1.0;
@@ -222,14 +223,24 @@ void BFManager::findAllIntersections()
     //brute force
     double time;
     intersections.clear();
-    std::set<BFObject *>::iterator iter, iter2;
+    std::set<BFObject *>::iterator iter;/*
+    std::set<BFObject *>::iterator iter2;
     for (iter = objects.begin(); iter != objects.end(); iter++)
         for (iter2 = iter, iter2++; iter2 != objects.end(); iter2++)
         {
             if (intersecting(*iter, *iter2))
                 intersections.push_back(IntersectionEvent(*iter, *iter2, intersectingTime(*iter, *iter2)));
-        }
+        }*/
     //IntersectionEvent::Boundary b;
+
+    qtree.clear();
+    for (iter = objects.begin(); iter != objects.end(); iter++)
+    {
+        qtree.insertObject(*iter);
+    }
+    qtree.build();
+    qtree.setOutput(intersections);
+    qtree.queryAll();
     for (iter = objects.begin(); iter != objects.end(); iter++)
     {
         if (intersectingBoundary(*iter, IntersectionEvent::LEFT))

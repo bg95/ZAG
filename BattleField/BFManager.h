@@ -14,6 +14,7 @@ class BFController;
 #include <QPainter>
 #include <QGLWidget>
 #include "IntersectionEvent.h"
+#include "QuadTree.h"
 #include "Vector2d.h"
 
 class BFManager
@@ -64,6 +65,7 @@ private:
     std::set<Qt::Key> keyspressed;
     Vector2d mouseposition;
     Qt::MouseButtons mousebuttons;
+    QuadTree qtree;
 
     void findAllIntersections();
     void processAllIntersections();

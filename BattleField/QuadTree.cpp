@@ -16,12 +16,15 @@ QuadTreeNode::QuadTreeNode(BFObject **_objs, int _objn, double l, double r, doub
 bool QuadTreeNode::intersectWith(BFObject *obj)
 {
     double r = obj->getRoughRadius() + rad;
-    return obj->getPosition() >= bl - Vector2d(r, r) && obj->getPosition() < tr + Vector2d(r, r);
+    Vector2d pos = obj->getPosition();
+    //return obj->getPosition() >= bl - Vector2d(r, r) && obj->getPosition() < tr + Vector2d(r, r);
+    return pos.x >= bl.x - r && pos.y >= bl.y - r && pos.x < tr.x + r && pos.y < tr.y + r;
 }
 
 QuadTree::QuadTree(BFManager *_manager)
 {
-    manager = manager;
+    root = 0;
+    manager = _manager;
 }
 
 void QuadTree::clear()
@@ -35,7 +38,7 @@ void QuadTree::insertObject(BFObject *obj)
     objs.push_back(obj);
 }
 
-void QuadTree::build()
+void QuadTree::build() //exists bug
 {
     static const double margin = 0.01;
     double l, r, b, t;
@@ -69,21 +72,29 @@ void QuadTree::setOutput(std::vector<IntersectionEvent> &intersections)
     intersect = &intersections;
 }
 
-void QuadTree::query()
+void QuadTree::queryAll()
 {
     std::vector<BFObject *>::iterator iter;
     for (iter = objs.begin(); iter != objs.end(); iter++)
         queryRecursive(root, *iter);
 }
 
-BFObject **QuadTree::findkth(BFObject **a, int n, int k, int dim)
+BFObject **QuadTree::findkth(BFObject **a, int n, int k, int dim) //exists bug
 {
+    //qDebug("findkth %lX, %d, %d, %d", (long)a, n, k, dim);
     Vector2d v;
     int i, j;
     while (1)
     {
+        //qDebug("findkth %lX, %d, %d, %d", (long)a, n, k, dim);
+        if (n == 1)
+        {
+            //qDebug("n=1");
+            return a;
+            //qDebug("n=1");
+        }
         v = a[rand() % n]->getPosition();
-        i = 0, j = n;
+        i = 0, j = n - 1;
         while (i <= j)
         {
             while (a[i]->getPosition().c[dim] < v.c[dim])
@@ -104,11 +115,11 @@ BFObject **QuadTree::findkth(BFObject **a, int n, int k, int dim)
         {
             a += i + 1;
             n -= i + 1;
-            k -= i;
+            k -= i + 1;
         }
         else
         {
-            n = i + 1;
+            n = i;
         }
     }
 }
@@ -120,13 +131,15 @@ void QuadTree::buildRecursive(QuadTreeNode *r)
     BFObject **midx, **midyl, **midyr;
     BFObject **&a = r->objs;
     int &n = r->objn;
+    //qDebug("findkth %lX, %d, %d, %d", (long)a, n, n / 2, 0);
+    //qDebug("Node %lX, %d", (long)a, n);
     midx = findkth(a, n, n / 2, 0);
     midyl = findkth(a, midx - a, (midx - a) / 2, 1);
     midyr = findkth(midx, a + n - midx, (a + n - midx) / 2, 1);
     r->c[0] = new QuadTreeNode(a, midyl - a, r->bl.x, (*midx)->getPosition().x, r->bl.y, (*midyl)->getPosition().y);
     r->c[2] = new QuadTreeNode(midyl, midx - midyl, r->bl.x, (*midx)->getPosition().x, (*midyl)->getPosition().y, r->tr.y);
     r->c[1] = new QuadTreeNode(midx, midyr - midx, (*midx)->getPosition().x, r->tr.x, r->bl.y, (*midyr)->getPosition().y);
-    r->c[3] = new QuadTreeNode(midyl, a + n - midyl, (*midx)->getPosition().x, r->tr.x, (*midyr)->getPosition().y, r->tr.y);
+    r->c[3] = new QuadTreeNode(midyr, a + n - midyr, (*midx)->getPosition().x, r->tr.x, (*midyr)->getPosition().y, r->tr.y);
     buildRecursive(r->c[0]);
     buildRecursive(r->c[1]);
     buildRecursive(r->c[2]);
@@ -150,6 +163,10 @@ void QuadTree::queryRecursive(QuadTreeNode *r, BFObject *obj)
         return;
     if (r->objn == 1)
     {
+        if (r->objs[0] == obj)
+            return;
+        if (*(r->objs[0]) < (*obj))
+            return;
         if (manager->intersecting(r->objs[0], obj))
             intersect->push_back(IntersectionEvent(r->objs[0], obj, manager->intersectingTime(r->objs[0], obj)));
         return;

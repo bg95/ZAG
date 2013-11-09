@@ -1,8 +1,12 @@
 #ifndef QUADTREE_H
 #define QUADTREE_H
 
-#include "BFManager.h"
-#include "BFObject/BFObject.h"
+#include <vector>
+#include "Vector2d.h"
+
+class BFObject;
+class BFManager;
+class IntersectionEvent;
 
 class QuadTreeNode
 {
@@ -25,7 +29,7 @@ public:
     void insertObject(BFObject *obj);
     void build();
     void setOutput(std::vector<IntersectionEvent> &intersections);
-    void query();
+    void queryAll();
 
 private:
     BFObject **findkth(BFObject **a, int n, int k, int dim); //k starts from 0; dim=0 : x, dim=1 : y
@@ -39,5 +43,9 @@ private:
     BFManager *manager;
 
 };
+
+#include "BFObject/BFObject.h"
+#include "BFManager.h"
+#include "IntersectionEvent.h"
 
 #endif // QUADTREE_H

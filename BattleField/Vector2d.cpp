@@ -1,5 +1,6 @@
 #include <cmath>
 #include "Vector2d.h"
+#include <Qt>
 
 Vector2d::Vector2d()
 {
@@ -50,5 +51,5 @@ bool operator <(Vector2d a, Vector2d b)
 }
 bool operator >=(Vector2d a, Vector2d b)
 {
-    return !(a < b);
+    return a.x >= b.x && a.y >= b.y;
 }

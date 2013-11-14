@@ -86,6 +86,8 @@ void BFManager::nextFrame(double deltatime)
             cir = (BFOCircle *)(*iter);
             cir->p = cir->p + cir->v * dt + 0.5 * cir->a * dt * dt;
             cir->v = cir->v + cir->a * dt;
+            //qDebug("nextframe p=(%lf,%lf) v=(%lf,%lf) a=(%lf,%lf)", ((BFOCircle *)cir)->p.x, ((BFOCircle *)cir)->p.y, cir->v.x, cir->v.y, cir->a.x, cir->a.y);
+            break;
         }
     }
     findAllIntersections();
@@ -236,6 +238,7 @@ void BFManager::findAllIntersections()
     qtree.clear();
     for (iter = objects.begin(); iter != objects.end(); iter++)
     {
+        //qDebug("manager insert (%lf, %lf)", (*iter)->getPosition().x, (*iter)->getPosition().y);
         qtree.insertObject(*iter);
     }
     qtree.build();

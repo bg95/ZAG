@@ -22,6 +22,7 @@ protected:
 
 private:
     Ui::MainWindow *ui;
+public: //for debugging
     BattleField *bf;
 };
 

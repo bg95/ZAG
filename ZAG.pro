@@ -35,6 +35,7 @@ HEADERS  += MainWindow.h \
     BattleField/BFObject/BFOColoredCircle.h \
     BattleField/BFController/BFController.h \
     BattleField/BFController/BFCHuman.h \
-    BattleField/QuadTree.h
+    BattleField/QuadTree.h \
+    main.h
 
 FORMS    += MainWindow.ui

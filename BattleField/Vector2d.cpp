@@ -7,8 +7,15 @@ Vector2d::Vector2d()
 }
 
 Vector2d::Vector2d(double _x, double _y)
-    :x(_x), y(_y)
 {
+    c[0] = _x;
+    c[1] = _y;
+}
+
+Vector2d &Vector2d::operator =(Vector2d b)
+{
+    c[0] = b.c[0];
+    c[1] = b.c[1];
 }
 
 double Vector2d::abs()

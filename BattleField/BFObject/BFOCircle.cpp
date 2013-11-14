@@ -3,7 +3,7 @@
 #include "BFOCircle.h"
 
 BFOCircle::BFOCircle(BFManager *manager)
-    :BFObject(manager)
+    :BFObject(manager), p(0, 0), v(0, 0), a(0, 0)
 {
 }
 

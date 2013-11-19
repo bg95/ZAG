@@ -1,11 +1,14 @@
 #include <QPainter>
 #include "BattleField.h"
 
-int BattleField::refresh_interval = 10; //50
+int BattleField::refresh_interval = 1; //50
+int BattleField::display_refreshes = 30; //50
+
 
 BattleField::BattleField(QWidget *parent) :
     QGLWidget(parent),
-    refreshtimer(this)
+    refreshtimer(this),
+    display_counter(0)
 {
     refreshtimer.setInterval(refresh_interval);
     connect(&refreshtimer, SIGNAL(timeout()), this, SLOT(refresh()));
@@ -95,7 +98,12 @@ void BattleField::mouseReleaseEvent(QMouseEvent *event)
 void BattleField::refresh()
 {
     manager.nextFrame(refresh_interval / 1000.0);
-    update();
+    display_counter++;
+    if (display_counter == display_refreshes)
+    {
+        display_counter = 0;
+        update();
+    }
 }
 
 void BattleField::mouseEvent(QMouseEvent *mouseevent)

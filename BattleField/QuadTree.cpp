@@ -146,7 +146,7 @@ void QuadTree::buildRecursive(QuadTreeNode *r)
 {
     depth++;
     //qDebug("%*cNode %lX, %d, range (%lf,%lf) (%lf,%lf) rad=%lf", depth, ' ', (long)r->objs, r->objn, r->bl.x, r->bl.y, r->tr.x, r->tr.y, r->rad);
-    qDebug("%*cNode %lX, %d, range (%lf,%lf) (%lf,%lf)", depth, ' ', (long)r->objs, r->objn, r->bl.x, r->bl.y, r->tr.x, r->tr.y);
+    //qDebug("%*cNode %lX, objs=%lX, %d, range (%lf,%lf) (%lf,%lf)", depth, ' ', (long)r, (long)r->objs, r->objn, r->bl.x, r->bl.y, r->tr.x, r->tr.y);
     if (r->objn == 0)
     {
         depth--;
@@ -173,15 +173,17 @@ void QuadTree::buildRecursive(QuadTreeNode *r)
     }
     BFObject **midx, **midyl, **midyr;
     BFObject **&a = r->objs;
+    double midxx;
     int &n = r->objn;
-    //qDebug("findkth %lX, %d, %d, %d", (long)a, n, n / 2, 0);
     midx = findkth(a, n, n / 2, 0);
+    midxx = (*midx)->getPosition().x;
+    //qDebug("findkth %lX, %d, %d, %d -> %d,%lf", (long)a, n, n / 2, 0, (midx - n), (*midx)->getPosition().x);
     midyl = findkth(a, midx - a, (midx - a) / 2, 1);
     midyr = findkth(midx, a + n - midx, (a + n - midx) / 2, 1);
-    r->c[0] = new QuadTreeNode(a, midyl - a, r->bl.x, (*midx)->getPosition().x, r->bl.y, (*midyl)->getPosition().y);
-    r->c[1] = new QuadTreeNode(midyl, midx - midyl, r->bl.x, (*midx)->getPosition().x, (*midyl)->getPosition().y, r->tr.y);
-    r->c[2] = new QuadTreeNode(midx, midyr - midx, (*midx)->getPosition().x, r->tr.x, r->bl.y, (*midyr)->getPosition().y);
-    r->c[3] = new QuadTreeNode(midyr, a + n - midyr, (*midx)->getPosition().x, r->tr.x, (*midyr)->getPosition().y, r->tr.y);
+    r->c[0] = new QuadTreeNode(a, midyl - a, r->bl.x, midxx, r->bl.y, (*midyl)->getPosition().y);
+    r->c[1] = new QuadTreeNode(midyl, midx - midyl, r->bl.x, midxx, (*midyl)->getPosition().y, r->tr.y);
+    r->c[2] = new QuadTreeNode(midx, midyr - midx, midxx, r->tr.x, r->bl.y, (*midyr)->getPosition().y);
+    r->c[3] = new QuadTreeNode(midyr, a + n - midyr, midxx, r->tr.x, (*midyr)->getPosition().y, r->tr.y);
     buildRecursive(r->c[0]);
     buildRecursive(r->c[1]);
     buildRecursive(r->c[2]);
@@ -219,8 +221,13 @@ void QuadTree::clearRecursive(QuadTreeNode *r)
 
 void QuadTree::queryRecursive(QuadTreeNode *r, BFObject *obj)
 {
+    //qDebug("Query object %lX (%lf,%lf) on node %lX", (long)obj, obj->getPosition().x, obj->getPosition().y, (long)r);
+    //qDebug("on node %lX", (long)r);
     if (r == 0 || r->objn == 0 || !r->intersectWith(obj))
+    {
+        //qDebug("ommiting node %lX", (long)r);
         return;
+    }
     if (r->objn == 1)
     {
         if (r->objs[0] == obj)

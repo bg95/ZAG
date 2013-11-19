@@ -18,7 +18,7 @@ public:
     int objn;
     Vector2d bl, tr; //bottom-left and top-right corners
     double rad; //rough radius of the largest object
-    QuadTreeNode *c[4]; //0-3: x-,y-; x+,y-; x-,y+; x+,y+
+    QuadTreeNode *c[4]; //0-3: x-,y-; x-,y+; x+,y-; x+,y+
 };
 
 class QuadTree

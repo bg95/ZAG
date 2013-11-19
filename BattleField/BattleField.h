@@ -12,6 +12,7 @@ class BattleField : public QGLWidget
     Q_OBJECT
 public:
     static int refresh_interval;
+    static int display_refreshes; //# of refreshes to re-display
 
     explicit BattleField(QWidget *parent = 0);
     bool insertObject(BFObject *o);
@@ -27,6 +28,7 @@ protected:
     void paintGL();
     void resizeGL(int w, int h);
 
+    //methods below are for BFCHuman
     void keyPressEvent(QKeyEvent *);
     void keyReleaseEvent(QKeyEvent *);
     void mouseMoveEvent(QMouseEvent *);
@@ -40,6 +42,7 @@ private:
     BFManager manager;
     QTimer refreshtimer;
     void mouseEvent(QMouseEvent *mouseevent);
+    int display_counter;
 
 };
 

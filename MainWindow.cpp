@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     bf->setGeometry(0, 0, width(), height());
 
     BFOColoredCircle *circle;
-
+/*
     circle = new BFOColoredCircle(bf->getManager());
     circle->p = Vector2d(0.89, 0.05);
     circle->r = 0.1;
@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     circle->maxa = 5;
     bf->getManager()->insertObject(circle);
     BFCHuman *hum = new BFCHuman(circle);
-    bf->getManager()->registerController(hum);
+    bf->getManager()->registerController(hum);*/
 /*
     circle = new BFOColoredCircle(bf->getManager());
     circle->p = Vector2d(0, -0.05);
@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     bf->getManager()->insertObject(circle);
 */
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 10; i++)
     {
         circle = new BFOColoredCircle(bf->getManager());
         circle->p = Vector2d(i / 9.0 - 0.9, 0.9);
@@ -63,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     for (int i = 0; i < 0; i++)
-        for (int j = 0; j < 1; j++)
+        for (int j = 0; j < 10; j++)
         {
             circle = new BFOColoredCircle(bf->getManager());
             circle->p = Vector2d(i / 80.0 - 0.5, -0.9 + j / 80.0);

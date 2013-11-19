@@ -21,7 +21,7 @@ public:
     virtual ~BFObject();
     virtual void draw(QGLWidget *) = 0;
     virtual BFObjectType getType() const = 0;
-    virtual double getRoughRadius() const = 0;
+    virtual double getRoughRadius() const = 0; //The radius of a circle large enough to cover the whole object, used for Quadtree
     virtual Vector2d getPosition() const = 0;
 
     bool intersectWith(BFObject *);

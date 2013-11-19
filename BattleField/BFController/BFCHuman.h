@@ -5,7 +5,7 @@
 #include "BFController.h"
 #include "../Vector2d.h"
 
-class BFCHuman : public BFController
+class BFCHuman : public BFController //A controller controled by human (mouse and keyboard)
 {
 public:
     static Qt::Key XNegKey, XPosKey, YNegKey, YPosKey;

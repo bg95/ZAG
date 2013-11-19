@@ -29,5 +29,6 @@ void BFOColoredCircle::onIntersection(BFObject *b0, Vector2d impulse)
         double t = 1.0 - atan2(impulse.abs(), m) / (3.141592653 / 2.0);
         blue *= t;
         green *= t;
+        green *= 0.9;
     }
 }

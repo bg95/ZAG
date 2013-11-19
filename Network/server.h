@@ -16,7 +16,7 @@ private slots:
 
 private:
     QTcpServer *tcpServer;
-    QStringList message;
+    QStringList messages;
     QNetworkSession *networkSession;
 };
 

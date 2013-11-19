@@ -23,7 +23,9 @@ SOURCES += main.cpp\
     BattleField/BFObject/BFOColoredCircle.cpp \
     BattleField/BFController/BFController.cpp \
     BattleField/BFController/BFCHuman.cpp \
-    BattleField/QuadTree.cpp
+    BattleField/QuadTree.cpp \
+    Network/server.cpp \
+    Network/client.cpp
 
 HEADERS  += MainWindow.h \
     BattleField/BFObject/BFObject.h \
@@ -35,6 +37,8 @@ HEADERS  += MainWindow.h \
     BattleField/BFObject/BFOColoredCircle.h \
     BattleField/BFController/BFController.h \
     BattleField/BFController/BFCHuman.h \
-    BattleField/QuadTree.h
+    BattleField/QuadTree.h \
+    Network/server.h \
+    Network/client.h
 
 FORMS    += MainWindow.ui

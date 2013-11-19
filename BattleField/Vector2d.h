@@ -6,16 +6,11 @@ class Vector2d
 public:
     Vector2d();
     Vector2d(double _x, double _y);
+    Vector2d &operator =(Vector2d b);
     double abs();
 
-    union
-    {
-        struct
-        {
-            double x, y;
-        };
-        double c[2];
-    };
+    double c[2];
+    double &x = c[0], &y = c[1];
 };
 
 Vector2d operator +(Vector2d a, Vector2d b);

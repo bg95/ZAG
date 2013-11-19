@@ -1,7 +1,7 @@
 #include <QPainter>
 #include "BattleField.h"
 
-int BattleField::refresh_interval = 1; //50
+int BattleField::refresh_interval = 10; //50
 
 BattleField::BattleField(QWidget *parent) :
     QGLWidget(parent),

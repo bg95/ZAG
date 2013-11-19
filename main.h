@@ -1,0 +1,9 @@
+#ifndef MAIN_H
+#define MAIN_H
+
+#include "MainWindow.h"
+#include "BattleField/BFObject/BFOCircle.h"
+extern MainWindow *mw;
+extern BFOCircle *circles[3];
+
+#endif // MAIN_H

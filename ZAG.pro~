@@ -39,7 +39,7 @@ HEADERS  += MainWindow.h \
     BattleField/BFController/BFCHuman.h \
     BattleField/QuadTree.h \
     Network/server.h \
-    Network/client.h\
+    Network/client.h
     main.h
 
 FORMS    += MainWindow.ui

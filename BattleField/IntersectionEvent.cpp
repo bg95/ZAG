@@ -14,3 +14,8 @@ IntersectionEvent::IntersectionEvent(BFObject *_obj1, BFObject *_obj2, double _t
     :obj1(_obj1), obj2(_obj2), boundary(false), time(_time)
 {
 }
+
+bool IntersectionEvent::operator <(const IntersectionEvent &b) const
+{
+    return time < b.time;
+}

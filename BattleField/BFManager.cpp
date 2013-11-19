@@ -83,14 +83,20 @@ void BFManager::nextFrame(double deltatime)
         switch ((*iter)->getType())
         {
         case BFO_CIRCLE:
-            cir = (BFOCircle *)(*iter);
+            cir = (BFOCircle *)(*iter);/*
             cir->p = cir->p + cir->v * dt + 0.5 * cir->a * dt * dt;
-            cir->v = cir->v + cir->a * dt;
+            cir->v = cir->v + cir->a * dt;*/
+            cir->move(dt);
             //qDebug("nextframe p=(%lf,%lf) v=(%lf,%lf) a=(%lf,%lf)", ((BFOCircle *)cir)->p.x, ((BFOCircle *)cir)->p.y, cir->v.x, cir->v.y, cir->a.x, cir->a.y);
             break;
         }
     }
-    findAllIntersections();
+    findAllIntersections();/*
+    while (intersections.size())
+    {
+        processIndependentIntersections();
+        findAllIntersections();
+    }*/
     processAllIntersections();
 }
 
@@ -297,6 +303,45 @@ void BFManager::processAllIntersections()
             }
         }
     }
+}
+
+void BFManager::processIndependentIntersections()
+{
+    std::vector<IntersectionEvent>::iterator iter;
+    BFObject *a, *b;
+    std::sort(intersections.begin(), intersections.end());
+    isintersected.clear();
+    for (iter = intersections.begin(); iter != intersections.end(); iter++)
+    {
+        if (!(*iter).boundary)
+        {
+            a = (*iter).obj1;
+            b = (*iter).obj2;
+            if (isintersected.find(a) == isintersected.end() && isintersected.find(b) == isintersected.end())
+            {
+                isintersected.insert(a);
+                isintersected.insert(b);
+                if (a->getType() == BFO_CIRCLE)
+                {
+                    if (b->getType() == BFO_CIRCLE)
+                        processIntersection((BFOCircle *)a, (BFOCircle *)b, (*iter).time);
+                }
+            }
+        }
+        else
+        {
+            a = (*iter).obj;
+            if (isintersected.find(a) == isintersected.end())
+            {
+                isintersected.insert(a);
+                if (a->getType() == BFO_CIRCLE)
+                {
+                    processBoundaryIntersection((BFOCircle *)a, (*iter).b, (*iter).time);
+                }
+            }
+        }
+    }
+    isintersected.clear();
 }
 
 void BFManager::processIntersection(BFOCircle *a, BFOCircle *b, double time)

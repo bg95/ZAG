@@ -59,6 +59,7 @@ private:
     //std::vector<std::pair<BFObject *, BFObject *> > intersections;
     //std::vector<std::pair<BFObject *, IntersectionEvent::Boundary> > boundaryintersections;
     std::vector<IntersectionEvent> intersections;
+    std::set<BFObject *> isintersected;
     double dt;
 
     std::set<BFController *> controllers;
@@ -69,6 +70,7 @@ private:
 
     void findAllIntersections();
     void processAllIntersections();
+    void processIndependentIntersections();
     void processIntersection(BFOCircle *a, BFOCircle *b, double time);
     void processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Boundary b, double time);
 

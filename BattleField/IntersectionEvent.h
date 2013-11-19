@@ -15,6 +15,7 @@ public:
     IntersectionEvent();
     IntersectionEvent(BFObject *_obj, Boundary _b, double _time);
     IntersectionEvent(BFObject *_obj1, BFObject *_obj2, double _time);
+    bool operator <(const IntersectionEvent &b) const;
     union
     {
         struct

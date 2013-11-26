@@ -6,6 +6,7 @@ class BFObject;
 class BFOCircle;
 class IntersectionEvent;
 class BFController;
+class BFRule;
 
 #include <Qt>
 #include <QKeyEvent>
@@ -43,6 +44,14 @@ public:
 
     void paintAll(QGLWidget *glwidget);//(QPainter *painter);
 
+    //interface for BFRule
+    void setRule(BFRule *_rule);
+    std::vector<IntersectionEvent> &getIntersections();
+    std::set<BFObject *> &getObjects();
+    std::set<Qt::Key> &getKeysPressed();
+    Vector2d getMousePosition();
+    Qt::MouseButtons getMouseButtons();
+
     double intersectingTime(const BFObject *a, const BFObject *b);
     bool intersectingBackTrace(const BFObject *a, const BFObject *b, double time);
     bool intersecting(const BFObject *a, const BFObject *b);
@@ -68,16 +77,19 @@ private:
     Qt::MouseButtons mousebuttons;
     QuadTree qtree;
 
+    BFRule *rule;
+
     void findAllIntersections();
     void processAllIntersections();
     void processIndependentIntersections();
-    void processIntersection(BFOCircle *a, BFOCircle *b, double time);
-    void processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Boundary b, double time);
+    //void processIntersection(BFOCircle *a, BFOCircle *b, double time);
+    //void processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Boundary b, double time);
 
 };
 
 #include "BFObject/BFObject.h"
 #include "BFObject/BFOCircle.h"
 #include "BFController/BFController.h"
+#include "BFRule/BFRule.h"
 
 #endif // BFMANAGER_H

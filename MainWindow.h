@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "BattleField/BattleField.h"
+#include "BattleField/BFRule/BFRCollision.h"
 
 #include <QMainWindow>
 
@@ -24,6 +25,7 @@ private:
     Ui::MainWindow *ui;
 public: //for debugging
     BattleField *bf;
+    BFRCollision *rule;
 };
 
 #endif // MAINWINDOW_H

@@ -107,6 +107,37 @@ void BFManager::paintAll(QGLWidget *glwidget)
         (*iter)->draw(glwidget);
 }
 
+//interface for BFRule
+void BFManager::setRule(BFRule *_rule)
+{
+    rule = _rule;
+}
+
+std::vector<IntersectionEvent> &BFManager::getIntersections()
+{
+    return intersections;
+}
+
+std::set<BFObject *> &BFManager::getObjects()
+{
+    return objects;
+}
+
+std::set<Qt::Key> &BFManager::getKeysPressed()
+{
+    return keyspressed;
+}
+
+Vector2d BFManager::getMousePosition()
+{
+    return mouseposition;
+}
+
+Qt::MouseButtons BFManager::getMouseButtons()
+{
+    return mousebuttons;
+}
+
 ///intersection between objects
 double BFManager::intersectingTime(const BFObject *a, const BFObject *b)
 {
@@ -279,7 +310,7 @@ void BFManager::findAllIntersections()
 }
 
 void BFManager::processAllIntersections()
-{
+{/*
     std::vector<IntersectionEvent>::iterator iter;
     BFObject *a, *b;
     for (iter = intersections.begin(); iter != intersections.end(); iter++)
@@ -302,7 +333,8 @@ void BFManager::processAllIntersections()
                 processBoundaryIntersection((BFOCircle *)a, (*iter).b, (*iter).time);
             }
         }
-    }
+    }*/
+    rule->process();
 }
 
 void BFManager::processIndependentIntersections()
@@ -351,7 +383,7 @@ void BFManager::processIndependentIntersections()
     intersections.resize(n);
     processAllIntersections();
 }
-
+/*
 void BFManager::processIntersection(BFOCircle *a, BFOCircle *b, double time)
 {
     //qDebug("intersection time %lf", time);
@@ -409,3 +441,4 @@ void BFManager::processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Bou
     }
     a->move(-time);
 }
+*/

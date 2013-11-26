@@ -2,6 +2,8 @@
 #include "BattleField/BFObject/BFOColoredCircle.h"
 #include "BattleField/BFController/BFCHuman.h"
 
+#include "BattleField/BFRule/BFRCollision.h"
+
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
@@ -16,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     bf = new BattleField(this);
     bf->setGeometry(0, 0, width(), height());
+
+    rule = new BFRCollision(bf->getManager());
+    bf->getManager()->setRule(rule);
 
     BFOColoredCircle *circle;
 /*
@@ -101,6 +106,7 @@ MainWindow::~MainWindow()
 {
     //delete ui;
     delete bf;
+    delete rule;
 }
 
 void MainWindow::resizeEvent(QResizeEvent *)

@@ -91,13 +91,13 @@ void BFManager::nextFrame(double deltatime)
             break;
         }
     }
-    findAllIntersections();/*
+    findAllIntersections();
     while (intersections.size())
     {
         processIndependentIntersections();
         findAllIntersections();
-    }*/
-    processAllIntersections();
+    }
+    //processAllIntersections();
 }
 
 void BFManager::paintAll(QGLWidget *glwidget)
@@ -309,8 +309,10 @@ void BFManager::processIndependentIntersections()
 {
     std::vector<IntersectionEvent>::iterator iter;
     BFObject *a, *b;
+    int n;
     std::sort(intersections.begin(), intersections.end());
     isintersected.clear();
+    n = 0;
     for (iter = intersections.begin(); iter != intersections.end(); iter++)
     {
         if (!(*iter).boundary)
@@ -320,12 +322,14 @@ void BFManager::processIndependentIntersections()
             if (isintersected.find(a) == isintersected.end() && isintersected.find(b) == isintersected.end())
             {
                 isintersected.insert(a);
-                isintersected.insert(b);
+                isintersected.insert(b);/*
                 if (a->getType() == BFO_CIRCLE)
                 {
                     if (b->getType() == BFO_CIRCLE)
                         processIntersection((BFOCircle *)a, (BFOCircle *)b, (*iter).time);
-                }
+                }*/
+                intersections[n] = (*iter);
+                n++;
             }
         }
         else
@@ -333,15 +337,19 @@ void BFManager::processIndependentIntersections()
             a = (*iter).obj;
             if (isintersected.find(a) == isintersected.end())
             {
-                isintersected.insert(a);
+                isintersected.insert(a);/*
                 if (a->getType() == BFO_CIRCLE)
                 {
                     processBoundaryIntersection((BFOCircle *)a, (*iter).b, (*iter).time);
-                }
+                }*/
+                intersections[n] = (*iter);
+                n++;
             }
         }
     }
     isintersected.clear();
+    intersections.resize(n);
+    processAllIntersections();
 }
 
 void BFManager::processIntersection(BFOCircle *a, BFOCircle *b, double time)
@@ -374,7 +382,7 @@ void BFManager::processIntersection(BFOCircle *a, BFOCircle *b, double time)
     b->onIntersection(a, -impulse); //should be modified later
 }
 
-void BFManager::processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Boundary b, double time)  ////time unused!
+void BFManager::processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Boundary b, double time)
 {
     a->move(time);
     switch (b)
@@ -401,4 +409,3 @@ void BFManager::processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Bou
     }
     a->move(-time);
 }
-

@@ -72,10 +72,12 @@ void BFManager::nextFrame(double deltatime)
         case BFC_HUMAN:
             BFCHuman *hum = (BFCHuman *)(*ctrliter);
             hum->setKeysAndMouse(keyspressed, mouseposition, mousebuttons);
-            hum->applyControl();
+            //hum->applyControl();
             break;
         }
     }
+    rule->processInput();
+
     std::set<BFObject *>::iterator iter;
     BFOCircle *cir;
     for (iter = objects.begin(); iter != objects.end(); iter++)
@@ -121,6 +123,11 @@ std::vector<IntersectionEvent> &BFManager::getIntersections()
 std::set<BFObject *> &BFManager::getObjects()
 {
     return objects;
+}
+
+std::set<BFController *> &BFManager::getControllers()
+{
+    return controllers;
 }
 
 std::set<Qt::Key> &BFManager::getKeysPressed()
@@ -334,7 +341,7 @@ void BFManager::processAllIntersections()
             }
         }
     }*/
-    rule->process();
+    rule->processIntersections();
 }
 
 void BFManager::processIndependentIntersections()

@@ -48,6 +48,7 @@ public:
     void setRule(BFRule *_rule);
     std::vector<IntersectionEvent> &getIntersections();
     std::set<BFObject *> &getObjects();
+    std::set<BFController *> &getControllers();
     std::set<Qt::Key> &getKeysPressed();
     Vector2d getMousePosition();
     Qt::MouseButtons getMouseButtons();

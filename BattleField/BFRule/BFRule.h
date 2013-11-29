@@ -3,11 +3,11 @@
 
 #include "../BFManager.h"
 
-class BFRule
+class BFRule //This class controls what to do when intersections / user inputs occur
 {
 public:
     explicit BFRule(BFManager *_manager);
-    virtual void process();
+    virtual void processIntersections();
     virtual void processInput();
 
 protected:

@@ -1,4 +1,5 @@
 #include "../BFObject/BFOCircle.h"
+#include "../BFController/BFCHuman.h"
 
 #include "BFRCollision.h"
 
@@ -7,7 +8,7 @@ BFRCollision::BFRCollision(BFManager *_manager) :
 {
 }
 
-void BFRCollision::process()
+void BFRCollision::processIntersections()
 {
     std::vector<IntersectionEvent> &intersections = manager->getIntersections();
     std::vector<IntersectionEvent>::iterator iter;
@@ -31,6 +32,23 @@ void BFRCollision::process()
             {
                 processBoundaryIntersection((BFOCircle *)a, (*iter).b, (*iter).time);
             }
+        }
+    }
+}
+
+void BFRCollision::processInput()
+{
+    std::set<BFController*> &controllers = manager->getControllers();
+    std::set<BFController *>::iterator ctrliter;
+    for (ctrliter = controllers.begin(); ctrliter != controllers.end(); ctrliter++)
+    {
+        switch ((*ctrliter)->getType())
+        {
+        case BFC_HUMAN:
+            BFCHuman *hum = (BFCHuman *)(*ctrliter);
+            //hum->setKeysAndMouse(keyspressed, mouseposition, mousebuttons);
+            hum->applyControl();
+            break;
         }
     }
 }

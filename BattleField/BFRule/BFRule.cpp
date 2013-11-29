@@ -5,7 +5,7 @@ BFRule::BFRule(BFManager *_manager) :
 {
 }
 
-void BFRule::process()
+void BFRule::processIntersections()
 {
 }
 

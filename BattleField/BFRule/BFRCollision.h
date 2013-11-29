@@ -2,12 +2,14 @@
 #define BFRCOLLISION_H
 
 #include "BFRule.h"
+#include "../BFController/BFController.h"
 
-class BFRCollision : public BFRule
+class BFRCollision : public BFRule //Simple rigid body collision & keyboard control
 {
 public:
     explicit BFRCollision(BFManager *_manager);
-    virtual void process();
+    virtual void processIntersections();
+    virtual void processInput();
 
 protected:
     void processIntersection(BFOCircle *a, BFOCircle *b, double time);

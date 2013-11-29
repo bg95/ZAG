@@ -18,7 +18,19 @@ public:
 private slots:
     void requestNewMessage();
     void readMessage();
-    void displayError(QAbstractSocket::SocketError)
+    void displayError(QAbstractSocket::SocketError);
+    void sessionOpened();
+
+private:
+    QString hostName;
+    quint16 port;
+
+    QTcpSocket *tcpSocket;
+    QStringList messageList;
+    QString currentMessage;
+    quint16 blockSize;
+
+    QNetworkSession *networkSession;
 };
 
 

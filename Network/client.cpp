@@ -26,12 +26,12 @@ Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
     if(manager.capabilities() & QNetworkConfigurationManager::NetworkSessionRequired){
         QSettings settings(QSettings::UserScope, QLatin1String("QtProject"));
         settings.beginGroup(QLatin1String("QtNetwork"));
-        const QString id = settings.value(QLatin1Strin("DefaultNetworkConfiguration")).toString();
+        const QString id = settings.value(QLatin1String("DefaultNetworkConfiguration")).toString();
         settings.endGroup();
 
         //If the saved network configuration is not discovered, use the system's default configuration
         QNetworkConfiguration config = manager.configurationFromIdentifier(id);
-        if((config.state() & QNetworkCOnfiguration::Discovered) != QNetworkConfiguration::Discovered){
+        if((config.state() & QNetworkConfiguration::Discovered) != QNetworkConfiguration::Discovered){
             config = manager.defaultConfiguration();
         }
 
@@ -67,7 +67,7 @@ void Client::readMessage(){
     in >> nextMessage;
 
     if(nextMessage == currentMessage){
-        QTimer::singleShot(0, this, SLOT(requestNewMessage());
+        QTimer::singleShot(0, this, SLOT(requestNewMessage()));
         return;
     }
 
@@ -85,7 +85,7 @@ void Client::displayError(QAbstractSocket::SocketError socketError){
         QMessageBox::information(this, tr("Client"), tr("This connection is refused by the peer."));
         break;
     default:
-        QMessageBox::information(this, tr("Client"), tr("The following error occurred: %1").arg(tcpSocket -> errorString));
+        QMessageBox::information(this, tr("Client"), tr("The following error occurred: %1").arg(tcpSocket -> errorString()));
     }
 }
 
@@ -93,7 +93,7 @@ void Client::sessionOpened(){
     QNetworkConfiguration config = networkSession -> configuration();
     QString id;
     if(config.type() == QNetworkConfiguration::UserChoice){
-        id = networkSession -> sessionProperty(QLatin1String("UserChoiceConfiguration"),toString());
+        id = networkSession -> sessionProperty(QLatin1String("UserChoiceConfiguration")).toString();
     }
     else{
         id = config.identifier();

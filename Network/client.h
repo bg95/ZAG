@@ -9,7 +9,7 @@ class QTcpSocket;
 class QNetworkSession;
 QT_END_NAMESPACE
 
-class Client : public Qdialog{
+class Client : public QDialog{
     Q_OBJECT
 
 public:

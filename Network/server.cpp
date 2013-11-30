@@ -3,13 +3,12 @@
 
 #include "server.h"
 
-Server::Server(Qwidget *parent):
+Server::Server(QWidget *parent):
     QDialog(parent), tcpServer(0), networkSession(0){
 
     QNetworkConfigurationManager manager;
     if(manager.capabilities() & QNetworkConfigurationManager::NetworkSessionRequired){
         QSettings settings(QSettings::UserScope, QLatin1String("QtObject"));
-        settings.beginGroup(QLatin1String());
         settings.beginGroup(QLatin1String("QtNetwork"));
         const QString id = settings.value(QLatin1String("DefaultNetworkConfiguration")).toString();
         settings.endGroup();
@@ -22,18 +21,19 @@ Server::Server(Qwidget *parent):
         networkSession = new QNetworkSession(config, this);
         connect(networkSession, SIGNAL(opended()), this, SLOT(sessionOpened()));
 
-        networkSession -> opend();
+        networkSession -> opened();
     }
     else{
-        sessionOpended();
+        sessionOpened();
     }
 
     // Set transformed message
     // May be set another class later
-    message = setMessage();
+    messages = encodeMessage();
 
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(sendMessage()));
 }
+
 
 void Server::sendMessage(){
     QByteArray block;
@@ -71,7 +71,7 @@ void Server::sessionOpened(){
     }
 
     tcpServer = new QTcpServer(this);
-    if(!tcpServer.open()){
+    if(!tcpServer->listen()){
         QMessageBox::critical(this, tr("Server"),
                               tr("Unable to be started: %1.")
                               .arg(tcpServer -> errorString()));
@@ -79,8 +79,8 @@ void Server::sessionOpened(){
         return;
     }
 
-    Qstring ipAddress;
-    QList<QHostAddress> ipAddressList = QNetworkinterface::allAddresses();
+    QString ipAddress;
+    QList<QHostAddress> ipAddressList = QNetworkInterface::allAddresses();
     for(int i = 0; i != ipAddressList.size(); i++){
         if(ipAddressList.at(i) != QHostAddress::LocalHost &&
            ipAddressList.at(i).toIPv4Address()){
@@ -92,4 +92,11 @@ void Server::sessionOpened(){
     if(ipAddress.isEmpty()){
         ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
     }
+}
+
+
+QStringList Server::encodeMessage(){
+    QStringList newString;
+    newString << QString("TestString1") << QString("TestString2");
+    return newString;
 }

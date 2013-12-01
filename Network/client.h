@@ -7,6 +7,11 @@
 QT_BEGIN_NAMESPACE
 class QTcpSocket;
 class QNetworkSession;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QDialogButtonBox;
+class QComboBox;
 QT_END_NAMESPACE
 
 class Client : public QDialog{
@@ -21,7 +26,22 @@ private slots:
     void displayError(QAbstractSocket::SocketError);
     void sessionOpened();
 
+    //This is for test
+    void setHostAndProt();
+    //End test for*/
+
 private:
+    //This is for test
+    QLabel *statusLabel;
+    QLabel *hostLabel;
+    QLabel *portLabel;
+    QComboBox *hostEdit;
+    QLineEdit *portEdit;
+    QPushButton *getMessageButton;
+    QPushButton *quitButton;
+    QDialogButtonBox *buttonBox;
+    //End test part */
+
     QString hostName;
     quint16 port;
 

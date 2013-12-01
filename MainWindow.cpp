@@ -144,6 +144,8 @@ void MainWindow::server(){
 }
 
 void MainWindow::client(){
+    Client *client = new Client;
+    client -> show();
     return;
 }
 

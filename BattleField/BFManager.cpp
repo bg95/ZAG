@@ -3,6 +3,7 @@
 
 #include "BFManager.h"
 
+int BFManager::process_independent_intersections = -1;
 double BFManager::epsi = 0.01;
 
 BFManager::BFManager() :
@@ -32,6 +33,11 @@ void BFManager::removeObject(BFObject *o)
     objects.erase(o); //not necessarily correct
 }
 
+void BFManager::clearObjects()
+{
+    objects.clear();
+}
+
 bool BFManager::registerController(BFController *c)
 {
     return controllers.insert(c).second;
@@ -40,6 +46,11 @@ bool BFManager::registerController(BFController *c)
 void BFManager::unregisterController(BFController *c)
 {
     controllers.erase(c); //not necessarily correct
+}
+
+void BFManager::clearControllers()
+{
+    controllers.clear();
 }
 
 void BFManager::keyPressEvent(QKeyEvent *keyevent)
@@ -94,12 +105,13 @@ void BFManager::nextFrame(double deltatime)
         }
     }
     findAllIntersections();
-    while (intersections.size())
+    for (int i = 0; i != process_independent_intersections && intersections.size(); i++)
     {
+        qDebug("proc ind");
         processIndependentIntersections();
         findAllIntersections();
     }
-    //processAllIntersections();
+    processAllIntersections();
 }
 
 void BFManager::paintAll(QGLWidget *glwidget)

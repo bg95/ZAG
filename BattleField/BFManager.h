@@ -21,6 +21,7 @@ class BFRule;
 class BFManager
 {
 public:
+    static int process_independent_intersections;
     static double epsi;
 
     BFManager();
@@ -33,8 +34,10 @@ public:
 
     bool insertObject(BFObject *o);
     void removeObject(BFObject *o);
+    void clearObjects();
     bool registerController(BFController *c);
     void unregisterController(BFController *c);
+    void clearControllers();
 
     void keyPressEvent(QKeyEvent *keyevent);
     void keyReleaseEvent(QKeyEvent *keyevent);

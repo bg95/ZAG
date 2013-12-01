@@ -25,7 +25,7 @@ private:
     Ui::MainWindow *ui;
 public: //for debugging
     BattleField *bf;
-    BFRCollision *rule;
+    BFRule *rule;
 };
 
 #endif // MAINWINDOW_H

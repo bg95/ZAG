@@ -15,8 +15,8 @@ public:
     static int display_refreshes; //# of refreshes to re-display
 
     explicit BattleField(QWidget *parent = 0);
-    bool insertObject(BFObject *o);
-    void removeObject(BFObject *o);
+    bool insertObject(BFObject *o); //unused, should be deleted later
+    void removeObject(BFObject *o); //unused, should be deleted later
     BFManager *getManager();
     
 signals:

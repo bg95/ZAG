@@ -19,12 +19,12 @@ BattleField::BattleField(QWidget *parent) :
     grabMouse();
 }
 
-bool BattleField::insertObject(BFObject *o)
+bool BattleField::insertObject(BFObject *o) //unused, should be deleted later
 {
     return manager.insertObject(o);
 }
 
-void BattleField::removeObject(BFObject *o)
+void BattleField::removeObject(BFObject *o) //unused, should be deleted later
 {
     manager.removeObject(o);
 }

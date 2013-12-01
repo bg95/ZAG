@@ -17,8 +17,8 @@ public:
     {
         return BFO_CIRCLE;
     }
-    virtual void onIntersection(BFObject *b, Vector2d impulse) //should be modified later
-    {}
+    //virtual void onIntersection(BFObject *b, Vector2d impulse) //should be modified later
+    //{}
     double getRoughRadius() const
     {
         return r;

@@ -21,6 +21,19 @@ void BFOColoredCircle::draw(QGLWidget *glwidget)
     BFOCircle::draw(glwidget);
 }
 
+void BFOColoredCircle::setColor(double r, double g, double b, double a)
+{
+    red = r;
+    green = g;
+    blue = b;
+    alpha = a;
+}
+
+const double *BFOColoredCircle::getColor() const
+{
+    return c;
+}
+/*
 void BFOColoredCircle::onIntersection(BFObject *b0, Vector2d impulse)
 {
     if (b0->getType() == BFO_CIRCLE)
@@ -32,3 +45,4 @@ void BFOColoredCircle::onIntersection(BFObject *b0, Vector2d impulse)
         green *= 0.9;
     }
 }
+*/

@@ -8,8 +8,11 @@ class BFOColoredCircle : public BFOCircle
 public:
     BFOColoredCircle(BFManager *manager);
     void draw(QGLWidget *glwidget);
-    void onIntersection(BFObject *b, Vector2d impulse); //should be modified later
-    double red, green, blue, alpha;
+    void setColor(double r, double g, double b, double a);
+    const double *getColor() const;
+    //void onIntersection(BFObject *b, Vector2d impulse); //should be modified later
+    double c[4];
+    double &red = c[0], &green = c[1], &blue = c[2], &alpha = c[3];
 };
 
 #endif // BFOCOLOREDCIRCLE_H

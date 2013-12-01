@@ -2,8 +2,15 @@
 #define SERVER_H
 
 #include <QDialog>
-#include <QTcpServer>
-#include <QNetworkSession>
+//#include <QTcpServer>
+//#include <QNetworkSession>
+
+QT_BEGIN_NAMESPACE
+class QLabel;
+class QPushButton;
+class QTcpServer;
+class QNetworkSession;
+QT_END_NAMESPACE
 
 class Server: public QDialog
 {
@@ -21,6 +28,10 @@ private:
     QTcpServer *tcpServer;
     QStringList messages;
     QNetworkSession *networkSession;
+
+    //This part is for test
+    QLabel *statusLabel;
+    QPushButton *quitButton;
 };
 
 #endif // SERVER_H

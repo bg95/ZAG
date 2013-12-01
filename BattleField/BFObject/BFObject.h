@@ -2,6 +2,8 @@
 #define BFOBJECT_H
 
 #include <QGLWidget>
+#include <string>
+#include <map>
 #include "../Vector2d.h"
 //#include "BFManager.h"
 
@@ -30,9 +32,17 @@ public:
         return id < b.id;
     }
 
+    void setInfo(std::string str);
+    const std::string &getInfo() const;
+
+    void setProperty(const std::string &prop, const std::string &val);
+    const std::string &getProperty(const std::string &prop);
+
 private:
     long id;
     BFManager *manager;
+    std::string info;
+    std::map<std::string, std::string> properties;
 
 };
 

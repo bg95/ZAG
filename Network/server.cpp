@@ -6,6 +6,24 @@
 Server::Server(QWidget *parent):
     QDialog(parent), tcpServer(0), networkSession(0){
 
+    // This part is for test
+    statusLabel = new QLabel;
+    quitButton = new QPushButton(tr("Quit"));
+    quitButton -> setAutoDefault(false);
+    connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
+    QHBoxLayout *buttonLayout = new QHBoxLayout;
+    buttonLayout -> addStretch(1);
+    buttonLayout -> addWidget(quitButton);
+    buttonLayout -> addStretch(1);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout -> addWidget(statusLabel);
+    mainLayout -> addLayout(buttonLayout);
+    setLayout(mainLayout);
+
+    setWindowTitle(tr("Server Test"));
+    //Test part end */
+
     QNetworkConfigurationManager manager;
     if(manager.capabilities() & QNetworkConfigurationManager::NetworkSessionRequired){
         QSettings settings(QSettings::UserScope, QLatin1String("QtObject"));
@@ -92,6 +110,9 @@ void Server::sessionOpened(){
     if(ipAddress.isEmpty()){
         ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
     }
+
+    //This part is for test
+    statusLabel -> setText(tr("The server is running on \n\n IP: %1\nport: %2\n\n").arg(ipAddress).arg(tcpServer -> serverPort()));
 }
 
 

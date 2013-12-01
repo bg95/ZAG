@@ -2,14 +2,16 @@
 #define MAINWINDOW_H
 
 #include "BattleField/BattleField.h"
+#include "BattleField/BFRule/BFRCollision.h"
 
 #include <QMainWindow>
+#include <QPushButton>
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public QWidget//public QMainWindow
 {
     Q_OBJECT
     
@@ -22,8 +24,17 @@ protected:
 
 private:
     Ui::MainWindow *ui;
+    QPushButton *serverButton;
+    QPushButton *clientButton;
+    QPushButton *singleButton;
+    QPushButton *quitButton;
 public: //for debugging
     BattleField *bf;
+    BFRCollision *rule;
+private slots:
+    void server();
+    void client();
+    void singlePlayer();
 };
 
 #endif // MAINWINDOW_H

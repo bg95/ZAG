@@ -72,10 +72,12 @@ void BFManager::nextFrame(double deltatime)
         case BFC_HUMAN:
             BFCHuman *hum = (BFCHuman *)(*ctrliter);
             hum->setKeysAndMouse(keyspressed, mouseposition, mousebuttons);
-            hum->applyControl();
+            //hum->applyControl();
             break;
         }
     }
+    rule->processInput();
+
     std::set<BFObject *>::iterator iter;
     BFOCircle *cir;
     for (iter = objects.begin(); iter != objects.end(); iter++)
@@ -83,15 +85,21 @@ void BFManager::nextFrame(double deltatime)
         switch ((*iter)->getType())
         {
         case BFO_CIRCLE:
-            cir = (BFOCircle *)(*iter);
+            cir = (BFOCircle *)(*iter);/*
             cir->p = cir->p + cir->v * dt + 0.5 * cir->a * dt * dt;
-            cir->v = cir->v + cir->a * dt;
+            cir->v = cir->v + cir->a * dt;*/
+            cir->move(dt);
             //qDebug("nextframe p=(%lf,%lf) v=(%lf,%lf) a=(%lf,%lf)", ((BFOCircle *)cir)->p.x, ((BFOCircle *)cir)->p.y, cir->v.x, cir->v.y, cir->a.x, cir->a.y);
             break;
         }
     }
     findAllIntersections();
-    processAllIntersections();
+    while (intersections.size())
+    {
+        processIndependentIntersections();
+        findAllIntersections();
+    }
+    //processAllIntersections();
 }
 
 void BFManager::paintAll(QGLWidget *glwidget)
@@ -99,6 +107,42 @@ void BFManager::paintAll(QGLWidget *glwidget)
     std::set<BFObject *>::iterator iter;
     for (iter = objects.begin(); iter != objects.end(); iter++)
         (*iter)->draw(glwidget);
+}
+
+//interface for BFRule
+void BFManager::setRule(BFRule *_rule)
+{
+    rule = _rule;
+}
+
+std::vector<IntersectionEvent> &BFManager::getIntersections()
+{
+    return intersections;
+}
+
+std::set<BFObject *> &BFManager::getObjects()
+{
+    return objects;
+}
+
+std::set<BFController *> &BFManager::getControllers()
+{
+    return controllers;
+}
+
+std::set<Qt::Key> &BFManager::getKeysPressed()
+{
+    return keyspressed;
+}
+
+Vector2d BFManager::getMousePosition()
+{
+    return mouseposition;
+}
+
+Qt::MouseButtons BFManager::getMouseButtons()
+{
+    return mousebuttons;
 }
 
 ///intersection between objects
@@ -273,7 +317,7 @@ void BFManager::findAllIntersections()
 }
 
 void BFManager::processAllIntersections()
-{
+{/*
     std::vector<IntersectionEvent>::iterator iter;
     BFObject *a, *b;
     for (iter = intersections.begin(); iter != intersections.end(); iter++)
@@ -296,9 +340,57 @@ void BFManager::processAllIntersections()
                 processBoundaryIntersection((BFOCircle *)a, (*iter).b, (*iter).time);
             }
         }
-    }
+    }*/
+    rule->processIntersections();
 }
 
+void BFManager::processIndependentIntersections()
+{
+    std::vector<IntersectionEvent>::iterator iter;
+    BFObject *a, *b;
+    int n;
+    std::sort(intersections.begin(), intersections.end());
+    isintersected.clear();
+    n = 0;
+    for (iter = intersections.begin(); iter != intersections.end(); iter++)
+    {
+        if (!(*iter).boundary)
+        {
+            a = (*iter).obj1;
+            b = (*iter).obj2;
+            if (isintersected.find(a) == isintersected.end() && isintersected.find(b) == isintersected.end())
+            {
+                isintersected.insert(a);
+                isintersected.insert(b);/*
+                if (a->getType() == BFO_CIRCLE)
+                {
+                    if (b->getType() == BFO_CIRCLE)
+                        processIntersection((BFOCircle *)a, (BFOCircle *)b, (*iter).time);
+                }*/
+                intersections[n] = (*iter);
+                n++;
+            }
+        }
+        else
+        {
+            a = (*iter).obj;
+            if (isintersected.find(a) == isintersected.end())
+            {
+                isintersected.insert(a);/*
+                if (a->getType() == BFO_CIRCLE)
+                {
+                    processBoundaryIntersection((BFOCircle *)a, (*iter).b, (*iter).time);
+                }*/
+                intersections[n] = (*iter);
+                n++;
+            }
+        }
+    }
+    isintersected.clear();
+    intersections.resize(n);
+    processAllIntersections();
+}
+/*
 void BFManager::processIntersection(BFOCircle *a, BFOCircle *b, double time)
 {
     //qDebug("intersection time %lf", time);
@@ -329,7 +421,7 @@ void BFManager::processIntersection(BFOCircle *a, BFOCircle *b, double time)
     b->onIntersection(a, -impulse); //should be modified later
 }
 
-void BFManager::processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Boundary b, double time)  ////time unused!
+void BFManager::processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Boundary b, double time)
 {
     a->move(time);
     switch (b)
@@ -356,4 +448,4 @@ void BFManager::processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Bou
     }
     a->move(-time);
 }
-
+*/

@@ -105,14 +105,14 @@ Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
 }
 
 void Client::setHostAndProt(){
-    hostName = hostEdit -> currentText();
+    //hostName = hostEdit -> currentText();
     port = (portEdit -> text()).toInt();
 }
 
 void Client::requestNewMessage(){
     blockSize = 0;
     tcpSocket -> abort();
-    tcpSocket -> connectToHost(hostName, port);
+    tcpSocket -> connectToHost(hostEdit -> currentText(), port);
 }
 
 void Client::readMessage(){

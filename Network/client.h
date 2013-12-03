@@ -42,7 +42,7 @@ private:
     QDialogButtonBox *buttonBox;
     //End test part */
 
-    QString hostName;
+    //QHostAddress hostName;
     quint16 port;
 
     QTcpSocket *tcpSocket;

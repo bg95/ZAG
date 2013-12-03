@@ -13,22 +13,16 @@ public:
     BFOCircle(BFManager *manager);
     virtual ~BFOCircle();
     virtual void draw(QGLWidget *glwidget);
-    BFObjectType getType() const
-    {
-        return BFO_CIRCLE;
-    }
+    BFObjectType getType() const;
     //virtual void onIntersection(BFObject *b, Vector2d impulse) //should be modified later
     //{}
-    double getRoughRadius() const
-    {
-        return r;
-    }
-    Vector2d getPosition() const
-    {
-        return p;
-    }
+    double getRoughRadius() const;
+    Vector2d getPosition() const;
 
     void move(double time);
+
+    virtual void encode(QIODevice *device); //must be called if overwritten by subclasses
+    virtual void decode(QIODevice *device); //must be called if overwritten by subclasses
 
 //private:
     Vector2d p, v, a; //position, velocity, acceleration

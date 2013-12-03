@@ -22,6 +22,8 @@ public:
 signals:
     
 public slots:
+    void start();
+    void pause();
     
 protected:
     void initializeGL();

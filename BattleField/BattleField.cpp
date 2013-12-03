@@ -12,7 +12,7 @@ BattleField::BattleField(QWidget *parent) :
 {
     refreshtimer.setInterval(refresh_interval);
     connect(&refreshtimer, SIGNAL(timeout()), this, SLOT(refresh()));
-    refreshtimer.start();
+    //refreshtimer.start();
 
     setMouseTracking(true);
     grabKeyboard();
@@ -32,6 +32,16 @@ void BattleField::removeObject(BFObject *o) //unused, should be deleted later
 BFManager *BattleField::getManager()
 {
     return &manager;
+}
+
+void BattleField::start()
+{
+    refreshtimer.start(refresh_interval);
+}
+
+void BattleField::pause()
+{
+    refreshtimer.stop();
 }
 
 void BattleField::initializeGL()

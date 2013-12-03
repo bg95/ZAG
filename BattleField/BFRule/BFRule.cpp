@@ -5,6 +5,15 @@ BFRule::BFRule(BFManager *_manager) :
 {
 }
 
+BFRule::~BFRule()
+{
+}
+
+BFRuleType BFRule::getType() const
+{
+    return BFR_Null;
+}
+
 void BFRule::processIntersections()
 {
 }

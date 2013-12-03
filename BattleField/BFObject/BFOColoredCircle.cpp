@@ -14,10 +14,10 @@ BFOColoredCircle::BFOColoredCircle(BFManager *manager) :
 void BFOColoredCircle::draw(QGLWidget *glwidget)
 {
     glwidget->makeCurrent();
-    glColor4d(red, green, blue, alpha);
+    glColor4d(red, green, blue, alpha);/*
     red = 0.9 * red + 0.1;
     green = 0.9 * green + 0.1;
-    blue = 0.9 * blue + 0.1;
+    blue = 0.9 * blue + 0.1;*/
     BFOCircle::draw(glwidget);
 }
 

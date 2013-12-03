@@ -11,6 +11,7 @@ public:
     void setColor(double r, double g, double b, double a);
     const double *getColor() const;
     //void onIntersection(BFObject *b, Vector2d impulse); //should be modified later
+
     double c[4];
     double &red = c[0], &green = c[1], &blue = c[2], &alpha = c[3];
 };

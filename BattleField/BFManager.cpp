@@ -33,9 +33,39 @@ void BFManager::removeObject(BFObject *o)
     objects.erase(o); //not necessarily correct
 }
 
+void BFManager::encodeObject(BFObject *o, QIODevice *device)
+{
+    BFObjectType type;
+    type = o->getType();
+    device->write((const char *)&type, sizeof(type));
+    o->decode(device);
+}
+
+BFObject *BFManager::decodeNewObject(QIODevice *device)
+{
+    BFObjectType type;
+    BFObject *o;
+    device->read((char *)&type, sizeof(type));
+    switch (type)
+    {
+    case BFO_CIRCLE:
+        o = new BFOCircle(this);
+        break;
+    }
+    o->decode(device);
+}
+
 void BFManager::clearObjects()
 {
     objects.clear();
+}
+
+void BFManager::destructObjects()
+{
+    std::set<BFObject *>::iterator iter;
+    for (iter = objects.begin(); iter != objects.end(); iter++)
+        delete *iter;
+    clearObjects();
 }
 
 bool BFManager::registerController(BFController *c)
@@ -51,6 +81,14 @@ void BFManager::unregisterController(BFController *c)
 void BFManager::clearControllers()
 {
     controllers.clear();
+}
+
+void BFManager::destructControllers()
+{
+    std::set<BFController *>::iterator ctrliter;
+    for (ctrliter = controllers.begin(); ctrliter != controllers.end(); ctrliter++)
+        delete *ctrliter;
+    clearControllers();
 }
 
 void BFManager::keyPressEvent(QKeyEvent *keyevent)

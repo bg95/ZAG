@@ -8,6 +8,15 @@ BFRCollision::BFRCollision(BFManager *_manager) :
 {
 }
 
+BFRCollision::~BFRCollision()
+{
+}
+
+BFRuleType BFRCollision::getType() const
+{
+    return BFR_Collision;
+}
+
 void BFRCollision::processIntersections()
 {
     std::vector<IntersectionEvent> &intersections = manager->getIntersections();

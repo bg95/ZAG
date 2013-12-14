@@ -30,7 +30,7 @@ private:
     QPushButton *quitButton;
 public: //for debugging
     BattleField *bf;
-    BFRCollision *rule;
+    BFRule *rule;
 private slots:
     void server();
     void client();

@@ -8,6 +8,8 @@ class BFRCollision : public BFRule //Simple rigid body collision & keyboard cont
 {
 public:
     explicit BFRCollision(BFManager *_manager);
+    virtual ~BFRCollision();
+    virtual BFRuleType getType() const;
     virtual void processIntersections();
     virtual void processInput();
 

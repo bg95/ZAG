@@ -21,7 +21,8 @@ public:
     static const std::string empty_string;
     static long count;
 
-    BFObject(BFManager *_manager);
+    BFObject();
+    //BFObject(BFManager *_manager = 0);
     virtual ~BFObject();
     virtual void draw(QGLWidget *) = 0;
     virtual BFObjectType getType() const = 0;
@@ -34,7 +35,7 @@ public:
     virtual void encode(QIODevice *device); //must be called if overwritten by subclasses
     virtual void decode(QIODevice *device); //must be called if overwritten by subclasses
 
-    bool intersectWith(BFObject *);
+    //bool intersectWith(BFObject *);
     bool operator <(BFObject &b)
     {
         return id < b.id;
@@ -50,7 +51,7 @@ public:
 
 private:
     long id;
-    BFManager *manager;
+    //BFManager *manager;
     std::string info;  //unused
     std::map<std::string, std::string> properties;
 

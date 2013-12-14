@@ -2,11 +2,16 @@
 
 #include "BFOCircle.h"
 
+BFOCircle::BFOCircle()
+    :p(0, 0), v(0, 0), a(0, 0)
+{
+}
+/*
 BFOCircle::BFOCircle(BFManager *manager)
     :BFObject(manager), p(0, 0), v(0, 0), a(0, 0)
 {
 }
-
+*/
 BFOCircle::~BFOCircle()
 {
 }

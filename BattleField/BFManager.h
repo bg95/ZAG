@@ -36,8 +36,6 @@ public:
     //Object operations
     bool insertObject(BFObject *o);
     void removeObject(BFObject *o);
-    void encodeObject(BFObject *o, QIODevice *device);
-    BFObject *decodeNewObject(QIODevice *device);
     void clearObjects();
     void destructObjects();
 

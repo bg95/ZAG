@@ -2,6 +2,14 @@
 
 #include "BFOColoredCircle.h"
 
+BFOColoredCircle::BFOColoredCircle()
+{
+    red = 1;
+    green = 1;
+    blue = 1;
+    alpha = 1;
+}
+/*
 BFOColoredCircle::BFOColoredCircle(BFManager *manager) :
     BFOCircle(manager)
 {
@@ -10,7 +18,7 @@ BFOColoredCircle::BFOColoredCircle(BFManager *manager) :
     blue = 1;
     alpha = 1;
 }
-
+*/
 void BFOColoredCircle::draw(QGLWidget *glwidget)
 {
     glwidget->makeCurrent();

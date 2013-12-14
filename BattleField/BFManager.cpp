@@ -33,28 +33,6 @@ void BFManager::removeObject(BFObject *o)
     objects.erase(o); //not necessarily correct
 }
 
-void BFManager::encodeObject(BFObject *o, QIODevice *device)
-{
-    BFObjectType type;
-    type = o->getType();
-    device->write((const char *)&type, sizeof(type));
-    o->decode(device);
-}
-
-BFObject *BFManager::decodeNewObject(QIODevice *device)
-{
-    BFObjectType type;
-    BFObject *o;
-    device->read((char *)&type, sizeof(type));
-    switch (type)
-    {
-    case BFO_CIRCLE:
-        o = new BFOCircle(this);
-        break;
-    }
-    o->decode(device);
-}
-
 void BFManager::clearObjects()
 {
     objects.clear();

@@ -6,7 +6,8 @@
 class BFOColoredCircle : public BFOCircle
 {
 public:
-    BFOColoredCircle(BFManager *manager);
+    BFOColoredCircle();
+    //BFOColoredCircle(BFManager *manager = 0);
     void draw(QGLWidget *glwidget);
     void setColor(double r, double g, double b, double a);
     const double *getColor() const;

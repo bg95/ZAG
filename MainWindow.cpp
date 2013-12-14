@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     for (int i = 0; i < 5; i++)
     {
-        circle = new BFOColoredCircle(bf->getManager());
+        circle = new BFOColoredCircle;//(bf->getManager());
         circle->p = Vector2d(i / 8.0 - 0.9, 0.9);
         circle->r = 0.05;
         circle->v = Vector2d(0.8, 0.5);
@@ -66,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
         bf->getManager()->insertObject(circle);
         circles[i] = circle;
     }
-    circle = new BFOColoredCircle(bf->getManager());
+    circle = new BFOColoredCircle;//(bf->getManager());
     circle->p = Vector2d(0, 0.9);
     circle->r = 0.05;
     circle->v = Vector2d(0, 0.5);
@@ -79,7 +79,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     for (int i = 0; i < 5; i++)
     {
-        circle = new BFOColoredCircle(bf->getManager());
+        circle = new BFOColoredCircle;//(bf->getManager());
         circle->p = Vector2d(-(i / 8.0 - 0.9), 0.9);
         circle->r = 0.05;
         circle->v = Vector2d(-0.8, 0.5);
@@ -91,7 +91,7 @@ MainWindow::MainWindow(QWidget *parent) :
     for (int i = 0; i < 10; i++)
         for (int j = 0; j < 50; j++)
         {
-            circle = new BFOColoredCircle(bf->getManager());
+            circle = new BFOColoredCircle;//(bf->getManager());
             circle->p = Vector2d(i / 80.0 - 0.5, -0.9 + j / 80.0);
             circle->r = 0.005;
             circle->v = Vector2d(i / 350.0 - 0.5, 0.5 + i / 180.0 - 0.5);

@@ -10,7 +10,8 @@ class BFOCircle : public BFObject
     friend class BFManager;
 
 public:
-    BFOCircle(BFManager *manager);
+    BFOCircle();
+    //BFOCircle(BFManager *manager);
     virtual ~BFOCircle();
     virtual void draw(QGLWidget *glwidget);
     BFObjectType getType() const;

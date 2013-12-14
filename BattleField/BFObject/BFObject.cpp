@@ -3,8 +3,8 @@
 const std::string BFObject::empty_string;
 long BFObject::count = 0;
 
-BFObject::BFObject(BFManager *_manager)
-    :manager(_manager), info()
+BFObject::BFObject()//BFManager *_manager)
+    :/*manager(_manager), */info()
 {
     id = count;
     count++;
@@ -41,12 +41,12 @@ void BFObject::decode(QIODevice *device)
         setProperty(prop, val);
     }
 }
-
+/*
 bool BFObject::intersectWith(BFObject *b)
 {
     return manager->intersecting(this, b);
 }
-
+*/
 void BFObject::setInfo(std::string str)
 {
     info = str;

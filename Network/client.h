@@ -27,7 +27,7 @@ private slots:
     void sessionOpened();
 
     //This is for test
-    void setHostAndProt();
+    void setHostAndPort();
     //End test for*/
 
 private:

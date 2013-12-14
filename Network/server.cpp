@@ -7,6 +7,7 @@ Server::Server(QWidget *parent):
     QDialog(parent), tcpServer(0), networkSession(0){
 
     // This part is for test
+    debuggerLabel = new QLabel;
     statusLabel = new QLabel;
     quitButton = new QPushButton(tr("Quit"));
     quitButton -> setAutoDefault(false);
@@ -17,6 +18,7 @@ Server::Server(QWidget *parent):
     buttonLayout -> addStretch(1);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout -> addWidget(debuggerLabel);
     mainLayout -> addWidget(statusLabel);
     mainLayout -> addLayout(buttonLayout);
     setLayout(mainLayout);
@@ -26,7 +28,7 @@ Server::Server(QWidget *parent):
 
     QNetworkConfigurationManager manager;
     if(manager.capabilities() & QNetworkConfigurationManager::NetworkSessionRequired){
-        QSettings settings(QSettings::UserScope, QLatin1String("QtObject"));
+        QSettings settings(QSettings::UserScope, QLatin1String("QtProject"));
         settings.beginGroup(QLatin1String("QtNetwork"));
         const QString id = settings.value(QLatin1String("DefaultNetworkConfiguration")).toString();
         settings.endGroup();
@@ -54,14 +56,19 @@ Server::Server(QWidget *parent):
 
 
 void Server::sendMessage(){
+    //This part is for test
+    debuggerLabel -> setText(tr("Messages sent!"));
+    //Test part end
+
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
 
     out << (quint16)0;
-    for(int i = 0; i != messages.size(); i++){
-        out << messages.at(i);
-    }
+    //for(int i = 0; i != messages.size(); i++){
+    //    out << messages.at(i);
+    //}
+    out << messages;
     out.device() -> seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
 
@@ -73,6 +80,10 @@ void Server::sendMessage(){
 }
 
 void Server::sessionOpened(){
+
+    //tihs part is for test
+    debuggerLabel -> setText(tr("Session is opened!"));
+    //end test part
 
     if (networkSession) {
         QNetworkConfiguration config = networkSession->configuration();
@@ -116,8 +127,8 @@ void Server::sessionOpened(){
 }
 
 
-QStringList Server::encodeMessage(){
-    QStringList newString;
-    newString << QString("TestString1") << QString("TestString2");
+QString Server::encodeMessage(){
+    QString newString;
+    newString = QString("TestString");
     return newString;
 }

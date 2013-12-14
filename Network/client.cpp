@@ -104,12 +104,16 @@ Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
     }
 }
 
-void Client::setHostAndProt(){
+void Client::setHostAndPort(){
     //hostName = hostEdit -> currentText();
     port = (portEdit -> text()).toInt();
 }
 
 void Client::requestNewMessage(){
+    //This is for test
+    statusLabel -> setText(tr("Resquest new Message!"));
+    //end test part
+
     blockSize = 0;
     tcpSocket -> abort();
     tcpSocket -> connectToHost(hostEdit -> currentText(), port);
@@ -138,6 +142,10 @@ void Client::readMessage(){
     }
 
     currentMessage = nextMessage;
+
+    //Test part
+    statusLabel -> setText(currentMessage);
+    //End test part
 }
 
 void Client::displayError(QAbstractSocket::SocketError socketError){

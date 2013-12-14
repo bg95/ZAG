@@ -30,8 +30,6 @@ SOURCES += main.cpp\
     BattleField/BFRule/BFRule.cpp \
     BattleField/BFRule/BFRCollision.cpp \
     WindowManagement.cpp\
-    BattleField/BFController/BFCodec.cpp\
-    BattleField/BFController/BFCAI.cpp
 
 HEADERS  += MainWindow.h \
     BattleField/BFObject/BFObject.h \
@@ -50,7 +48,5 @@ HEADERS  += MainWindow.h \
     BattleField/BFRule/BFRule.h \
     BattleField/BFRule/BFRCollision.h \
     WindowManagement.h\
-    BattleField/BFController/BFCodec.h\
-    BattleField/BFController/BFCAI.h
 
 FORMS    += MainWindow.ui

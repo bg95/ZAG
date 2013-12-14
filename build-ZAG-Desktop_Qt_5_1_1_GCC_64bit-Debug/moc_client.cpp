@@ -40,7 +40,7 @@ QT_MOC_LITERAL(7, 94, 14)
     },
     "Client\0requestNewMessage\0\0readMessage\0"
     "displayError\0QAbstractSocket::SocketError\0"
-    "sessionOpened\0setHostAndProt\0"
+    "sessionOpened\0setHostAndPort\0"
 };
 #undef QT_MOC_LITERAL
 
@@ -83,7 +83,7 @@ void Client::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
         case 1: _t->readMessage(); break;
         case 2: _t->displayError((*reinterpret_cast< QAbstractSocket::SocketError(*)>(_a[1]))); break;
         case 3: _t->sessionOpened(); break;
-        case 4: _t->setHostAndProt(); break;
+        case 4: _t->setHostAndPort(); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {

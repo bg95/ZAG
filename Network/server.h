@@ -22,14 +22,15 @@ public:
 private slots:
     void sessionOpened();
     void sendMessage();
-    QStringList encodeMessage();
+    QString encodeMessage();
 
 private:
     QTcpServer *tcpServer;
-    QStringList messages;
+    QString messages;
     QNetworkSession *networkSession;
 
     //This part is for test
+    QLabel *debuggerLabel;
     QLabel *statusLabel;
     QPushButton *quitButton;
 };

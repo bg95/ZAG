@@ -61,7 +61,7 @@ static const uint qt_meta_data_Server[] = {
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::QStringList,
+    QMetaType::QString,
 
        0        // eod
 };
@@ -73,8 +73,8 @@ void Server::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
         switch (_id) {
         case 0: _t->sessionOpened(); break;
         case 1: _t->sendMessage(); break;
-        case 2: { QStringList _r = _t->encodeMessage();
-            if (_a[0]) *reinterpret_cast< QStringList*>(_a[0]) = _r; }  break;
+        case 2: { QString _r = _t->encodeMessage();
+            if (_a[0]) *reinterpret_cast< QString*>(_a[0]) = _r; }  break;
         default: ;
         }
     }

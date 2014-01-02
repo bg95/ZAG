@@ -1,21 +1,21 @@
 #include "BFObject/BFOCircle.h"
 #include "BFController/BFController.h"
 
-#include "BFCodec.h"
+#include "BFFactory.h"
 
-BFCodec::BFCodec()
+BFFactory::BFFactory()
 {
 }
 
-void BFCodec::encodeObject(BFObject *o, QIODevice *device)
+void BFFactory::encodeObject(BFObject *o, QIODevice *device)
 {
     BFObjectType type;
     type = o->getType();
     device->write((const char *)&type, sizeof(type));
-    o->decode(device);
+    o->encode(device);
 }
 
-BFObject *BFCodec::decodeNewObject(QIODevice *device)
+BFObject *BFFactory::decodeNewObject(QIODevice *device)
 {
     BFObjectType type;
     BFObject *o;

@@ -1,6 +1,7 @@
 #include "BattleField/BFObject/BFOCircle.h"
 #include "BattleField/BFObject/BFOColoredCircle.h"
 #include "BattleField/BFController/BFCHuman.h"
+#include "BattleField/BFController/AI/BFCAIRandom.h"
 
 #include "BattleField/BFRule/BFRCollision.h"
 
@@ -74,8 +75,10 @@ MainWindow::MainWindow(QWidget *parent) :
     bf->getManager()->insertObject(circle);
 
     circle->maxa = 5;
-    BFCHuman *hum = new BFCHuman(circle);
-    bf->getManager()->registerController(hum);
+    circle->setColor(0.0, 0.5, 1.0, 1.0);
+    //BFCHuman *hum = new BFCHuman(circle);
+    BFCAIRandom *air = new BFCAIRandom(bf->getManager(), circle);
+    bf->getManager()->registerController(air);
 
     for (int i = 0; i < 5; i++)
     {

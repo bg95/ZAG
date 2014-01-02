@@ -1,15 +1,15 @@
-#ifndef BFCODEC_H
-#define BFCODEC_H
+#ifndef BFFACTORY_H
+#define BFFACTORY_H
 
 #include "BFObject/BFObject.h"
 #include "BFController/BFController.h"
 
-class BFCodec
+class BFFactory
 {
 public:
-    BFCodec();
+    BFFactory();
     void encodeObject(BFObject *o, QIODevice *device);
     BFObject *decodeNewObject(QIODevice *device);
 };
 
-#endif // BFCODEC_H
+#endif // BFFACTORY_H

@@ -1,5 +1,6 @@
 #include "../BFObject/BFOCircle.h"
 #include "../BFController/BFCHuman.h"
+#include "../BFController/BFCAI.h"
 
 #include "BFRCollision.h"
 
@@ -51,12 +52,16 @@ void BFRCollision::processInput()
     std::set<BFController *>::iterator ctrliter;
     for (ctrliter = controllers.begin(); ctrliter != controllers.end(); ctrliter++)
     {
+        BFCHuman *hum = (BFCHuman *)(*ctrliter);
+        BFCAI *ai = (BFCAI *)(*ctrliter);
         switch ((*ctrliter)->getType())
         {
         case BFC_HUMAN:
-            BFCHuman *hum = (BFCHuman *)(*ctrliter);
             //hum->setKeysAndMouse(keyspressed, mouseposition, mousebuttons);
             hum->applyControl();
+            break;
+        case BFC_AI:
+            ai->applyControl();
             break;
         }
     }

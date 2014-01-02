@@ -3,7 +3,7 @@
 
 #include "BFManager.h"
 
-int BFManager::process_independent_intersections = -1;
+int BFManager::process_independent_intersections = 10;
 double BFManager::epsi = 0.01;
 
 BFManager::BFManager() :
@@ -90,7 +90,7 @@ void BFManager::mouseEvent(Vector2d mousepos, Qt::MouseButtons mousebut)
 
 void BFManager::nextFrame(double deltatime)
 {
-    dt = deltatime;
+    dt = deltatime;/*
     std::set<BFController *>::iterator ctrliter;
     for (ctrliter = controllers.begin(); ctrliter != controllers.end(); ctrliter++)
     {
@@ -101,8 +101,11 @@ void BFManager::nextFrame(double deltatime)
             hum->setKeysAndMouse(keyspressed, mouseposition, mousebuttons);
             //hum->applyControl();
             break;
+        case BFC_AI:
+            BFCAI *ai = (BFCAI *)(*ctrliter);
+            break;
         }
-    }
+    }*/
     rule->processInput();
 
     std::set<BFObject *>::iterator iter;

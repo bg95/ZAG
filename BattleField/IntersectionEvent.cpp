@@ -19,3 +19,14 @@ bool IntersectionEvent::operator <(const IntersectionEvent &b) const
 {
     return time < b.time;
 }
+
+bool IntersectionEvent::operator ==(const IntersectionEvent &other) const
+{
+    if (boundary)
+    {
+        return other.boundary && obj == other.obj && b == other.b && time == other.time;
+    }
+    return !other.boundary &&
+            ((obj1 == other.obj1 && obj2 == other.obj2) || (obj1 == other.obj2 && obj2 == other.obj1)) &&
+            time == other.time;
+}

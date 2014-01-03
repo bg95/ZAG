@@ -120,6 +120,7 @@ MainWindow::MainWindow(QWidget *parent) :
             bf->getManager()->insertObject(circle);
         }
 */
+    //bf->refresh();
     bf->start();
 }
 

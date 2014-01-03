@@ -77,19 +77,19 @@ void BFManager::destructControllers()
 
 void BFManager::keyPressEvent(QKeyEvent *keyevent)
 {
-    qDebug("key %d pressed", keyevent->key());
+    //qDebug("key %d pressed", keyevent->key());
     keyspressed.insert((Qt::Key)keyevent->key());
 }
 
 void BFManager::keyReleaseEvent(QKeyEvent *keyevent)
 {
-    qDebug("key %d released", keyevent->key());
+    //qDebug("key %d released", keyevent->key());
     keyspressed.erase((Qt::Key)keyevent->key());
 }
 
 void BFManager::mouseEvent(Vector2d mousepos, Qt::MouseButtons mousebut)
 {
-    qDebug("mouse at %lf,%lf", mousepos.x, mousepos.y);
+    //qDebug("mouse at %lf,%lf", mousepos.x, mousepos.y);
     mouseposition = mousepos;
     mousebuttons = mousebut;
 }
@@ -302,6 +302,8 @@ void BFManager::findAllIntersections()
             if (intersecting(*iter, *iter2))
                 intersections.push_back(IntersectionEvent(*iter, *iter2, intersectingTime(*iter, *iter2)));
         }
+
+    std::vector<IntersectionEvent> intersectionsqtree;
 */
     qtree.clear();
     for (iter = objects.begin(); iter != objects.end(); iter++)
@@ -310,9 +312,31 @@ void BFManager::findAllIntersections()
         qtree.insertObject(*iter);
     }
     qtree.build();
+    //qtree.setOutput(intersectionsqtree);
     qtree.setOutput(intersections);
     qtree.queryAll();
+    //intersections = intersectionsqtree;
 
+    //std::sort(intersections.begin(), intersections.end());
+    //std::sort(intersectionsqtree.begin(), intersectionsqtree.end());
+    /*
+    for (int j = 0; j < (int)intersections.size(); j++)
+    {
+        int i;
+        for (i = 0; i < (int)intersectionsqtree.size(); i++)
+            if ((intersections[j] == intersectionsqtree[i]))
+            {
+                break;
+            }
+        if (i >= intersectionsqtree.size())
+        {
+            qDebug("inconsistency!");
+            qDebug("brute-force: %lX %lX %lf", intersections[j].obj1, intersections[j].obj2, intersections[j].time);
+            //qDebug("quadtree:    %lX %lX %lf", intersectionsqtree[j].obj1, intersectionsqtree[j].obj2, intersectionsqtree[j].time);
+            qtree.query(intersections[j].obj1 < intersections[j].obj2 ? intersections[j].obj1 : intersections[j].obj2);
+        }
+    }
+*/
     for (iter = objects.begin(); iter != objects.end(); iter++)
     {
         if (intersectingBoundary(*iter, IntersectionEvent::LEFT))

@@ -30,6 +30,7 @@ public:
     void build();
     void setOutput(std::vector<IntersectionEvent> &intersections);
     void queryAll();
+    void query(BFObject *obj);
 
 private:
     BFObject **findkth(BFObject **a, int n, int k, int dim); //k starts from 0; dim=0 : x, dim=1 : y

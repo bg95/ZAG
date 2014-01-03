@@ -39,7 +39,7 @@ void BFCHuman::applyControl()
             double theta = (mousepos - cir->p).arg();
             cir->setProperty("shoot", theta);
 
-            qDebug("mouse left button pressed. %lf %s", theta);
+            //qDebug("mouse left button pressed. %lf %s", theta);
         }
 
     }

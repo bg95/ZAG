@@ -16,6 +16,23 @@ BFOCircle::~BFOCircle()
 {
 }
 
+BFObject *BFOCircle::newObject()
+{
+    return new BFOCircle;
+}
+
+BFObject *BFOCircle::duplicate()
+{
+    BFOCircle *ptr = (BFOCircle *)BFObject::duplicate();
+    ptr->p = p;
+    ptr->v = v;
+    ptr->a = a;
+    ptr->m = m;
+    ptr->r = r;
+    ptr->maxa = maxa;
+    return ptr;
+}
+
 void BFOCircle::draw(QGLWidget *glwidget)
 {
     //QRectF region(p.x - r, p.y - r, p.x + r, p.y + r);

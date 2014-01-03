@@ -19,6 +19,19 @@ BFOColoredCircle::BFOColoredCircle(BFManager *manager) :
     alpha = 1;
 }
 */
+
+BFObject *BFOColoredCircle::newObject()
+{
+    return new BFOColoredCircle;
+}
+
+BFObject *BFOColoredCircle::duplicate()
+{
+    BFOColoredCircle *ptr = (BFOColoredCircle *)BFOCircle::duplicate();
+    memcpy(ptr->c, c, sizeof(c));
+    return ptr;
+}
+
 void BFOColoredCircle::draw(QGLWidget *glwidget)
 {
     glwidget->makeCurrent();

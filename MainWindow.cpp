@@ -4,9 +4,12 @@
 #include "BattleField/BFController/AI/BFCAIRandom.h"
 
 #include "BattleField/BFRule/BFRCollision.h"
+#include "BattleField/BFRule/BFRShoot.h"
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+
+#include <sstream>
 
 #include "main.h"
 
@@ -20,7 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
     bf = new BattleField(this);
     bf->setGeometry(0, 0, width(), height());
 
-    rule = new BFRCollision(bf->getManager());
+    //rule = new BFRCollision(bf->getManager());
+    rule = new BFRShoot(bf->getManager());
     bf->getManager()->setRule(rule);
 
     BFOColoredCircle *circle;
@@ -64,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
         circle->r = 0.05;
         circle->v = Vector2d(0.8, 0.5);
         circle->m = 0.25;
+        circle->setProperty("shoot", "");
         bf->getManager()->insertObject(circle);
         circles[i] = circle;
     }
@@ -76,9 +81,23 @@ MainWindow::MainWindow(QWidget *parent) :
 
     circle->maxa = 5;
     circle->setColor(0.0, 0.5, 1.0, 1.0);
-    //BFCHuman *hum = new BFCHuman(circle);
-    BFCAIRandom *air = new BFCAIRandom(bf->getManager(), circle);
-    bf->getManager()->registerController(air);
+    BFOColoredCircle *bullet = new BFOColoredCircle();
+    bullet->setColor(1.0, 0, 0, 1.0);
+    bullet->r = 0.01;
+    bullet->v = Vector2d(0, 2);
+    bullet->m = 0.01;
+    bullet->setProperty("isBullet", "Yes");
+    std::ostringstream oss0;
+    oss0 << (unsigned long)circle;
+    bullet->setProperty("shooter", oss0.str());
+    std::ostringstream oss;
+    oss << (unsigned long)bullet;
+    circle->setProperty("shoot", "");
+    circle->setProperty("bullet prototype", oss.str());
+
+    BFCHuman *hum = new BFCHuman(circle);
+    //BFCAIRandom *air = new BFCAIRandom(bf->getManager(), circle);
+    bf->getManager()->registerController(hum);
 
     for (int i = 0; i < 5; i++)
     {
@@ -87,10 +106,13 @@ MainWindow::MainWindow(QWidget *parent) :
         circle->r = 0.05;
         circle->v = Vector2d(-0.8, 0.5);
         circle->m = 0.25;
+        circle->setProperty("shoot", "");
+        circle->setProperty("cooldown", "1");
+        circle->setProperty("cooldowncount", "1");
         bf->getManager()->insertObject(circle);
         circles[i] = circle;
     }
-
+/*
     for (int i = 0; i < 10; i++)
         for (int j = 0; j < 50; j++)
         {
@@ -101,7 +123,7 @@ MainWindow::MainWindow(QWidget *parent) :
             circle->m = 0.0025;
             bf->getManager()->insertObject(circle);
         }
-
+*/
     bf->start();
 }
 

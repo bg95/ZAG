@@ -1,6 +1,6 @@
 #include "BFObject.h"
 
-const std::string BFObject::empty_string;
+const std::string BFObject::empty_string("");
 long BFObject::count = 0;
 
 BFObject::BFObject()//BFManager *_manager)
@@ -12,6 +12,13 @@ BFObject::BFObject()//BFManager *_manager)
 
 BFObject::~BFObject()
 {
+}
+
+BFObject *BFObject::duplicate()
+{
+    BFObject *p = newObject();
+    p->properties = properties;
+    return p;
 }
 
 void BFObject::encode(QIODevice *device)
@@ -68,6 +75,7 @@ const std::string &BFObject::getProperty(const std::string &prop)
     iter = properties.find(prop);
     if (iter == properties.end())
         return empty_string;
+    qDebug("property %s found: %s", prop.c_str(), (*iter).second.c_str());
     return (*iter).second;
 }
 

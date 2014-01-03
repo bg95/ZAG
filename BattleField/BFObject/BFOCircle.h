@@ -13,6 +13,9 @@ public:
     BFOCircle();
     //BFOCircle(BFManager *manager);
     virtual ~BFOCircle();
+    virtual BFObject *newObject();
+    virtual BFObject *duplicate();
+
     virtual void draw(QGLWidget *glwidget);
     BFObjectType getType() const;
     //virtual void onIntersection(BFObject *b, Vector2d impulse) //should be modified later

@@ -24,6 +24,9 @@ public:
     BFObject();
     //BFObject(BFManager *_manager = 0);
     virtual ~BFObject();
+    virtual BFObject *newObject() = 0;
+    virtual BFObject *duplicate();
+
     virtual void draw(QGLWidget *) = 0;
     virtual BFObjectType getType() const = 0;
     virtual double getRoughRadius() const = 0; //The radius of a circle centered at the object's center, large enough to cover the whole object, used for Quadtree

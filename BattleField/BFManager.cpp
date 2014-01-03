@@ -33,6 +33,12 @@ void BFManager::removeObject(BFObject *o)
     objects.erase(o); //not necessarily correct
 }
 
+void BFManager::destructObject(BFObject *o)
+{
+    delete o;
+    removeObject(o);
+}
+
 void BFManager::clearObjects()
 {
     objects.clear();
@@ -90,25 +96,19 @@ void BFManager::mouseEvent(Vector2d mousepos, Qt::MouseButtons mousebut)
 
 void BFManager::nextFrame(double deltatime)
 {
-    dt = deltatime;/*
+    dt = deltatime;
     std::set<BFController *>::iterator ctrliter;
     for (ctrliter = controllers.begin(); ctrliter != controllers.end(); ctrliter++)
     {
-        switch ((*ctrliter)->getType())
-        {
-        case BFC_HUMAN:
-            BFCHuman *hum = (BFCHuman *)(*ctrliter);
-            hum->setKeysAndMouse(keyspressed, mouseposition, mousebuttons);
-            //hum->applyControl();
-            break;
-        case BFC_AI:
-            BFCAI *ai = (BFCAI *)(*ctrliter);
-            break;
-        }
-    }*/
+        (*ctrliter)->setKeysAndMouse(keyspressed, mouseposition, mousebuttons);
+    }
+    std::set<BFObject *>::iterator iter;
+    for (iter = objects.begin(); iter != objects.end(); iter++)
+    {
+        qDebug("object %lX (manager)", (unsigned long)(*iter));
+    }
     rule->processInput();
 
-    std::set<BFObject *>::iterator iter;
     BFOCircle *cir;
     for (iter = objects.begin(); iter != objects.end(); iter++)
     {
@@ -126,7 +126,7 @@ void BFManager::nextFrame(double deltatime)
     findAllIntersections();
     for (int i = 0; i != process_independent_intersections && intersections.size(); i++)
     {
-        qDebug("proc ind");
+        //qDebug("proc ind");
         processIndependentIntersections();
         findAllIntersections();
     }
@@ -344,7 +344,7 @@ void BFManager::findAllIntersections()
             intersections.push_back(IntersectionEvent(*iter, IntersectionEvent::TOP, time));
         */
     }
-    qDebug("intersections: %d", intersections.size());
+    //qDebug("intersections: %d", intersections.size());
 }
 
 void BFManager::processAllIntersections()

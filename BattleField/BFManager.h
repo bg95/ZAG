@@ -36,6 +36,7 @@ public:
     //Object operations
     bool insertObject(BFObject *o);
     void removeObject(BFObject *o);
+    void destructObject(BFObject *o);
     void clearObjects();
     void destructObjects();
 

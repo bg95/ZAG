@@ -14,6 +14,10 @@ BFRuleType BFRule::getType() const
     return BFR_Null;
 }
 
+void BFRule::filterIntersections()
+{
+}
+
 void BFRule::processIntersections()
 {
 }

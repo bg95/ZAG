@@ -65,6 +65,7 @@ public:
     std::set<Qt::Key> &getKeysPressed();
     Vector2d getMousePosition();
     Qt::MouseButtons getMouseButtons();
+    double getDT();
 
     //Calculate intersections
     double intersectingTime(const BFObject *a, const BFObject *b);

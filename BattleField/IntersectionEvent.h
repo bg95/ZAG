@@ -30,6 +30,7 @@ public:
     };
     bool boundary; //true if it is a boundary intersection
     double time; //time when collision occurs (from now, so it's always negative). time == INVALID if this is a invalid collision
+    bool ignored; //whether this intersections is ignored by BFRule
 };
 
 #include "BFObject/BFObject.h"

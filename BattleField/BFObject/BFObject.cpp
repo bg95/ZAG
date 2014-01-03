@@ -23,14 +23,17 @@ BFObject *BFObject::duplicate()
 
 void BFObject::encode(QIODevice *device)
 {
-    std::map<std::string, std::string>::iterator iter;
+    std::map<std::string, QVariant>::iterator iter;
     int size = properties.size();
     std::string prop, val;
     device->write((const char *)&size, sizeof(size));
     for (iter = properties.begin(); iter != properties.end(); iter++)
     {
+        QVariant var = (*iter).second;
+        var.convert(QVariant::String);
         writeStdString(device, (*iter).first);
-        writeStdString(device, (*iter).second);
+        //writeStdString(device, (*iter).second);
+        writeStdString(device, var.toString().toStdString());
     }
 }
 
@@ -45,7 +48,7 @@ void BFObject::decode(QIODevice *device)
     {
         readStdString(device, prop);
         readStdString(device, val);
-        setProperty(prop, val);
+        setProperty(prop, QString(val.c_str()));
     }
 }
 /*
@@ -64,21 +67,27 @@ const std::string &BFObject::getInfo() const
     return info;
 }
 
-void BFObject::setProperty(const std::string &prop, const std::string &val)
+void BFObject::setProperty(const std::string &prop, const QVariant &val)
 {
     properties[prop] = val;
 }
 
-const std::string &BFObject::getProperty(const std::string &prop)
+const QVariant &BFObject::getProperty(const std::string &prop)
 {
-    std::map<std::string, std::string>::iterator iter;
+    std::map<std::string, QVariant>::iterator iter;
     iter = properties.find(prop);
     if (iter == properties.end())
-        return empty_string;
-    qDebug("property %s found: %s", prop.c_str(), (*iter).second.c_str());
+        return QVariant(QVariant::Invalid);
+    //qDebug("property %s found: %s", prop.c_str(), (*iter).second.c_str());
     return (*iter).second;
 }
-
+/*
+void BFObject::setProperty(const std::string &prop, const std::string &val)
+{
+    QVariant var(QString(val.c_str()));
+    setProperty(prop, var);
+}
+*/
 //private
 
 void BFObject::readStdString(QIODevice *device, std::string &str)

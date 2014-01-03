@@ -3,7 +3,7 @@
 
 #include "BFManager.h"
 
-int BFManager::process_independent_intersections = 10;
+int BFManager::process_independent_intersections = -1;
 double BFManager::epsi = 0.01;
 
 BFManager::BFManager() :
@@ -102,11 +102,11 @@ void BFManager::nextFrame(double deltatime)
     {
         (*ctrliter)->setKeysAndMouse(keyspressed, mouseposition, mousebuttons);
     }
-    std::set<BFObject *>::iterator iter;
+    std::set<BFObject *>::iterator iter;/*
     for (iter = objects.begin(); iter != objects.end(); iter++)
     {
-        qDebug("object %lX (manager)", (unsigned long)(*iter));
-    }
+        qDebug("object %lX (manager)", (unsigned long long)(*iter));
+    }*/
     rule->processInput();
 
     BFOCircle *cir;
@@ -174,6 +174,11 @@ Vector2d BFManager::getMousePosition()
 Qt::MouseButtons BFManager::getMouseButtons()
 {
     return mousebuttons;
+}
+
+double BFManager::getDT()
+{
+    return dt;
 }
 
 ///intersection between objects
@@ -264,17 +269,6 @@ bool BFManager::intersectingBoundary(const BFObject *a, IntersectionEvent::Bound
 
 bool BFManager::intersectingBoundary(BFOCircle *a, IntersectionEvent::Boundary b) ////
 {
-    /*
-    if (a->p.x - a->r < left)
-        return IntersectionEvent::LEFT;
-    if (a->p.x + a->r > right)
-        return IntersectionEvent::RIGHT;
-    if (a->p.y - a->r < bottom)
-        return IntersectionEvent::BOTTOM;
-    if (a->p.y + a->r > top)
-        return IntersectionEvent::TOP;
-    return IntersectionEvent::NONE;
-    */
     switch (b)
     {
     case IntersectionEvent::LEFT:
@@ -297,19 +291,18 @@ bool BFManager::intersectingBoundary(BFOCircle *a, IntersectionEvent::Boundary b
 
 void BFManager::findAllIntersections()
 {
-    //brute force
     double time;
     intersections.clear();
-    std::set<BFObject *>::iterator iter;/*
+    std::set<BFObject *>::iterator iter;
+/*
     std::set<BFObject *>::iterator iter2;
     for (iter = objects.begin(); iter != objects.end(); iter++)
         for (iter2 = iter, iter2++; iter2 != objects.end(); iter2++)
         {
             if (intersecting(*iter, *iter2))
                 intersections.push_back(IntersectionEvent(*iter, *iter2, intersectingTime(*iter, *iter2)));
-        }*/
-    //IntersectionEvent::Boundary b;
-
+        }
+*/
     qtree.clear();
     for (iter = objects.begin(); iter != objects.end(); iter++)
     {
@@ -319,6 +312,7 @@ void BFManager::findAllIntersections()
     qtree.build();
     qtree.setOutput(intersections);
     qtree.queryAll();
+
     for (iter = objects.begin(); iter != objects.end(); iter++)
     {
         if (intersectingBoundary(*iter, IntersectionEvent::LEFT))
@@ -329,49 +323,25 @@ void BFManager::findAllIntersections()
             intersections.push_back(IntersectionEvent(*iter, IntersectionEvent::BOTTOM, intersectingBoundaryTime(*iter, IntersectionEvent::BOTTOM)));
         if (intersectingBoundary(*iter, IntersectionEvent::TOP))
             intersections.push_back(IntersectionEvent(*iter, IntersectionEvent::TOP, intersectingBoundaryTime(*iter, IntersectionEvent::TOP)));
-       /*
-        time = intersectingBoundary(*iter, IntersectionEvent::LEFT);
-        if (time <= 0.0)
-            intersections.push_back(IntersectionEvent(*iter, IntersectionEvent::LEFT, time));
-        time = intersectingBoundary(*iter, IntersectionEvent::RIGHT);
-        if (time <= 0.0)
-            intersections.push_back(IntersectionEvent(*iter, IntersectionEvent::RIGHT, time));
-        time = intersectingBoundary(*iter, IntersectionEvent::BOTTOM);
-        if (time <= 0.0)
-            intersections.push_back(IntersectionEvent(*iter, IntersectionEvent::BOTTOM, time));
-        time = intersectingBoundary(*iter, IntersectionEvent::TOP);
-        if (time <= 0.0)
-            intersections.push_back(IntersectionEvent(*iter, IntersectionEvent::TOP, time));
-        */
     }
+
+    rule->filterIntersections();
+    int n = 0;
+    std::vector<IntersectionEvent>::iterator interiter;
+    for (interiter = intersections.begin(); interiter != intersections.end(); interiter++)
+    {
+        if (!(*interiter).ignored)
+        {
+            intersections[n] = (*interiter);
+            n++;
+        }
+    }
+    intersections.resize(n);
     //qDebug("intersections: %d", intersections.size());
 }
 
 void BFManager::processAllIntersections()
-{/*
-    std::vector<IntersectionEvent>::iterator iter;
-    BFObject *a, *b;
-    for (iter = intersections.begin(); iter != intersections.end(); iter++)
-    {
-        if (!(*iter).boundary)
-        {
-            a = (*iter).obj1;
-            b = (*iter).obj2;
-            if (a->getType() == BFO_CIRCLE)
-            {
-                if (b->getType() == BFO_CIRCLE)
-                    processIntersection((BFOCircle *)a, (BFOCircle *)b, (*iter).time);
-            }
-        }
-        else
-        {
-            a = (*iter).obj;
-            if (a->getType() == BFO_CIRCLE)
-            {
-                processBoundaryIntersection((BFOCircle *)a, (*iter).b, (*iter).time);
-            }
-        }
-    }*/
+{
     rule->processIntersections();
 }
 
@@ -385,6 +355,10 @@ void BFManager::processIndependentIntersections()
     n = 0;
     for (iter = intersections.begin(); iter != intersections.end(); iter++)
     {
+        if ((*iter).ignored)
+        {
+            continue;
+        }
         if (!(*iter).boundary)
         {
             a = (*iter).obj1;
@@ -392,12 +366,7 @@ void BFManager::processIndependentIntersections()
             if (isintersected.find(a) == isintersected.end() && isintersected.find(b) == isintersected.end())
             {
                 isintersected.insert(a);
-                isintersected.insert(b);/*
-                if (a->getType() == BFO_CIRCLE)
-                {
-                    if (b->getType() == BFO_CIRCLE)
-                        processIntersection((BFOCircle *)a, (BFOCircle *)b, (*iter).time);
-                }*/
+                isintersected.insert(b);
                 intersections[n] = (*iter);
                 n++;
             }
@@ -407,11 +376,7 @@ void BFManager::processIndependentIntersections()
             a = (*iter).obj;
             if (isintersected.find(a) == isintersected.end())
             {
-                isintersected.insert(a);/*
-                if (a->getType() == BFO_CIRCLE)
-                {
-                    processBoundaryIntersection((BFOCircle *)a, (*iter).b, (*iter).time);
-                }*/
+                isintersected.insert(a);
                 intersections[n] = (*iter);
                 n++;
             }
@@ -421,62 +386,3 @@ void BFManager::processIndependentIntersections()
     intersections.resize(n);
     processAllIntersections();
 }
-/*
-void BFManager::processIntersection(BFOCircle *a, BFOCircle *b, double time)
-{
-    //qDebug("intersection time %lf", time);
-    a->move(time);
-    b->move(time);
-
-    Vector2d e = a->p - b->p;
-    e = e / e.abs();
-    double A, B;
-    A = a->v & e;
-    B = b->v & e;
-    Vector2d ar, br;
-    ar = a->v - A * e;
-    br = b->v - B * e;
-    double Al, Bl;
-    Al = (A * (a->m - b->m) + 2 * b->m * B) / (a->m + b->m);
-    Bl = (B * (b->m - a->m) + 2 * a->m * A) / (a->m + b->m);
-    Vector2d vat, vbt;
-    vat = ar + Al * e;
-    vbt = br + Bl * e;
-    Vector2d impulse = a->m * (vat - a->v);
-    a->v = vat;
-    b->v = vbt;
-
-    a->move(-time);
-    b->move(-time);
-    a->onIntersection(b, impulse); //should be modified later
-    b->onIntersection(a, -impulse); //should be modified later
-}
-
-void BFManager::processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Boundary b, double time)
-{
-    a->move(time);
-    switch (b)
-    {
-    case IntersectionEvent::LEFT:
-        a->p.x = 2.0 * (left + a->r) - a->p.x;
-        a->v.x = -a->v.x;
-        break;
-    case IntersectionEvent::RIGHT:
-        //qDebug("a->p.x = %lf -> %lf", a->p.x, 2.0 * (right - a->r) - a->p.x);
-        a->p.x = 2.0 * (right - a->r) - a->p.x;
-        a->v.x = -a->v.x;
-        break;
-    case IntersectionEvent::BOTTOM:
-        a->p.y = 2.0 * (bottom + a->r) - a->p.y;
-        a->v.y = -a->v.y;
-        break;
-    case IntersectionEvent::TOP:
-        a->p.y = 2.0 * (top - a->r) - a->p.y;
-        a->v.y = -a->v.y;
-        break;
-    default:
-        break;
-    }
-    a->move(-time);
-}
-*/

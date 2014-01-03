@@ -37,11 +37,9 @@ void BFCHuman::applyControl()
         if (mousebut & Qt::LeftButton)
         {
             double theta = (mousepos - cir->p).arg();
-            std::ostringstream oss;
-            oss << theta;
-            cir->setProperty("shoot", oss.str());
+            cir->setProperty("shoot", theta);
 
-            qDebug("mouse left button pressed. %lf %s", theta, oss.str().data());
+            qDebug("mouse left button pressed. %lf %s", theta);
         }
 
     }

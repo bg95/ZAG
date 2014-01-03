@@ -84,16 +84,14 @@ MainWindow::MainWindow(QWidget *parent) :
     BFOColoredCircle *bullet = new BFOColoredCircle();
     bullet->setColor(1.0, 0, 0, 1.0);
     bullet->r = 0.01;
-    bullet->v = Vector2d(0, 2);
+    bullet->v = Vector2d(0, 3);
     bullet->m = 0.01;
     bullet->setProperty("isBullet", "Yes");
-    std::ostringstream oss0;
-    oss0 << (unsigned long)circle;
-    bullet->setProperty("shooter", oss0.str());
-    std::ostringstream oss;
-    oss << (unsigned long)bullet;
+    bullet->setProperty("shooter", (unsigned long long)circle);
     circle->setProperty("shoot", "");
-    circle->setProperty("bullet prototype", oss.str());
+    circle->setProperty("bullet prototype", (unsigned long long)bullet);
+    circle->setProperty("cooldown", 0.2);
+    circle->setProperty("cooldowncount", 0.0);
 
     BFCHuman *hum = new BFCHuman(circle);
     //BFCAIRandom *air = new BFCAIRandom(bf->getManager(), circle);
@@ -107,8 +105,6 @@ MainWindow::MainWindow(QWidget *parent) :
         circle->v = Vector2d(-0.8, 0.5);
         circle->m = 0.25;
         circle->setProperty("shoot", "");
-        circle->setProperty("cooldown", "1");
-        circle->setProperty("cooldowncount", "1");
         bf->getManager()->insertObject(circle);
         circles[i] = circle;
     }

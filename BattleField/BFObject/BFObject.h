@@ -3,6 +3,7 @@
 
 #include <QGLWidget>
 #include <QIODevice>
+#include <QVariant>
 #include <string>
 #include <map>
 #include "../Vector2d.h"
@@ -49,14 +50,15 @@ public:
     const std::string &getInfo() const;
 
     //set/getProperty not tested
-    void setProperty(const std::string &prop, const std::string &val);
-    const std::string &getProperty(const std::string &prop);
+    void setProperty(const std::string &prop, const QVariant &val);
+    const QVariant &getProperty(const std::string &prop);
+    //void setProperty(const std::string &prop, const std::string &val);
 
 private:
     long id;
     //BFManager *manager;
     std::string info;  //unused
-    std::map<std::string, std::string> properties;
+    std::map<std::string, QVariant> properties;
 
     void readStdString(QIODevice *device, std::string &str); //read a string from device
     void writeStdString(QIODevice *device, const std::string &str); //write a string to device

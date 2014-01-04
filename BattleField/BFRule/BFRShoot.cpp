@@ -6,6 +6,7 @@
 //#include "BFRCollision.h"
 #include <sstream>
 #include <cmath>
+#include <cstdlib>
 
 #include "BFRShoot.h"
 
@@ -56,23 +57,36 @@ void BFRShoot::processIntersections()
     {
         if (!(*iter).boundary)
         {
-            bool bullet = false;
+            bool bullet = false, aisbullet, bisbullet;
             a = (*iter).obj1;
             b = (*iter).obj2;
-            if (a->getProperty("isBullet") == "Yes")
+            aisbullet = a->getProperty("isBullet") == "Yes";
+            bisbullet = b->getProperty("isBullet") == "Yes";
+            if (aisbullet && bisbullet)
             {
-                if (a->getProperty("shooter") != (unsigned long long)b)
-                    manager->destructObject(a);
-                bullet = true;
-            }
-            if (b->getProperty("isBullet") == "Yes")
-            {
-                if (b->getProperty("shooter") != (unsigned long long)a)
-                    manager->destructObject(b);
-                bullet = true;
-            }
-            if (bullet)
+                manager->destructObject(a);
+                manager->destructObject(b);
                 continue;
+            }
+            if (bisbullet)
+            {
+                std::swap(a, b);
+                std::swap(aisbullet, bisbullet);
+            }
+            if (aisbullet) //b is not a bullet
+            {
+                double newhealth = b->getProperty("health").toDouble() - a->getProperty("damage").toDouble();
+                if (newhealth <= 0)
+                    manager->destructObject(b);
+                else
+                {
+                    b->setProperty("health", newhealth);
+                    ((BFOColoredCircle *)b)->setColor(1.0, newhealth, newhealth, 1.0);
+                    ((BFOCircle *)b)->v = (((BFOCircle *)b)->v * ((BFOCircle *)b)->m + ((BFOCircle *)a)->v * ((BFOCircle *)a)->m) / (((BFOCircle *)b)->m + ((BFOCircle *)a)->m);
+                }
+                manager->destructObject(a);
+                continue;
+            }
             if (a->getType() == BFO_CIRCLE)
             {
                 if (b->getType() == BFO_CIRCLE)
@@ -133,6 +147,21 @@ void BFRShoot::processInput()
         }
         (*iter)->setProperty("shoot", "");
     }
+    static bool pspace = false;
+    if (!pspace && (manager->getKeysPressed().find(Qt::Key_Space) != manager->getKeysPressed().end()))
+    {
+        BFOColoredCircle *circle;
+        circle = new BFOColoredCircle;//(bf->getManager());
+        circle->p = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
+        circle->r = 0.05;
+        circle->v = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
+        circle->m = 0.25;
+        circle->setProperty("shoot", "");
+        circle->setProperty("health", 1.0);
+        manager->insertObject(circle);
+        //circles[i] = circle;
+    }
+    pspace = manager->getKeysPressed().find(Qt::Key_Space) != manager->getKeysPressed().end();
 }
 
 void BFRShoot::processIntersection(BFOCircle *a, BFOCircle *b, double time)

@@ -81,6 +81,12 @@ const QVariant &BFObject::getProperty(const std::string &prop)
     //qDebug("property %s found: %s", prop.c_str(), (*iter).second.c_str());
     return (*iter).second;
 }
+
+const QVariant &BFObject::operator [](const std::string &prop)
+{
+    return getProperty(prop);
+}
+
 /*
 void BFObject::setProperty(const std::string &prop, const std::string &val)
 {

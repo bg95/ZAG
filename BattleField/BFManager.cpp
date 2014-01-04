@@ -3,7 +3,7 @@
 
 #include "BFManager.h"
 
-int BFManager::process_independent_intersections = -1;
+int BFManager::process_independent_intersections = 10;
 double BFManager::epsi = 0.01;
 
 BFManager::BFManager() :

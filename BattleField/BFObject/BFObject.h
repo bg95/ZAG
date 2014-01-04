@@ -53,6 +53,7 @@ public:
     void setProperty(const std::string &prop, const QVariant &val);
     const QVariant &getProperty(const std::string &prop);
     //void setProperty(const std::string &prop, const std::string &val);
+    const QVariant &operator[](const std::string &prop);
 
 private:
     long id;

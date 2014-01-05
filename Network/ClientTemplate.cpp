@@ -1,9 +1,9 @@
-#include <QtWidets>
-#inlcude <QtNetwork>
+#include <QtWidgets>
+#include <QtNetwork>
 
 #include "ClientTemplate.h"
 
-ClientTemplate::ClientTemplate(QWidget *parent){
+ClientTemplate::ClientTemplate(QWidget *parent): QDialog(parent){
     //This is for test
     hostLabel = new QLabel(tr("Server IP:"));
     portLabel = new QLabel(tr("Server port:"));
@@ -64,17 +64,22 @@ ClientTemplate::ClientTemplate(QWidget *parent){
     setWindowTitle(tr("ZAG client"));
 
     //End test part */
+
     client = new Client(parent);
 }
 
+void ClientTemplate::gameBegin(){
+}
+
 void ClientTemplate::setHostAndPort(){
-    port = (portEdit -> text()).toInt();
-    hostName = hostEdit -> currentText();
-    QHostAddress = hostName;
+    client -> setPort((portEdit -> text()).toInt());
+    client -> setHost(hostEdit -> currentText());
 }
 
-void ClientTemplate::sendMessage(){
+void ClientTemplate::sendMessage(QByteArray message){
+    client -> sendMessage(message);
 }
 
-void ClientTemplate::getMessage(){
+QDataStream &ClientTemplate::getMessage(){
+    return client -> getMessage();
 }

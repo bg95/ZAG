@@ -111,6 +111,34 @@ void Client::setHostAndPort(){
 }
 */
 
+void Client::setPort(quint16 newPort){
+    port = newPort;
+}
+
+void Client::setHost(QString newAddress){
+    hostName = newAddress;
+}
+
+void Client::sendMessage(QByteArray message){
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+
+    out << (quint16)0;
+    out << message;
+    out.device() -> seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    tcpSocket -> abort();
+    tcpSocket -> connectToHost(hostName, port);
+    tcpSocket -> write(block);
+    tcpSocket -> disconnectFromHost();
+}
+
+QDataStream &Client::getMessage(){
+}
+
+/*
 void Client::requestNewMessage(){
     //This is for test
     statusLabel -> setText(tr("Resquest new Message!"));
@@ -149,7 +177,7 @@ void Client::readMessage(){
     statusLabel -> setText(currentMessage);
     //End test part
 }
-
+*/
 void Client::displayError(QAbstractSocket::SocketError socketError){
     switch(socketError){
     case QAbstractSocket::RemoteHostClosedError:

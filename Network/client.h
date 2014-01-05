@@ -19,16 +19,16 @@ class Client : public QDialog{
 
 public:
     Client(QWidget *parent = 0);
+    void setPort(quint16);
+    void setHost(QString);
+    void sendMessage(QByteArray);
+    QDataStream &getMessage();
 
 private slots:
-    void requestNewMessage();
-    void readMessage();
+    //void requestNewMessage();
+    //void readMessage();
     void displayError(QAbstractSocket::SocketError);
     void sessionOpened();
-
-    //This is for test
-    void setHostAndPort();
-    //End test for*/
 
 private:
     /*This is for test
@@ -42,7 +42,7 @@ private:
     QDialogButtonBox *buttonBox;
     //End test part */
 
-    //QHostAddress hostName;
+    QString hostName;
     quint16 port;
 
     QTcpSocket *tcpSocket;

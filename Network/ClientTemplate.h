@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <QTcpServer>
-#inlcude "client.h"
+#include "client.h"
 
 QT_BEGIN_NAMESPACE
 class QTcpSocket;
@@ -24,7 +24,7 @@ public:
 private slots:
     void gameBegin();
     void sendMessage();
-    void getMessage();
+    QDataStream &getMessage();
     void setHostAndPort();
 
 private:
@@ -40,7 +40,7 @@ private:
     //End test part */
 
     Client *client;
-    QString message;
+    //QByteArray message;
 };
 
 #endif //__CLIENT_TEMPLATE_H__

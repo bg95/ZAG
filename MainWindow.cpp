@@ -4,7 +4,7 @@
 #include "BattleField/BFController/BFCHuman.h"
 
 #include "BattleField/BFRule/BFRCollision.h"
-#include "Network/client.h"
+#include "Network/ClientTemplate.h"
 #include "Network/server.h"
 
 #include "MainWindow.h"
@@ -143,7 +143,7 @@ void MainWindow::server(){
 }
 
 void MainWindow::client(){
-    Client *client = new Client;
+    ClientTemplate *client = new ClientTemplate();
     client -> show();
     return;
 }

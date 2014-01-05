@@ -88,8 +88,8 @@ MainWindow::MainWindow(QWidget *parent) :
         circles[i] = circle;
     }
 
-    for (int i = 0; i < 50; i++)
-        for (int j = 0; j < 20; j++)
+    for (int i = 0; i < 5; i++)
+        for (int j = 0; j < 2; j++)
         {
             circle = new BFOColoredCircle(bf->getManager());
             circle->p = Vector2d(i / 80.0 - 0.5, -0.9 + j / 80.0);

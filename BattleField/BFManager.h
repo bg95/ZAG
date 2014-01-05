@@ -43,6 +43,7 @@ public:
     //Controller operations
     bool registerController(BFController *c);
     void unregisterController(BFController *c);
+    void destructController(BFController *c);
     void clearControllers();
     void destructControllers();
 

@@ -10,6 +10,8 @@
 
 #include "BFRShoot.h"
 
+const double BFRShoot::eta = 1;
+
 BFRShoot::BFRShoot(BFManager *_manager) :
     BFRule(_manager)
 {
@@ -111,18 +113,30 @@ void BFRShoot::processIntersections()
 
 void BFRShoot::processInput()
 {
-    BFRule::processInput();
     std::set<BFObject *>::iterator iter;
+    for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
+    {
+        BFOCircle *cir = (BFOCircle *)(*iter);
+        cir->a = Vector2d(0, 0);
+    }
+    BFRule::processInput();
+    for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
+    {
+        BFOCircle *cir = (BFOCircle *)(*iter);
+        cir->a = cir->a + -6.0 * PI * eta * cir->r * cir->v / cir->m;
+    }
     for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
     {
         //qDebug("object %lX", (unsigned long long)(*iter));
         QVariant vartheta = (*iter)->getProperty("shoot");
         if (vartheta.isValid())
+            for (double dtheta = -PI / 9.0; dtheta <= PI / 9.0 + 1E-7; dtheta += PI / 27.0)
         {
             bool ok;
             double theta = vartheta.toDouble(&ok);
             if (!ok)
                 continue;
+            /**/theta += dtheta;
             unsigned long long ptr = (*iter)->getProperty("bullet prototype").toULongLong();
             if (!ptr)
                 continue;

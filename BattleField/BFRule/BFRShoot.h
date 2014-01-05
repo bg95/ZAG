@@ -6,6 +6,8 @@
 class BFRShoot : public BFRule
 {
 public:
+    static const double eta; //drag force = 6 * pi * eta * r * v
+
     explicit BFRShoot(BFManager *_manager);
     virtual ~BFRShoot();
     virtual BFRuleType getType() const;

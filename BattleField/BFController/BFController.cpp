@@ -3,6 +3,7 @@
 BFController::BFController(BFObject *_obj) :
     obj(_obj)
 {
+    obj->controller = this;
 }
 
 BFController::~BFController()

@@ -9,10 +9,16 @@ double BFManager::epsi = 0.01;
 BFManager::BFManager() :
     qtree(this)
 {
+    /*
     left = -1.0;
     right = 1.0;
     bottom = -1.0;
     top = 1.0;
+    */
+    left = -2.0;
+    right = 2.0;
+    bottom = -2.0;
+    top = 2.0;
 }
 
 BFManager::~BFManager()
@@ -35,6 +41,8 @@ void BFManager::removeObject(BFObject *o)
 
 void BFManager::destructObject(BFObject *o)
 {
+    if (o->getController())
+        destructController(o->getController());
     delete o;
     removeObject(o);
 }
@@ -60,6 +68,12 @@ bool BFManager::registerController(BFController *c)
 void BFManager::unregisterController(BFController *c)
 {
     controllers.erase(c); //not necessarily correct
+}
+
+void BFManager::destructController(BFController *c)
+{
+    delete c;
+    unregisterController(c);
 }
 
 void BFManager::clearControllers()

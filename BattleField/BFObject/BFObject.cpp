@@ -8,6 +8,7 @@ BFObject::BFObject()//BFManager *_manager)
 {
     id = count;
     count++;
+    controller = 0;
 }
 
 BFObject::~BFObject()
@@ -51,20 +52,15 @@ void BFObject::decode(QIODevice *device)
         setProperty(prop, QString(val.c_str()));
     }
 }
-/*
-bool BFObject::intersectWith(BFObject *b)
+
+BFController *BFObject::getController()
 {
-    return manager->intersecting(this, b);
-}
-*/
-void BFObject::setInfo(std::string str)
-{
-    info = str;
+    return controller;
 }
 
-const std::string &BFObject::getInfo() const
+long BFObject::getID()
 {
-    return info;
+    return id;
 }
 
 void BFObject::setProperty(const std::string &prop, const QVariant &val)
@@ -94,7 +90,7 @@ void BFObject::setProperty(const std::string &prop, const std::string &val)
     setProperty(prop, var);
 }
 */
-//private
+//static
 
 void BFObject::readStdString(QIODevice *device, std::string &str)
 {

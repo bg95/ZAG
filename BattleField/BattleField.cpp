@@ -68,7 +68,7 @@ void BattleField::resizeGL(int w, int h)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(manager.getLeft(), manager.getRight(), manager.getBottom(), manager.getTop(), -1.0, 1.0);
-    glLoadIdentity();
+    //glLoadIdentity();
 }
 
 /*

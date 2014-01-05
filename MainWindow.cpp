@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui(new Ui::MainWindow)
 {
     //ui->setupUi(this);
-    setGeometry(50, 50, 600, 600);
+    setGeometry(20, 20, 700, 700);
 
     bf = new BattleField(this);
     bf->setGeometry(0, 0, width(), height());
@@ -76,9 +76,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     BFOColoredCircle *bullet = new BFOColoredCircle();
     bullet->setColor(1.0, 0, 0, 1.0);
-    bullet->r = 0.01;
-    bullet->v = Vector2d(0, 3);
-    bullet->m = 0.01;
+    bullet->r = 0.005;
+    bullet->v = Vector2d(0, 6);
+    bullet->m = 0.05;
     bullet->setProperty("isBullet", "Yes");
     bullet->setProperty("damage", 0.2);
 
@@ -133,7 +133,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     for (int i = 0; i < 10; i++)
-        for (int j = 0; j < 5; j++)
+        for (int j = 0; j < 50; j++)
         {
             circle = new BFOColoredCircle;//(bf->getManager());
             circle->p = Vector2d(i / 80.0 - 0.5, -0.9 + j / 80.0);

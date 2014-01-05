@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "BFCHuman.h"
 
 Qt::Key BFCHuman::XNegKey = Qt::Key_A, BFCHuman::XPosKey = Qt::Key_D, BFCHuman::YNegKey = Qt::Key_S, BFCHuman::YPosKey = Qt::Key_W;
@@ -31,25 +33,17 @@ void BFCHuman::applyControl()
         if (keyPressed(YPosKey))
             cir->a = cir->a + Vector2d(0, cir->maxa);
         //qDebug("appling to object %lX: %lf,%lf", (long)obj, cir->a.x, cir->a.y);
+
+        if (mousebut & Qt::LeftButton)
+        {
+            double theta = (mousepos - cir->p).arg();
+            cir->setProperty("shoot", theta);
+
+            //qDebug("mouse left button pressed. %lf %s", theta);
+        }
+
     }
 
     //...
     //not completed
-}
-
-void BFCHuman::setKeysAndMouse(std::set<Qt::Key> keyspressed, Vector2d mouseposition, Qt::MouseButtons mousebuttons)
-{
-    keys = keyspressed;
-    mousepos = mouseposition;
-    mousebut = mousebuttons;
-}
-
-bool BFCHuman::keyPressed(Qt::Key key)
-{
-    keys.find(key); //not completed
-    std::set<Qt::Key>::iterator iter;
-    for (iter = keys.begin(); iter != keys.end(); iter++)
-        if ((*iter) == key)
-            return true;
-    return false;
 }

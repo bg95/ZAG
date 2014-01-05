@@ -21,37 +21,54 @@ class BFRule;
 class BFManager
 {
 public:
+    static int process_independent_intersections;
     static double epsi;
 
     BFManager();
     ~BFManager();
 
+    //Range of the battlefield
     double getLeft() const {return left;}
     double getRight() const {return right;}
     double getBottom() const {return bottom;}
     double getTop() const {return top;}
 
+    //Object operations
     bool insertObject(BFObject *o);
     void removeObject(BFObject *o);
+    void destructObject(BFObject *o);
+    void clearObjects();
+    void destructObjects();
+
+    //Controller operations
     bool registerController(BFController *c);
     void unregisterController(BFController *c);
+    void destructController(BFController *c);
+    void clearControllers();
+    void destructControllers();
 
+    //User Events
     void keyPressEvent(QKeyEvent *keyevent);
     void keyReleaseEvent(QKeyEvent *keyevent);
     void mouseEvent(Vector2d mousepos, Qt::MouseButtons mousebut);
 
+    //Process user inputs, calculate positions of objects in the next frame, apply the rule
     void nextFrame(double deltatime);
 
+    //Paint the background and all objects
     void paintAll(QGLWidget *glwidget);//(QPainter *painter);
 
-    //interface for BFRule
+    //Interface for BFRule
     void setRule(BFRule *_rule);
     std::vector<IntersectionEvent> &getIntersections();
     std::set<BFObject *> &getObjects();
+    std::set<BFController *> &getControllers();
     std::set<Qt::Key> &getKeysPressed();
     Vector2d getMousePosition();
     Qt::MouseButtons getMouseButtons();
+    double getDT();
 
+    //Calculate intersections
     double intersectingTime(const BFObject *a, const BFObject *b);
     bool intersectingBackTrace(const BFObject *a, const BFObject *b, double time);
     bool intersecting(const BFObject *a, const BFObject *b);
@@ -65,8 +82,6 @@ public:
 private:
     double left, right, bottom, top;
     std::set<BFObject *> objects;
-    //std::vector<std::pair<BFObject *, BFObject *> > intersections;
-    //std::vector<std::pair<BFObject *, IntersectionEvent::Boundary> > boundaryintersections;
     std::vector<IntersectionEvent> intersections;
     std::set<BFObject *> isintersected;
     double dt;

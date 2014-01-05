@@ -12,19 +12,19 @@ BattleField::BattleField(QWidget *parent) :
 {
     refreshtimer.setInterval(refresh_interval);
     connect(&refreshtimer, SIGNAL(timeout()), this, SLOT(refresh()));
-    refreshtimer.start();
+    //refreshtimer.start();
 
     setMouseTracking(true);
     grabKeyboard();
     grabMouse();
 }
 
-bool BattleField::insertObject(BFObject *o)
+bool BattleField::insertObject(BFObject *o) //unused, should be deleted later
 {
     return manager.insertObject(o);
 }
 
-void BattleField::removeObject(BFObject *o)
+void BattleField::removeObject(BFObject *o) //unused, should be deleted later
 {
     manager.removeObject(o);
 }
@@ -32,6 +32,16 @@ void BattleField::removeObject(BFObject *o)
 BFManager *BattleField::getManager()
 {
     return &manager;
+}
+
+void BattleField::start()
+{
+    refreshtimer.start(refresh_interval);
+}
+
+void BattleField::pause()
+{
+    refreshtimer.stop();
 }
 
 void BattleField::initializeGL()
@@ -58,7 +68,7 @@ void BattleField::resizeGL(int w, int h)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(manager.getLeft(), manager.getRight(), manager.getBottom(), manager.getTop(), -1.0, 1.0);
-    glLoadIdentity();
+    //glLoadIdentity();
 }
 
 /*

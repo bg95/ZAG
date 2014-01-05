@@ -25,7 +25,11 @@ SOURCES += main.cpp\
     BattleField/BFController/BFCHuman.cpp \
     BattleField/QuadTree.cpp \
     BattleField/BFRule/BFRule.cpp \
-    BattleField/BFRule/BFRCollision.cpp
+    BattleField/BFRule/BFRCollision.cpp \
+    BattleField/BFController/BFCAI.cpp \
+    BattleField/BFController/AI/BFCAIRandom.cpp \
+    BattleField/BFFactory.cpp \
+    BattleField/BFRule/BFRShoot.cpp
 
 HEADERS  += MainWindow.h \
     BattleField/BFObject/BFObject.h \
@@ -40,6 +44,10 @@ HEADERS  += MainWindow.h \
     BattleField/QuadTree.h \
     main.h \
     BattleField/BFRule/BFRule.h \
-    BattleField/BFRule/BFRCollision.h
+    BattleField/BFRule/BFRCollision.h \
+    BattleField/BFController/BFCAI.h \
+    BattleField/BFController/AI/BFCAIRandom.h \
+    BattleField/BFFactory.h \
+    BattleField/BFRule/BFRShoot.h
 
 FORMS    += MainWindow.ui

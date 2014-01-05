@@ -1,4 +1,6 @@
 #include "../BFObject/BFOCircle.h"
+#include "../BFController/BFCHuman.h"
+#include "../BFController/BFCAI.h"
 
 #include "BFRCollision.h"
 
@@ -7,7 +9,16 @@ BFRCollision::BFRCollision(BFManager *_manager) :
 {
 }
 
-void BFRCollision::process()
+BFRCollision::~BFRCollision()
+{
+}
+
+BFRuleType BFRCollision::getType() const
+{
+    return BFR_Collision;
+}
+
+void BFRCollision::processIntersections()
 {
     std::vector<IntersectionEvent> &intersections = manager->getIntersections();
     std::vector<IntersectionEvent>::iterator iter;
@@ -32,6 +43,16 @@ void BFRCollision::process()
                 processBoundaryIntersection((BFOCircle *)a, (*iter).b, (*iter).time);
             }
         }
+    }
+}
+
+void BFRCollision::processInput()
+{
+    std::set<BFController*> &controllers = manager->getControllers();
+    std::set<BFController *>::iterator ctrliter;
+    for (ctrliter = controllers.begin(); ctrliter != controllers.end(); ctrliter++)
+    {
+        (*ctrliter)->applyControl();
     }
 }
 
@@ -61,8 +82,8 @@ void BFRCollision::processIntersection(BFOCircle *a, BFOCircle *b, double time)
 
     a->move(-time);
     b->move(-time);
-    a->onIntersection(b, impulse); //should be modified later
-    b->onIntersection(a, -impulse); //should be modified later
+    //a->onIntersection(b, impulse); //should be modified later
+    //b->onIntersection(a, -impulse); //should be modified later
 }
 
 void BFRCollision::processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Boundary b, double time)

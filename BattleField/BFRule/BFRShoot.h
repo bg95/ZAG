@@ -1,22 +1,23 @@
-#ifndef BFRCOLLISION_H
-#define BFRCOLLISION_H
+#ifndef BFRSHOOT_H
+#define BFRSHOOT_H
 
 #include "BFRule.h"
-#include "../BFController/BFController.h"
 
-class BFRCollision : public BFRule //Simple rigid body collision & keyboard control
+class BFRShoot : public BFRule
 {
 public:
-    explicit BFRCollision(BFManager *_manager);
-    virtual ~BFRCollision();
+    static const double eta; //drag force = 6 * pi * eta * r * v
+
+    explicit BFRShoot(BFManager *_manager);
+    virtual ~BFRShoot();
     virtual BFRuleType getType() const;
+    virtual void filterIntersections();
     virtual void processIntersections();
     virtual void processInput();
 
 protected:
     void processIntersection(BFOCircle *a, BFOCircle *b, double time);
     void processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Boundary b, double time);
-
 };
 
-#endif // BFRCOLLISION_H
+#endif // BFRSHOOT_H

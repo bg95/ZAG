@@ -31,7 +31,9 @@ SOURCES += main.cpp\
     BattleField/BFRule/BFRCollision.cpp \
     WindowManagement.cpp\
     BattleField/BFController/BFCAI.cpp \
-    BattleField/BFCodec.cpp
+    BattleField/BFCodec.cpp \
+    Network/ServerTemplate.cpp \
+    Network/ClientTemplate.cpp
 
 HEADERS  += MainWindow.h \
     BattleField/BFObject/BFObject.h \
@@ -51,6 +53,8 @@ HEADERS  += MainWindow.h \
     BattleField/BFRule/BFRCollision.h \
     WindowManagement.h\
     BattleField/BFCodec.h \
-    BattleField/BFController/BFCAI.h
+    BattleField/BFController/BFCAI.h \
+    Network/ServerTemplate.h \
+    Network/ClientTemplate.h
 
 FORMS    += MainWindow.ui

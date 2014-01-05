@@ -4,7 +4,7 @@
 #include "client.h"
 
 Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
-    //This is for test
+    /*This is for test
     hostLabel = new QLabel(tr("Server IP:"));
     portLabel = new QLabel(tr("Server port:"));
 
@@ -104,10 +104,12 @@ Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
     }
 }
 
+/*
 void Client::setHostAndPort(){
     //hostName = hostEdit -> currentText();
     port = (portEdit -> text()).toInt();
 }
+*/
 
 void Client::requestNewMessage(){
     //This is for test

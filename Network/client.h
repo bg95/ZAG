@@ -31,7 +31,7 @@ private slots:
     //End test for*/
 
 private:
-    //This is for test
+    /*This is for test
     QLabel *statusLabel;
     QLabel *hostLabel;
     QLabel *portLabel;

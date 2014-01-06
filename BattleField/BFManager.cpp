@@ -127,6 +127,10 @@ void BFManager::nextFrame(double deltatime)
     rule->processInput();
 
     BFOCircle *cir;
+    /*
+    qDebug("circle0 (%lf,%lf)", circles[0]->p.x, circles[0]->p.y);
+    qDebug("circle1 (%lf,%lf)", circles[1]->p.x, circles[1]->p.y);
+    /**/
     for (iter = objects.begin(); iter != objects.end(); iter++)
     {
         switch ((*iter)->getShape())
@@ -135,11 +139,16 @@ void BFManager::nextFrame(double deltatime)
             cir = (BFOCircle *)(*iter);/*
             cir->p = cir->p + cir->v * dt + 0.5 * cir->a * dt * dt;
             cir->v = cir->v + cir->a * dt;*/
+            //qDebug("nextframe< p=(%lf,%lf) v=(%lf,%lf) a=(%lf,%lf)", ((BFOCircle *)cir)->p.x, ((BFOCircle *)cir)->p.y, cir->v.x, cir->v.y, cir->a.x, cir->a.y);
             cir->move(dt);
-            //qDebug("nextframe p=(%lf,%lf) v=(%lf,%lf) a=(%lf,%lf)", ((BFOCircle *)cir)->p.x, ((BFOCircle *)cir)->p.y, cir->v.x, cir->v.y, cir->a.x, cir->a.y);
+            //qDebug("nextframe> p=(%lf,%lf) v=(%lf,%lf) a=(%lf,%lf)", ((BFOCircle *)cir)->p.x, ((BFOCircle *)cir)->p.y, cir->v.x, cir->v.y, cir->a.x, cir->a.y);
             break;
         }
     }
+    /*
+    qDebug("circle0 (%lf,%lf)", circles[0]->p.x, circles[0]->p.y);
+    qDebug("circle1 (%lf,%lf)", circles[1]->p.x, circles[1]->p.y);
+    /**/
     findAllIntersections();
     for (int i = 0; i != process_independent_intersections && intersections.size(); i++)
     {
@@ -148,9 +157,6 @@ void BFManager::nextFrame(double deltatime)
         findAllIntersections();
     }
     processAllIntersections();
-    /**/
-    //qDebug("circle0 (%lf,%lf)", circles[0]->p.x, circles[0]->p.y);
-    /**/
 }
 
 void BFManager::paintAll(QGLWidget *glwidget)
@@ -200,6 +206,11 @@ Qt::MouseButtons BFManager::getMouseButtons()
 double BFManager::getDT()
 {
     return dt;
+}
+
+BFFactory *BFManager::getFactory()
+{
+    return &factory;
 }
 
 ///intersection between objects

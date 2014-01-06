@@ -137,3 +137,13 @@ void BFObject::writeQVariant(QIODevice *device, const QVariant &var)
     device->write((const char *)&size, sizeof(size));
     device->write(ba.data(), ba.size());
 }
+
+void BFObject::readVector2d(QIODevice *device, Vector2d &vec)
+{
+    device->read((char *)vec.c, sizeof(vec.c));
+}
+
+void BFObject::writeVector2d(QIODevice *device, const Vector2d &vec)
+{
+    device->write((const char *)vec.c, sizeof(vec.c));
+}

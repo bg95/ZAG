@@ -15,10 +15,12 @@ class BFFactory
 {
 public:
     BFFactory();
+    ~BFFactory();
     BFObject *newObject(BFObjectType type);
     void deleteObject(BFObject *o);
     void encodeObject(BFObject *o, QIODevice *device);
     BFObject *decodeNewObject(QIODevice *device);
+    void clear();
 
 private:
     std::map<BFObjectType, BFObject *> prototypes;

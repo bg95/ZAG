@@ -75,9 +75,9 @@ void BFOCircle::encode(QIODevice *device)
 {
     BFObject::encode(device);
 
-    device->write((const char *)&p, sizeof(p));
-    device->write((const char *)&v, sizeof(v));
-    device->write((const char *)&a, sizeof(a));
+    writeVector2d(device, p);
+    writeVector2d(device, v);
+    writeVector2d(device, a);
     device->write((const char *)&m, sizeof(m));
     device->write((const char *)&r, sizeof(r));
     device->write((const char *)&maxa, sizeof(maxa));
@@ -87,9 +87,9 @@ void BFOCircle::decode(QIODevice *device)
 {
     BFObject::decode(device);
 
-    device->read((char *)&p, sizeof(p));
-    device->read((char *)&v, sizeof(v));
-    device->read((char *)&a, sizeof(a));
+    readVector2d(device, p);
+    readVector2d(device, v);
+    readVector2d(device, a);
     device->read((char *)&m, sizeof(m));
     device->read((char *)&r, sizeof(r));
     device->read((char *)&maxa, sizeof(maxa));

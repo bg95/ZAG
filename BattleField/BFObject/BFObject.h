@@ -16,7 +16,7 @@ class BFController;
 
 enum BFObjectType
 {
-    BFO_CIRCLE = 0, BFO_COLORED_CIRCLE = 1
+    BFO_CIRCLE = 2, BFO_COLORED_CIRCLE = 3
 };
 enum BFObjectShape
 {
@@ -33,6 +33,8 @@ public:
     static void writeStdString(QIODevice *device, const std::string &str); //write a string to device
     static void readQVariant(QIODevice *device, QVariant &var); //read a QVariant
     static void writeQVariant(QIODevice *device, const QVariant &var); //write a QVariant
+    static void readVector2d(QIODevice *device, Vector2d &vec); //read a Vector2d
+    static void writeVector2d(QIODevice *device, const Vector2d &vec); //write a Vector2d
 
     BFObject();
     //BFObject(BFManager *_manager = 0);

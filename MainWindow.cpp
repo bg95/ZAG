@@ -78,8 +78,8 @@ MainWindow::MainWindow(QWidget *parent) :
     hum = new BFCHuman(circle);
     bf->getManager()->registerController(hum);
 
-    QBuffer buf;
-    BFFactory fac;
+    QBuffer *buf = new QBuffer;
+    BFFactory *fac = bf->getManager()->getFactory();
     circle = new BFOColoredCircle;//(bf->getManager());
     circle->p = Vector2d(-0.7, 0.9);
     circle->r = 0.05;
@@ -88,16 +88,39 @@ MainWindow::MainWindow(QWidget *parent) :
     circle->maxa = 5;
     circle->setProperty("shoot", "");
     circle->setProperty("health", 1.0);
-    buf.open(QBuffer::ReadWrite);
-    fac.encodeObject(circle, &buf);
+    buf->open(QBuffer::WriteOnly);
+    fac->encodeObject(circle, buf);
+    buf->close();
+    qDebug("prototype id = %ld", circle->getID());
     delete circle;
 
     for (int i = 0; i < 2; i++)
     {
-        buf.seek(0);
-        circle = (BFOColoredCircle *)fac.decodeNewObject(&buf);
+        buf->open(QBuffer::ReadOnly);
+        buf->seek(0);
+        //circle = (BFOColoredCircle *)fac->decodeNewObject(&buf);
+        BFObjectType type;
+        BFObject *o;
+        buf->read((char *)&type, sizeof(type));
+        //o = fac->newObject(type);
+        o = new BFOColoredCircle;
+        circle = (BFOColoredCircle *)o;
+
+        circle->decode(buf);
+/*      qDebug("before read %lf,%lf", circle->p.x, circle->p.y);
+
+        //int cnt = buf->read((char *)&circle->p, sizeof(circle->p));
+        BFObject::readVector2d(buf, circle->p);
+        qDebug("after read %lf,%lf", circle->p.x, circle->p.y);
+
+        BFObject::readVector2d(buf, circle->v);
+       buf->read((char *)&circle->a, sizeof(circle->a));
+        buf->read((char *)&circle->m, sizeof(circle->m));
+        buf->read((char *)&circle->r, sizeof(circle->r));
+        buf->read((char *)&circle->maxa, sizeof(circle->maxa));*/
+        qDebug("type %d", o->getType());
         //circle = new BFOColoredCircle;
-        /*
+
         circle->r = 0.05;
         circle->v = Vector2d(0.8, 0.5);
         circle->m = 0.25;
@@ -105,19 +128,22 @@ MainWindow::MainWindow(QWidget *parent) :
         circle->maxa = 5;
         circle->setProperty("shoot", "");
         circle->setProperty("health", 1.0);
-        */
+
         qDebug("%lX", (unsigned long)circle);
-        circle->p = Vector2d(i / 8.0 - 0.8, 0.9);
-        qDebug("%lf,%lf", i / 8.0 - 0.8, 0.9);
         circle->p.x = i / 8.0 - 0.8;
+        circle->p.y = 0.9;
+        qDebug("%lf,%lf", i / 8.0 - 0.8, 0.9);
+        //circle->p.x = i / 8.0 - 0.8;
         qDebug("%lf,%lf", circle->p.x, circle->p.y);
         qDebug("health: %lf", circle->getProperty("health").toDouble());
         bf->getManager()->insertObject(circle);
         controller = new BFCAIRandom(circle);
         bf->getManager()->registerController(controller);
         circles[i] = circle;
+        buf->close();
     }
-    for (int i = 0; i < 5; i++)
+    delete buf;
+    for (int i = 0; i < 2; i++)
     {
         circle = new BFOColoredCircle;//(bf->getManager());
         circle->p = Vector2d(-(i / 8.0 - 0.9), 0.9);
@@ -132,7 +158,7 @@ MainWindow::MainWindow(QWidget *parent) :
         //bf->getManager()->registerController(controller);
         //circles[i] = circle;
     }
-
+/*
     for (int i = 0; i < 10; i++)
         for (int j = 0; j < 5; j++)
         {
@@ -145,7 +171,7 @@ MainWindow::MainWindow(QWidget *parent) :
             circle->setProperty("health", 0.4);
             bf->getManager()->insertObject(circle);
         }
-
+*/
     //bf->refresh();
     bf->start();
 }

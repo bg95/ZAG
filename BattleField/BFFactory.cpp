@@ -10,6 +10,11 @@ BFFactory::BFFactory()
     prototypes[BFO_COLORED_CIRCLE] = new BFOColoredCircle;
 }
 
+BFFactory::~BFFactory()
+{
+    clear();
+}
+
 BFObject *BFFactory::newObject(BFObjectType type)
 {
     std::map<BFObjectType, BFObject *>::iterator iter = prototypes.find(type);
@@ -47,4 +52,16 @@ BFObject *BFFactory::decodeNewObject(QIODevice *device)
     o = newObject(type);
     o->decode(device);
     return o;
+}
+
+void BFFactory::clear()
+{
+    std::map<long, BFObject *>::iterator oiter;
+    for (oiter = objects.begin(); oiter != objects.end(); oiter++)
+        delete (*oiter).second;
+    objects.clear();
+    std::map<BFObjectType, BFObject *>::iterator piter;
+    for (piter = prototypes.begin(); piter != prototypes.end(); piter++)
+        delete (*piter).second;
+    prototypes.clear();
 }

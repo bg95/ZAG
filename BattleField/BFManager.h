@@ -17,6 +17,7 @@ class BFRule;
 #include "IntersectionEvent.h"
 #include "QuadTree.h"
 #include "Vector2d.h"
+#include "BFFactory.h"
 
 class BFManager
 {
@@ -68,6 +69,8 @@ public:
     Qt::MouseButtons getMouseButtons();
     double getDT();
 
+    BFFactory *getFactory();
+
     //Calculate intersections
     double intersectingTime(const BFObject *a, const BFObject *b);
     bool intersectingBackTrace(const BFObject *a, const BFObject *b, double time);
@@ -93,6 +96,8 @@ private:
     QuadTree qtree;
 
     BFRule *rule;
+
+    BFFactory factory;
 
     void findAllIntersections();
     void processAllIntersections();

@@ -20,6 +20,7 @@ public:
     
 protected:
     void resizeEvent(QResizeEvent *);
+    void keyPressEvent(QKeyEvent *event);
 
 private:
     Ui::MainWindow *ui;

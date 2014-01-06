@@ -7,6 +7,8 @@
 #include <sstream>
 #include <cmath>
 #include <cstdlib>
+#include <QByteArray>
+#include <QBuffer>
 
 #include "BFRShoot.h"
 
@@ -137,30 +139,7 @@ void BFRShoot::processInput()
             if (!ok)
                 continue;
             /*theta += dtheta;*/
-            unsigned long long ptr = (*iter)->getProperty("bullet prototype").toULongLong();
-            if (!ptr)
-                continue;
-            double cooldown = (*iter)->getProperty("cooldown").toDouble();
-            double cooldowncount = (*iter)->getProperty("cooldowncount").toDouble();
-            //qDebug("cooldown = %lf/%lf dt=%lf", cooldowncount, cooldown, manager->getDT());
-            cooldowncount -= manager->getDT();
-            (*iter)->setProperty("cooldowncount", cooldowncount);
-            if (cooldowncount <= 0.0)
-                //for (double dtheta = -PI / 9.0; dtheta <= PI / 9.0 + 1E-7; dtheta += PI / 81.0)
-            {
-                double dtheta = 0.0;
-                BFObject *newobj = ((BFObject *)ptr)->duplicate();
-                BFOColoredCircle *newcir = (BFOColoredCircle *)newobj; //...... don't know how to avoid this
-                newcir->p = (*iter)->getPosition();
-                double vabs = newcir->v.abs();
-                double ddtheta = (((double)rand() / RAND_MAX) - 0.5) * PI / 81.0;
-                newcir->v = vabs * Vector2d(cos(theta + dtheta + ddtheta), sin(theta + dtheta + ddtheta));
-                newcir->setProperty("isBullet", "Yes");
-                newcir->setProperty("shooter", (unsigned long long)(*iter));
-                manager->insertObject(newcir);
-                //qDebug("Creating bullet");
-                (*iter)->setProperty("cooldowncount", cooldown + cooldowncount); //reset cooldowncount
-            }
+            shoot(*iter, theta);
         }
         (*iter)->setProperty("shoot", "");
     }
@@ -184,6 +163,37 @@ void BFRShoot::processInput()
         //circles[i] = circle;
     }
     pspace = manager->getKeysPressed().find(Qt::Key_Space) != manager->getKeysPressed().end();
+}
+
+void BFRShoot::shoot(BFObject *obj, double theta)
+{
+    QByteArray bulletba = obj->getProperty("bullet prototype").toByteArray();
+    QBuffer bulletbuf(&bulletba);
+    bulletbuf.open(QIODevice::ReadOnly);
+
+    double cooldown = obj->getProperty("cooldown").toDouble();
+    double cooldowncount = obj->getProperty("cooldowncount").toDouble();
+    //qDebug("cooldown = %lf/%lf dt=%lf", cooldowncount, cooldown, manager->getDT());
+    cooldowncount -= manager->getDT();
+    obj->setProperty("cooldowncount", cooldowncount);
+
+    if (cooldowncount <= 0.0)
+        //for (double dtheta = -PI / 9.0; dtheta <= PI / 9.0 + 1E-7; dtheta += PI / 81.0)
+    {
+        double dtheta = 0.0;
+        bulletbuf.seek(0);
+        BFObject *newobj = manager->getFactory()->decodeNewObject(&bulletbuf);
+        BFOColoredCircle *newcir = (BFOColoredCircle *)newobj; //...... don't know how to avoid this
+        newcir->p = obj->getPosition();
+        double vabs = newcir->v.abs();
+        double ddtheta = (((double)rand() / RAND_MAX) - 0.5) * PI / 81.0;
+        newcir->v = vabs * Vector2d(cos(theta + dtheta + ddtheta), sin(theta + dtheta + ddtheta));
+        newcir->setProperty("isBullet", "Yes");
+        newcir->setProperty("shooter", (unsigned long long)obj);
+        manager->insertObject(newcir);
+        obj->setProperty("cooldowncount", cooldown + cooldowncount); //reset cooldowncount
+        ((BFOCircle *)obj)->v = ((BFOCircle *)obj)->v - newcir->v * newcir->m / ((BFOCircle *)obj)->m;
+    }
 }
 
 void BFRShoot::processIntersection(BFOCircle *a, BFOCircle *b, double time)

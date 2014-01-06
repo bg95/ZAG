@@ -35,14 +35,20 @@ MainWindow::MainWindow(QWidget *parent) :
 
     BFOColoredCircle *bullet = new BFOColoredCircle();
     bullet->setColor(1.0, 0, 0, 1.0);
-    bullet->r = 0.002;
-    bullet->v = Vector2d(0, 6);
+    bullet->r = 0.005;
+    bullet->v = Vector2d(0, 12);
     bullet->m = 0.05;
     bullet->setProperty("isBullet", "Yes");
     bullet->setProperty("damage", 0.2);
+    QBuffer bulletbuf;
+    bulletbuf.open(QIODevice::ReadWrite);
+    bf->getManager()->getFactory()->encodeObject(bullet, &bulletbuf);
+    bulletbuf.seek(0);
+    delete bullet;
+    //shooter property is set in BFRShoot
 
     circle = new BFOColoredCircle;//(bf->getManager());
-    bullet->setProperty("shooter", (unsigned long long)circle);
+    //bullet->setProperty("shooter", (unsigned long long)circle);
     circle->p = Vector2d(0, 0.9);
     circle->r = 0.05;
     circle->v = Vector2d(0, 0.5);
@@ -50,8 +56,8 @@ MainWindow::MainWindow(QWidget *parent) :
     circle->maxa = 5;
     circle->setColor(0.0, 0.5, 1.0, 1.0);
     circle->setProperty("shoot", "");
-    circle->setProperty("bullet prototype", (unsigned long long)bullet);
-    circle->setProperty("cooldown", 0.0);
+    circle->setProperty("bullet prototype", bulletbuf.data());
+    circle->setProperty("cooldown", 0.1);
     circle->setProperty("cooldowncount", 0.0);
     circle->setProperty("health", 1.0);
     bf->getManager()->insertObject(circle);
@@ -61,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
     bf->getManager()->registerController(hum);
 
     circle = new BFOColoredCircle;//(bf->getManager());
-    bullet->setProperty("shooter", (unsigned long long)circle);
+    //bullet->setProperty("shooter", (unsigned long long)circle);
     circle->p = Vector2d(0, 0.8);
     circle->r = 0.05;
     circle->v = Vector2d(0, 0.5);
@@ -69,8 +75,8 @@ MainWindow::MainWindow(QWidget *parent) :
     circle->maxa = 5;
     circle->setColor(0.0, 0.5, 1.0, 1.0);
     circle->setProperty("shoot", "");
-    circle->setProperty("bullet prototype", (unsigned long long)bullet);
-    circle->setProperty("cooldown", 0.05);
+    circle->setProperty("bullet prototype", bulletbuf.data());
+    circle->setProperty("cooldown", 0.1);
     circle->setProperty("cooldowncount", 0.0);
     circle->setProperty("health", 1.0);
     bf->getManager()->insertObject(circle);
@@ -94,39 +100,29 @@ MainWindow::MainWindow(QWidget *parent) :
     qDebug("prototype id = %ld", circle->getID());
     delete circle;
 
+    buf->open(QBuffer::ReadOnly);
     for (int i = 0; i < 5; i++)
     {
-        buf->open(QBuffer::ReadOnly);
         buf->seek(0);
         circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
-        circle->p = Vector2d(i / 8.0 - 0.8, 0.9);/*
-        qDebug("%lX", (unsigned long)circle);
-        qDebug("%lf,%lf", i / 8.0 - 0.8, 0.9);
-        //circle->p.x = i / 8.0 - 0.8;
-        qDebug("%lf,%lf", circle->p.x, circle->p.y);
-        qDebug("health: %lf", circle->getProperty("health").toDouble());*/
+        circle->p = Vector2d(i / 8.0 - 0.8, 0.9);
         bf->getManager()->insertObject(circle);
         controller = new BFCAIRandom(circle);
         bf->getManager()->registerController(controller);
         circles[i] = circle;
-        buf->close();
     }
-    delete buf;
     for (int i = 0; i < 5; i++)
     {
-        circle = new BFOColoredCircle;//(bf->getManager());
+        buf->seek(0);
+        circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
         circle->p = Vector2d(-(i / 8.0 - 0.9), 0.9);
-        circle->r = 0.05;
-        circle->v = Vector2d(-0.8, 0.5);
-        circle->m = 0.25;
-        circle->maxa = 5;
-        circle->setProperty("shoot", "");
-        circle->setProperty("health", 1.0);
         bf->getManager()->insertObject(circle);
-        //controller = new BFCAIRandom(circle);
-        //bf->getManager()->registerController(controller);
+        controller = new BFCAIRandom(circle);
+        bf->getManager()->registerController(controller);
         //circles[i] = circle;
     }
+    buf->close();
+    delete buf;
 /*
     for (int i = 0; i < 10; i++)
         for (int j = 0; j < 5; j++)
@@ -155,4 +151,9 @@ MainWindow::~MainWindow()
 void MainWindow::resizeEvent(QResizeEvent *)
 {
     bf->setGeometry(0, 0, width(), height());
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    qDebug("mainwindow key %d", event->key());
 }

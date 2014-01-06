@@ -59,3 +59,17 @@ const double *BFOColoredCircle::getColor() const
 {
     return c;
 }
+
+void BFOColoredCircle::encode(QIODevice *device)
+{
+    BFOCircle::encode(device);
+
+    device->write((const char *)c, sizeof(c));
+}
+
+void BFOColoredCircle::decode(QIODevice *device)
+{
+    BFOCircle::decode(device);
+
+    device->read((char *)c, sizeof(c));
+}

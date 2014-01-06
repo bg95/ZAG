@@ -146,18 +146,20 @@ void BFRShoot::processInput()
             cooldowncount -= manager->getDT();
             (*iter)->setProperty("cooldowncount", cooldowncount);
             if (cooldowncount <= 0.0)
-                for (double dtheta = -PI / 9.0; dtheta <= PI / 9.0 + 1E-7; dtheta += PI / 27.0)
+                //for (double dtheta = -PI / 9.0; dtheta <= PI / 9.0 + 1E-7; dtheta += PI / 81.0)
             {
+                double dtheta = 0.0;
                 BFObject *newobj = ((BFObject *)ptr)->duplicate();
                 BFOColoredCircle *newcir = (BFOColoredCircle *)newobj; //...... don't know how to avoid this
                 newcir->p = (*iter)->getPosition();
                 double vabs = newcir->v.abs();
-                newcir->v = vabs * Vector2d(cos(theta + dtheta), sin(theta + dtheta));
+                double ddtheta = (((double)rand() / RAND_MAX) - 0.5) * PI / 81.0;
+                newcir->v = vabs * Vector2d(cos(theta + dtheta + ddtheta), sin(theta + dtheta + ddtheta));
                 newcir->setProperty("isBullet", "Yes");
                 newcir->setProperty("shooter", (unsigned long long)(*iter));
                 manager->insertObject(newcir);
                 //qDebug("Creating bullet");
-                (*iter)->setProperty("cooldowncount", cooldown); //reset cooldowncount
+                (*iter)->setProperty("cooldowncount", cooldown + cooldowncount); //reset cooldowncount
             }
         }
         (*iter)->setProperty("shoot", "");
@@ -167,7 +169,8 @@ void BFRShoot::processInput()
     {
         BFOColoredCircle *circle;
         BFCAIRandom *controller;
-        circle = new BFOColoredCircle;//(bf->getManager());
+        //circle = new BFOColoredCircle;//(bf->getManager());
+        circle = (BFOColoredCircle *)manager->getFactory()->newObject(BFO_COLORED_CIRCLE);
         circle->p = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
         circle->r = 0.05;
         circle->v = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);

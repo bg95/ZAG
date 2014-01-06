@@ -2,8 +2,8 @@
 
 #include "BFCAIRandom.h"
 
-BFCAIRandom::BFCAIRandom(BFManager *_manager, BFObject *_obj) :
-    BFCAI(_manager, _obj), obj(_obj)
+BFCAIRandom::BFCAIRandom(BFObject *_obj) :
+    BFController(_obj), obj(_obj)
 {
     count = 0;
 }
@@ -12,9 +12,14 @@ BFCAIRandom::~BFCAIRandom()
 {
 }
 
+BFControllerType BFCAIRandom::getType() const
+{
+    return BFC_AI;//...
+}
+
 void BFCAIRandom::applyControl()
 {
-    if (obj->getType() == BFO_CIRCLE)
+    if (obj->getShape() == BFO_CIRCULAR)
     {
         BFOCircle *cir = (BFOCircle *)obj;
         if (count <= 0)

@@ -12,6 +12,7 @@ public:
     BFObject *duplicate();
 
     void draw(QGLWidget *glwidget);
+    virtual BFObjectType getType() const;
     void setColor(double r, double g, double b, double a);
     const double *getColor() const;
     //void onIntersection(BFObject *b, Vector2d impulse); //should be modified later

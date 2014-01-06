@@ -3,6 +3,7 @@
 
 int BattleField::refresh_interval = 5;
 int BattleField::display_refreshes = 6;
+double BattleField::timescale = 1.0;
 
 
 BattleField::BattleField(QWidget *parent) :
@@ -107,7 +108,7 @@ void BattleField::mouseReleaseEvent(QMouseEvent *event)
 
 void BattleField::refresh()
 {
-    manager.nextFrame(refresh_interval / 1000.0);
+    manager.nextFrame(refresh_interval / 1000.0 * timescale);
     display_counter++;
     if (display_counter == display_refreshes)
     {

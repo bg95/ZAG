@@ -1,7 +1,7 @@
 #include "../BFObject/BFOCircle.h"
 #include "../BFObject/BFOColoredCircle.h"
 #include "../BFController/BFCHuman.h"
-#include "../BFController/BFCAI.h"
+#include "../BFController/BFCAIRandom.h"
 
 //#include "BFRCollision.h"
 #include <sstream>
@@ -38,7 +38,8 @@ void BFRShoot::filterIntersections()
             a = (*iter).obj1;
             b = (*iter).obj2;
             if ((a->getProperty("isBullet") == "Yes" && a->getProperty("shooter") == (unsigned long long)b) ||
-                (b->getProperty("isBullet") == "Yes" && b->getProperty("shooter") == (unsigned long long)a))
+                (b->getProperty("isBullet") == "Yes" && b->getProperty("shooter") == (unsigned long long)a) ||
+                (a->getProperty("isBullet") == "Yes" && b->getProperty("isBullet") == "Yes" && a->getProperty("shooter") == b->getProperty("shooter")))
             {
                 (*iter).ignored = true;
             }
@@ -89,9 +90,9 @@ void BFRShoot::processIntersections()
                 manager->destructObject(a);
                 continue;
             }
-            if (a->getType() == BFO_CIRCLE)
+            if (a->getShape() == BFO_CIRCULAR)
             {
-                if (b->getType() == BFO_CIRCLE)
+                if (b->getShape() == BFO_CIRCULAR)
                     processIntersection((BFOCircle *)a, (BFOCircle *)b, (*iter).time);
             }
         }
@@ -103,7 +104,7 @@ void BFRShoot::processIntersections()
                 manager->destructObject(a);
                 continue;
             }
-            if (a->getType() == BFO_CIRCLE)
+            if (a->getShape() == BFO_CIRCULAR)
             {
                 processBoundaryIntersection((BFOCircle *)a, (*iter).b, (*iter).time);
             }
@@ -130,13 +131,12 @@ void BFRShoot::processInput()
         //qDebug("object %lX", (unsigned long long)(*iter));
         QVariant vartheta = (*iter)->getProperty("shoot");
         if (vartheta.isValid())
-            for (double dtheta = -PI / 9.0; dtheta <= PI / 9.0 + 1E-7; dtheta += PI / 27.0)
         {
             bool ok;
             double theta = vartheta.toDouble(&ok);
             if (!ok)
                 continue;
-            /**/theta += dtheta;
+            /*theta += dtheta;*/
             unsigned long long ptr = (*iter)->getProperty("bullet prototype").toULongLong();
             if (!ptr)
                 continue;
@@ -146,12 +146,13 @@ void BFRShoot::processInput()
             cooldowncount -= manager->getDT();
             (*iter)->setProperty("cooldowncount", cooldowncount);
             if (cooldowncount <= 0.0)
+                for (double dtheta = -PI / 9.0; dtheta <= PI / 9.0 + 1E-7; dtheta += PI / 27.0)
             {
                 BFObject *newobj = ((BFObject *)ptr)->duplicate();
                 BFOColoredCircle *newcir = (BFOColoredCircle *)newobj; //...... don't know how to avoid this
                 newcir->p = (*iter)->getPosition();
                 double vabs = newcir->v.abs();
-                newcir->v = vabs * Vector2d(cos(theta), sin(theta));
+                newcir->v = vabs * Vector2d(cos(theta + dtheta), sin(theta + dtheta));
                 newcir->setProperty("isBullet", "Yes");
                 newcir->setProperty("shooter", (unsigned long long)(*iter));
                 manager->insertObject(newcir);
@@ -165,14 +166,18 @@ void BFRShoot::processInput()
     if (!pspace && (manager->getKeysPressed().find(Qt::Key_Space) != manager->getKeysPressed().end()))
     {
         BFOColoredCircle *circle;
+        BFCAIRandom *controller;
         circle = new BFOColoredCircle;//(bf->getManager());
         circle->p = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
         circle->r = 0.05;
         circle->v = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
         circle->m = 0.25;
+        circle->maxa = 5;
         circle->setProperty("shoot", "");
         circle->setProperty("health", 1.0);
         manager->insertObject(circle);
+        controller = new BFCAIRandom(circle);
+        manager->registerController(controller);
         //circles[i] = circle;
     }
     pspace = manager->getKeysPressed().find(Qt::Key_Space) != manager->getKeysPressed().end();

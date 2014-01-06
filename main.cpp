@@ -4,7 +4,7 @@
 #include "main.h"
 MainWindow *mw;
 
-BFOCircle *circles[3];
+BFOCircle *circles[10];
 
 int main(int argc, char *argv[])
 {

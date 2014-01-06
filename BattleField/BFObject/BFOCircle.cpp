@@ -51,6 +51,11 @@ BFObjectType BFOCircle::getType() const
     return BFO_CIRCLE;
 }
 
+BFObjectShape BFOCircle::getShape() const
+{
+    return BFO_CIRCULAR;
+}
+
 double BFOCircle::getRoughRadius() const
 {
     return r;

@@ -20,7 +20,7 @@ BFControllerType BFCHuman::getType() const
 
 void BFCHuman::applyControl()
 {
-    if (obj->getType() == BFO_CIRCLE)
+    if (obj->getShape() == BFO_CIRCULAR)
     {
         BFOCircle *cir = (BFOCircle *)obj;
         cir->a = Vector2d(0, 0);

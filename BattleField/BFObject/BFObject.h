@@ -16,7 +16,11 @@ class BFController;
 
 enum BFObjectType
 {
-    BFO_CIRCLE, BFO_COLORED_CIRCLE
+    BFO_CIRCLE = 0, BFO_COLORED_CIRCLE = 1
+};
+enum BFObjectShape
+{
+    BFO_CIRCULAR = 0
 };
 
 class BFObject
@@ -27,6 +31,8 @@ public:
     static long count;
     static void readStdString(QIODevice *device, std::string &str); //read a string from device
     static void writeStdString(QIODevice *device, const std::string &str); //write a string to device
+    static void readQVariant(QIODevice *device, QVariant &var); //read a QVariant
+    static void writeQVariant(QIODevice *device, const QVariant &var); //write a QVariant
 
     BFObject();
     //BFObject(BFManager *_manager = 0);
@@ -36,6 +42,7 @@ public:
 
     virtual void draw(QGLWidget *) = 0;
     virtual BFObjectType getType() const = 0;
+    virtual BFObjectShape getShape() const = 0;
     virtual double getRoughRadius() const = 0; //The radius of a circle centered at the object's center, large enough to cover the whole object, used for Quadtree
     virtual Vector2d getPosition() const = 0;
     //virtual Vector2d getVelocity() const = 0;

@@ -17,6 +17,7 @@ BFObject *BFFactory::newObject(BFObjectType type)
         return 0;
     BFObject *p = (*iter).second->newObject();
     objects[p->getID()] = p;
+    qDebug("new object of type %d id=%ld", (int)type, p->getID());
     return p;
 }
 
@@ -33,6 +34,7 @@ void BFFactory::encodeObject(BFObject *o, QIODevice *device)
 {
     BFObjectType type;
     type = o->getType();
+    qDebug("encode object type %d", (int)type);
     device->write((const char *)&type, sizeof(type)); //change to a string??
     o->encode(device);
 }

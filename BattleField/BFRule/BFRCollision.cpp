@@ -1,6 +1,6 @@
 #include "../BFObject/BFOCircle.h"
 #include "../BFController/BFCHuman.h"
-#include "../BFController/BFCAI.h"
+//#include "../BFController/BFCAI.h"
 
 #include "BFRCollision.h"
 
@@ -29,16 +29,16 @@ void BFRCollision::processIntersections()
         {
             a = (*iter).obj1;
             b = (*iter).obj2;
-            if (a->getType() == BFO_CIRCLE)
+            if (a->getShape() == BFO_CIRCULAR)
             {
-                if (b->getType() == BFO_CIRCLE)
+                if (b->getShape() == BFO_CIRCULAR)
                     processIntersection((BFOCircle *)a, (BFOCircle *)b, (*iter).time);
             }
         }
         else
         {
             a = (*iter).obj;
-            if (a->getType() == BFO_CIRCLE)
+            if (a->getShape() == BFO_CIRCULAR)
             {
                 processBoundaryIntersection((BFOCircle *)a, (*iter).b, (*iter).time);
             }

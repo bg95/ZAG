@@ -3,6 +3,9 @@
 
 #include "BFManager.h"
 
+/**/
+#include "main.h"  //only for debug
+
 int BFManager::process_independent_intersections = 10;
 double BFManager::epsi = 0.01;
 
@@ -126,9 +129,9 @@ void BFManager::nextFrame(double deltatime)
     BFOCircle *cir;
     for (iter = objects.begin(); iter != objects.end(); iter++)
     {
-        switch ((*iter)->getType())
+        switch ((*iter)->getShape())
         {
-        case BFO_CIRCLE:
+        case BFO_CIRCULAR:
             cir = (BFOCircle *)(*iter);/*
             cir->p = cir->p + cir->v * dt + 0.5 * cir->a * dt * dt;
             cir->v = cir->v + cir->a * dt;*/
@@ -145,10 +148,14 @@ void BFManager::nextFrame(double deltatime)
         findAllIntersections();
     }
     processAllIntersections();
+    /**/
+    //qDebug("circle0 (%lf,%lf)", circles[0]->p.x, circles[0]->p.y);
+    /**/
 }
 
 void BFManager::paintAll(QGLWidget *glwidget)
 {
+    //qDebug("paintAll");
     std::set<BFObject *>::iterator iter;
     for (iter = objects.begin(); iter != objects.end(); iter++)
         (*iter)->draw(glwidget);
@@ -213,11 +220,11 @@ double BFManager::intersectingTime(const BFObject *a, const BFObject *b)
 
 bool BFManager::intersectingBackTrace(const BFObject *a, const BFObject *b, double time)
 {
-    if (a->getType() == BFO_CIRCLE)
+    if (a->getShape() == BFO_CIRCULAR)
     {
         BFOCircle a1(*(BFOCircle *)a);
         a1.move(time);
-        if (b->getType() == BFO_CIRCLE)
+        if (b->getShape() == BFO_CIRCULAR)
         {
             BFOCircle b1(*(BFOCircle *)b);
             b1.move(time);
@@ -229,9 +236,9 @@ bool BFManager::intersectingBackTrace(const BFObject *a, const BFObject *b, doub
 
 bool BFManager::intersecting(const BFObject *a, const BFObject *b)
 {
-    if (a->getType() == BFO_CIRCLE)
+    if (a->getShape() == BFO_CIRCULAR)
     {
-        if (b->getType() == BFO_CIRCLE)
+        if (b->getShape() == BFO_CIRCULAR)
             return intersecting((BFOCircle *)a, (BFOCircle *)b);
     }
     return false;
@@ -262,7 +269,7 @@ double BFManager::intersectingBoundaryTime(const BFObject *a, IntersectionEvent:
 
 bool BFManager::intersectingBoundaryBackTrace(const BFObject *a, IntersectionEvent::Boundary b, double time)
 {
-    if (a->getType() == BFO_CIRCLE)
+    if (a->getShape() == BFO_CIRCULAR)
     {
         BFOCircle a1(*(BFOCircle *)a);
         a1.move(time);
@@ -273,7 +280,7 @@ bool BFManager::intersectingBoundaryBackTrace(const BFObject *a, IntersectionEve
 
 bool BFManager::intersectingBoundary(const BFObject *a, IntersectionEvent::Boundary b) ////
 {
-    if (a->getType() == BFO_CIRCLE)
+    if (a->getShape() == BFO_CIRCULAR)
     {
         return intersectingBoundary((BFOCircle *)a, b);
     }

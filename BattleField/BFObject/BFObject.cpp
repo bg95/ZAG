@@ -26,15 +26,16 @@ void BFObject::encode(QIODevice *device)
 {
     std::map<std::string, QVariant>::iterator iter;
     int size = properties.size();
-    std::string prop, val;
+    std::string prop;
     device->write((const char *)&size, sizeof(size));
     for (iter = properties.begin(); iter != properties.end(); iter++)
     {
         QVariant var = (*iter).second;
-        var.convert(QVariant::String);
+        //var.convert(QVariant::String);
         writeStdString(device, (*iter).first);
         //writeStdString(device, (*iter).second);
-        writeStdString(device, var.toString().toStdString());
+        //writeStdString(device, var.toString().toStdString());
+        writeQVariant(device, var);
     }
 }
 
@@ -42,14 +43,16 @@ void BFObject::decode(QIODevice *device)
 {
     int i;
     int size;
-    std::string prop, val;
+    std::string prop;
+    QVariant val;
     properties.clear();
     device->read((char *)&size, sizeof(size));
     for (i = 0; i < size; i++)
     {
         readStdString(device, prop);
-        readStdString(device, val);
-        setProperty(prop, QString(val.c_str()));
+        readQVariant(device, val);
+        //qDebug("read property %s:%s", prop.c_str(), val.c_str());
+        setProperty(prop, val);
     }
 }
 
@@ -106,4 +109,31 @@ void BFObject::writeStdString(QIODevice *device, const std::string &str)
     strsize = str.size();
     device->write((const char *)&strsize, sizeof(strsize));
     device->write(str.data(), strsize);
+}
+
+void BFObject::readQVariant(QIODevice *device, QVariant &var)
+{
+    QVariant::Type type;
+    int size;
+    QByteArray ba;
+    device->read((char *)&type, sizeof(type));
+    device->read((char *)&size, sizeof(size));
+    ba.resize(size);
+    device->read(ba.data(), size);
+    var.setValue(ba);
+    bool ok = var.convert(type);
+    qDebug("read  from type %s to %s, %d", QVariant::typeToName(QVariant::ByteArray), QVariant::typeToName(type), ok);
+}
+
+void BFObject::writeQVariant(QIODevice *device, const QVariant &var)
+{
+    QVariant::Type type = var.type();
+    QVariant bavar(var);
+    bool ok = bavar.convert(QVariant::ByteArray);
+    QByteArray ba = bavar.toByteArray();
+    int size = ba.size();
+    qDebug("write from type %s to %s, %d", QVariant::typeToName(type), QVariant::typeToName(QVariant::ByteArray), ok);
+    device->write((const char *)&type, sizeof(type));
+    device->write((const char *)&size, sizeof(size));
+    device->write(ba.data(), ba.size());
 }

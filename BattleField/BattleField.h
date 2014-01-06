@@ -13,6 +13,7 @@ class BattleField : public QGLWidget
 public:
     static int refresh_interval;
     static int display_refreshes; //# of refreshes to re-display
+    static double timescale; //scaling time. <1 slower, >1 faster
 
     explicit BattleField(QWidget *parent = 0);
     bool insertObject(BFObject *o); //unused, should be deleted later

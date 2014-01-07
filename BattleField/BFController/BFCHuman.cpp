@@ -37,6 +37,7 @@ void BFCHuman::applyControl()
 
         if (mousebut & Qt::LeftButton)
         {
+            double bulletv = 6.0;
             double theta = (mousepos - cir->p).arg();
             if (keyPressed(Qt::Key_Shift))
             {
@@ -47,7 +48,7 @@ void BFCHuman::applyControl()
                     if ((*iter) != cir && (*iter)->getProperty("isBullet") != "Yes")
                     {
                         BFOCircle *aim = (BFOCircle *)(*iter);
-                        double t = ((*iter)->getPosition() - cir->p).abs() / 6.0;
+                        double t = ((*iter)->getPosition() - cir->p).abs() / bulletv;
                         double ttheta = (aim->p + aim->v * t - cir->p).arg();
                         if (cos(ttheta - theta) > closestcos)
                         {
@@ -57,13 +58,16 @@ void BFCHuman::applyControl()
                     }
                 if (closestcos == -2)
                     closesttheta = theta;
-                cir->setProperty("shoot", closesttheta);
-            }
-            else
-            {
-                cir->setProperty("shoot", theta);
+                //cir->setProperty("shoot", closesttheta);
+                theta = closesttheta;
             }
 
+            Vector2d r(cos(theta), sin(theta));
+            Vector2d v0 = ((BFOCircle *)obj)->v;
+            double k = (-(r & v0) + sqrt((r & v0) * (r & v0) - (r & r) * ((v0 & v0) - bulletv * bulletv))) / (r & r);
+            theta = (k * r - v0).arg();
+
+            cir->setProperty("shoot", theta);
             //qDebug("mouse left button pressed. %lf %s", theta);
         }
 

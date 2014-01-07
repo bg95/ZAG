@@ -10,7 +10,7 @@ public:
     {
         LEFT, RIGHT, BOTTOM, TOP, NONE
     };
-    const static double INVALID = 1.0; //invalid time
+    const static double INVALID; //invalid time
 
     IntersectionEvent();
     IntersectionEvent(BFObject *_obj, Boundary _b, double _time);

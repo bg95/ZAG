@@ -6,8 +6,8 @@
 
 BFFactory::BFFactory()
 {
-    prototypes[BFO_CIRCLE] = new BFOCircle;
-    prototypes[BFO_COLORED_CIRCLE] = new BFOColoredCircle;
+    prototypes[typehash(BFOCircle)] = new BFOCircle;
+    prototypes[typehash(BFOColoredCircle)] = new BFOColoredCircle;
 }
 
 BFFactory::~BFFactory()

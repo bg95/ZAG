@@ -1,5 +1,7 @@
 #include "IntersectionEvent.h"
 
+const double IntersectionEvent::INVALID = 1.0; //invalid time
+
 IntersectionEvent::IntersectionEvent()
     :obj1(0), obj2(0), boundary(false), time(INVALID), ignored(false)
 {

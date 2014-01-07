@@ -160,7 +160,7 @@ void BFRShoot::processInput()
         BFOColoredCircle *circle;
         BFCAIRandom *controller;
         //circle = new BFOColoredCircle;//(bf->getManager());
-        circle = (BFOColoredCircle *)manager->getFactory()->newObject(BFO_COLORED_CIRCLE);
+        circle = (BFOColoredCircle *)manager->getFactory()->newObject(typehash(BFOColoredCircle));
         circle->p = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
         circle->r = 0.05;
         circle->v = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
@@ -195,7 +195,7 @@ void BFRShoot::shoot(BFObject *obj, double theta)
         newcir->p = obj->getPosition();
         double vabs = newcir->v.abs();
         double ddtheta = (((double)rand() / RAND_MAX) - 0.5) * PI / 81.0;
-        newcir->v = vabs * Vector2d(cos(theta + dtheta + ddtheta), sin(theta + dtheta + ddtheta));
+        newcir->v = ((BFOCircle *)obj)->v + vabs * Vector2d(cos(theta + dtheta + ddtheta), sin(theta + dtheta + ddtheta));
         newcir->setProperty("isBullet", "Yes");
         newcir->setProperty("shooter", (unsigned long long)obj);
         manager->insertObject(newcir);

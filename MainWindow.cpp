@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     BFOColoredCircle *circle;
     BFCAIRandom *controller;
 
-    BFOColoredCircle *bullet = new BFOColoredCircle();
+    BFOColoredCircle *bullet = (BFOColoredCircle *)bf->getManager()->getFactory()->newObject(typehash(BFOColoredCircle));
     bullet->setColor(1.0, 0, 0, 1.0);
     bullet->r = 0.01;
     bullet->v = Vector2d(0, 6);

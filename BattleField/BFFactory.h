@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include <typeindex>
 
 #include "BFObject/BFObject.h"
 #include "BFController/BFController.h"
@@ -16,7 +17,7 @@ class BFFactory
 public:
     BFFactory();
     ~BFFactory();
-    BFObject *newObject(BFObjectType type);
+    BFObject *newObject(size_t type);
     void deleteObject(BFObject *o);
     void encodeObject(BFObject *o, QIODevice *device);
     BFObject *decodeNewObject(QIODevice *device);

@@ -5,6 +5,7 @@
 #include <QIODevice>
 #include <QVariant>
 #include <string>
+#include <typeinfo>
 #include <map>
 #include "../Vector2d.h"
 //#include "BFManager.h"
@@ -14,10 +15,13 @@ const double PI = 3.14159265358979323846264338327950288419716939937510;
 class BFManager;
 class BFController;
 
+typedef size_t BFObjectType;
+#define typehash(TYPE) (typeid(TYPE).hash_code())
+/*
 enum BFObjectType
 {
     BFO_CIRCLE = 2, BFO_COLORED_CIRCLE = 3
-};
+};*/
 enum BFObjectShape
 {
     BFO_CIRCULAR = 0

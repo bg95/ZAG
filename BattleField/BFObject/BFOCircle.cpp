@@ -48,7 +48,8 @@ void BFOCircle::draw(QGLWidget *glwidget)
 
 BFObjectType BFOCircle::getType() const
 {
-    return BFO_CIRCLE;
+    return typeid(BFOCircle).hash_code();
+    //return BFO_CIRCLE;
 }
 
 BFObjectShape BFOCircle::getShape() const

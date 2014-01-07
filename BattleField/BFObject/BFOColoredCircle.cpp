@@ -44,7 +44,8 @@ void BFOColoredCircle::draw(QGLWidget *glwidget)
 
 BFObjectType BFOColoredCircle::getType() const
 {
-    return BFO_COLORED_CIRCLE;
+    return typeid(BFOColoredCircle).hash_code();
+    //return BFO_COLORED_CIRCLE;
 }
 
 void BFOColoredCircle::setColor(double r, double g, double b, double a)

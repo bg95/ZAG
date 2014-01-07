@@ -4,8 +4,8 @@
 #include "BattleField/BFController/BFCHuman.h"
 
 #include "BattleField/BFRule/BFRCollision.h"
-#include "Network/client.h"
-#include "Network/server.h"
+#include "Network/Client.h"
+#include "Network/Server.h"
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
@@ -30,8 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
     singleButton -> setAutoDefault(false);
     quitButton -> setAutoDefault(false);
 
-    connect(serverButton, SIGNAL(clicked()), this, SLOT(server()));
-    connect(clientButton, SIGNAL(clicked()), this, SLOT(client()));
+    connect(serverButton, SIGNAL(clicked()), this, SLOT(serverMode()));
+    connect(clientButton, SIGNAL(clicked()), this, SLOT(clientMode()));
     connect(singleButton, SIGNAL(clicked()), this, SLOT(singlePlayer()));
     connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
 
@@ -136,14 +136,14 @@ void MainWindow::singlePlayer(){
 
 }
 
-void MainWindow::server(){
-    Server *server = new Server;
+void MainWindow::serverMode(){
+    server = new Server;
     server -> show();
     return;
 }
 
-void MainWindow::client(){
-    Client *client = new Client;
+void MainWindow::clientMode(){
+    client = new Client;
     client -> show();
     return;
 }
@@ -154,6 +154,8 @@ MainWindow::~MainWindow()
     delete clientButton;
     delete singleButton;
     delete quitButton;
+    //delete server;
+    delete client;
     //delete ui;
     //delete bf;
     //delete rule;

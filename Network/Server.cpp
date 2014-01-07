@@ -1,7 +1,7 @@
 #include <QtWidgets>
 #include <QtNetwork>
 
-#include "server.h"
+#include "Server.h"
 
 Server::Server(QWidget *parent):
     QDialog(parent), tcpServer(0), networkSession(0){
@@ -51,32 +51,61 @@ Server::Server(QWidget *parent):
     // May be set another class later
     messages = encodeMessage();
 
-    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(sendMessage()));
+    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
+
 }
 
+Server::~Server(){
+    delete debuggerLabel;
+    delete statusLabel;
+    delete quitButton;
+    if(clientConnection != NULL){
+        clientConnection -> disconnectFromHost();
+    }
+}
+
+void Server::acceptConnection(){
+    clientConnection = tcpServer -> nextPendingConnection();
+    connect(clientConnection, SIGNAL(readyRead()), this, SLOT(sendMessage()));
+    connect(clientConnection, SIGNAL(disconnected()), clientConnection, SLOT(deleteLater()));
+
+}
 
 void Server::sendMessage(){
     //This part is for test
     debuggerLabel -> setText(tr("Messages sent!"));
     //Test part end
 
+    QDataStream in(clientConnection);
+    in.setVersion(QDataStream::Qt_4_0);
+    if(blockSize == 0){
+        if(clientConnection -> bytesAvailable() < (int)sizeof(quint16)){
+            return;
+        }
+        in >> blockSize;
+    }
+    if(clientConnection -> bytesAvailable() < blockSize){
+        return;
+    }
+    in >> currentMessageGot;
+    debuggerLabel -> setText(currentMessageGot);
+
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
 
     out << (quint16)0;
-    //for(int i = 0; i != messages.size(); i++){
-    //    out << messages.at(i);
-    //}
     out << messages;
     out.device() -> seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
 
-    QTcpSocket *clientConnection = tcpServer -> nextPendingConnection();
-    connect(clientConnection, SIGNAL(disconnected()),
-            clientConnection, SLOT(deleteLater()));
+
     clientConnection -> write(block);
     clientConnection -> disconnectFromHost();
+
+    //This part is for test
+    //debuggerLabel -> setText();
+    //debuggerLabel -> setText(tr("All done!"));
 }
 
 void Server::sessionOpened(){

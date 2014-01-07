@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
     QByteArrayData data[5];
-    char stringdata[40];
+    char stringdata[48];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -30,12 +30,13 @@ struct qt_meta_stringdata_MainWindow_t {
 static const qt_meta_stringdata_MainWindow_t qt_meta_stringdata_MainWindow = {
     {
 QT_MOC_LITERAL(0, 0, 10),
-QT_MOC_LITERAL(1, 11, 6),
-QT_MOC_LITERAL(2, 18, 0),
-QT_MOC_LITERAL(3, 19, 6),
-QT_MOC_LITERAL(4, 26, 12)
+QT_MOC_LITERAL(1, 11, 10),
+QT_MOC_LITERAL(2, 22, 0),
+QT_MOC_LITERAL(3, 23, 10),
+QT_MOC_LITERAL(4, 34, 12)
     },
-    "MainWindow\0server\0\0client\0singlePlayer\0"
+    "MainWindow\0serverMode\0\0clientMode\0"
+    "singlePlayer\0"
 };
 #undef QT_MOC_LITERAL
 
@@ -70,8 +71,8 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
     if (_c == QMetaObject::InvokeMetaMethod) {
         MainWindow *_t = static_cast<MainWindow *>(_o);
         switch (_id) {
-        case 0: _t->server(); break;
-        case 1: _t->client(); break;
+        case 0: _t->serverMode(); break;
+        case 1: _t->clientMode(); break;
         case 2: _t->singlePlayer(); break;
         default: ;
         }

@@ -3,8 +3,8 @@
 
 #include "main.h"
 
-#include "Network/server.h"
-#include "Network/client.h"
+#include "Network/Server.h"
+#include "Network/Client.h"
 
 MainWindow *mw;
 

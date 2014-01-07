@@ -6,6 +6,7 @@
 //#include <QNetworkSession>
 
 QT_BEGIN_NAMESPACE
+class QTcpSocket;
 class QLabel;
 class QPushButton;
 class QTcpServer;
@@ -18,8 +19,10 @@ class Server: public QDialog
 
 public:
     Server(QWidget *parent = 0);
+    ~Server();
 
 private slots:
+    void acceptConnection();
     void sessionOpened();
     void sendMessage();
     QString encodeMessage();
@@ -28,6 +31,10 @@ private:
     QTcpServer *tcpServer;
     QString messages;
     QNetworkSession *networkSession;
+    QTcpSocket *clientConnection;
+
+    quint16 blockSize;
+    QString currentMessageGot;
 
     //This part is for test
     QLabel *debuggerLabel;

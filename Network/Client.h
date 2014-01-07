@@ -19,8 +19,10 @@ class Client : public QDialog{
 
 public:
     Client(QWidget *parent = 0);
+    ~Client();
 
 private slots:
+    void sendMessage(QString);
     void requestNewMessage();
     void readMessage();
     void displayError(QAbstractSocket::SocketError);

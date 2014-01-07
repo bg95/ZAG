@@ -1,7 +1,7 @@
 #include <QtWidgets>
 #include <QtNetwork>
 
-#include "client.h"
+#include "Client.h"
 
 Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
     //This is for test
@@ -104,6 +104,33 @@ Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
     }
 }
 
+Client::~Client(){
+    delete statusLabel;
+    delete hostLabel;
+    delete portLabel;
+    delete hostEdit;
+    delete portEdit;
+    delete getMessageButton;
+    delete quitButton;
+    delete buttonBox;
+}
+
+void Client::sendMessage(QString message){
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+
+    out << (quint16)0;
+    //statusLabel -> setText(message);
+    out << message;
+    out.device() -> seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+
+    tcpSocket -> abort();
+    tcpSocket -> connectToHost(hostEdit -> currentText(), port);
+    tcpSocket -> write(block);
+}
+
 void Client::setHostAndPort(){
     //hostName = hostEdit -> currentText();
     port = (portEdit -> text()).toInt();
@@ -114,12 +141,16 @@ void Client::requestNewMessage(){
     statusLabel -> setText(tr("Resquest new Message!"));
     //end test part
 
-    blockSize = 0;
-    tcpSocket -> abort();
-    tcpSocket -> connectToHost(hostEdit -> currentText(), port);
+
+    QString mes = "this string is sent by client";
+    sendMessage(mes);
+    //blockSize = 0;
+    //tcpSocket -> abort();
+    //tcpSocket -> connectToHost(hostEdit -> currentText(), port);
 }
 
 void Client::readMessage(){
+    //statusLabel -> setText(tr("Message got!"));
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_0);
 
@@ -136,10 +167,10 @@ void Client::readMessage(){
     QString nextMessage;
     in >> nextMessage;
 
-    if(nextMessage == currentMessage){
+    /*if(nextMessage == currentMessage){
         QTimer::singleShot(0, this, SLOT(requestNewMessage()));
         return;
-    }
+    }*/
 
     currentMessage = nextMessage;
 

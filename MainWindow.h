@@ -3,6 +3,8 @@
 
 #include "BattleField/BattleField.h"
 #include "BattleField/BFRule/BFRCollision.h"
+#include "Network/Client.h"
+#include "Network/Server.h"
 
 #include <QMainWindow>
 #include <QPushButton>
@@ -28,12 +30,14 @@ private:
     QPushButton *clientButton;
     QPushButton *singleButton;
     QPushButton *quitButton;
+    Client *client;
+    Server *server;
 public: //for debugging
     BattleField *bf;
     BFRule *rule;
 private slots:
-    void server();
-    void client();
+    void serverMode();
+    void clientMode();
     void singlePlayer();
 };
 

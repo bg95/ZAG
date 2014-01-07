@@ -9,6 +9,8 @@ Server::Server(QWidget *parent):
     // This part is for test
     debuggerLabel = new QLabel;
     statusLabel = new QLabel;
+    sentMessage = new QLineEdit;
+    connect(sentMessage, SIGNAL(textChanged(QString)), this, SLOT(encodeMessage()));
     quitButton = new QPushButton(tr("Quit"));
     quitButton -> setAutoDefault(false);
     connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
@@ -20,6 +22,7 @@ Server::Server(QWidget *parent):
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout -> addWidget(debuggerLabel);
     mainLayout -> addWidget(statusLabel);
+    mainLayout -> addWidget(sentMessage);
     mainLayout -> addLayout(buttonLayout);
     setLayout(mainLayout);
 
@@ -47,10 +50,6 @@ Server::Server(QWidget *parent):
         sessionOpened();
     }
 
-    // Set transformed message
-    // May be set another class later
-    messages = encodeMessage();
-
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
 
 }
@@ -68,7 +67,6 @@ void Server::acceptConnection(){
     clientConnection = tcpServer -> nextPendingConnection();
     connect(clientConnection, SIGNAL(readyRead()), this, SLOT(sendMessage()));
     connect(clientConnection, SIGNAL(disconnected()), clientConnection, SLOT(deleteLater()));
-
 }
 
 void Server::sendMessage(){
@@ -76,9 +74,13 @@ void Server::sendMessage(){
     debuggerLabel -> setText(tr("Messages sent!"));
     //Test part end
 
+    // Set transformed message
+    // May be set another class later
+    encodeMessage();
+
     QDataStream in(clientConnection);
     in.setVersion(QDataStream::Qt_4_0);
-    if(blockSize == 0){
+    /*if(blockSize == 0){
         if(clientConnection -> bytesAvailable() < (int)sizeof(quint16)){
             return;
         }
@@ -86,7 +88,7 @@ void Server::sendMessage(){
     }
     if(clientConnection -> bytesAvailable() < blockSize){
         return;
-    }
+    }*/
     in >> currentMessageGot;
     debuggerLabel -> setText(currentMessageGot);
 
@@ -94,14 +96,13 @@ void Server::sendMessage(){
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
 
-    out << (quint16)0;
+    //out << (quint16)0;
     out << messages;
-    out.device() -> seek(0);
-    out << (quint16)(block.size() - sizeof(quint16));
-
+    //out.device() -> seek(0);
+    //out << (quint16)(block.size() - sizeof(quint16));
 
     clientConnection -> write(block);
-    clientConnection -> disconnectFromHost();
+    //clientConnection -> disconnectFromHost();
 
     //This part is for test
     //debuggerLabel -> setText();
@@ -156,8 +157,6 @@ void Server::sessionOpened(){
 }
 
 
-QString Server::encodeMessage(){
-    QString newString;
-    newString = QString("TestString");
-    return newString;
+void Server::encodeMessage(){
+    messages = sentMessage->text();
 }

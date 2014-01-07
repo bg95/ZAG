@@ -9,6 +9,7 @@ QT_BEGIN_NAMESPACE
 class QTcpSocket;
 class QLabel;
 class QPushButton;
+class QLineEdit;
 class QTcpServer;
 class QNetworkSession;
 QT_END_NAMESPACE
@@ -25,7 +26,7 @@ private slots:
     void acceptConnection();
     void sessionOpened();
     void sendMessage();
-    QString encodeMessage();
+    void encodeMessage();
 
 private:
     QTcpServer *tcpServer;
@@ -39,6 +40,7 @@ private:
     //This part is for test
     QLabel *debuggerLabel;
     QLabel *statusLabel;
+    QLineEdit *sentMessage;
     QPushButton *quitButton;
 };
 

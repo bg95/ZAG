@@ -154,8 +154,12 @@ MainWindow::~MainWindow()
     delete clientButton;
     delete singleButton;
     delete quitButton;
-    //delete server;
-    delete client;
+    if(server != NULL){
+        delete server;
+    }
+    if(client != NULL){
+        delete client;
+    }
     //delete ui;
     //delete bf;
     //delete rule;

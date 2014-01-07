@@ -7,6 +7,9 @@ Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
     //This is for test
     hostLabel = new QLabel(tr("Server IP:"));
     portLabel = new QLabel(tr("Server port:"));
+    debuggerLabel = new QLabel(tr("This is for debug"));
+
+    messageEdit = new QLineEdit;
 
     hostEdit = new QComboBox;
     hostEdit -> setEditable(true);
@@ -44,14 +47,19 @@ Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
 
     quitButton = new QPushButton(tr("Quit"));
 
+    connectToHostButton = new QPushButton(tr("ConnectToHost"));
+
     buttonBox = new QDialogButtonBox;
+    buttonBox -> addButton(connectToHostButton, QDialogButtonBox::ActionRole);
     buttonBox -> addButton(getMessageButton, QDialogButtonBox::ActionRole);
     buttonBox -> addButton(quitButton, QDialogButtonBox::RejectRole);
 
+    connect(connectToHostButton, SIGNAL(clicked()), this, SLOT(connectToHost()));
     connect(getMessageButton, SIGNAL(clicked()), this, SLOT(requestNewMessage()));
     connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(hostEdit, SIGNAL(editTextChanged(QString)), this, SLOT(setHostAndPort()));
     connect(portEdit, SIGNAL(textChanged(QString)), this, SLOT(setHostAndPort()));
+
     QGridLayout *mainLayout = new QGridLayout;
     mainLayout -> addWidget(hostLabel, 0, 0);
     mainLayout -> addWidget(hostEdit, 0, 1);
@@ -59,6 +67,8 @@ Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
     mainLayout -> addWidget(portEdit, 1, 1);
     mainLayout -> addWidget(statusLabel, 2, 0, 1, 2);
     mainLayout -> addWidget(buttonBox, 3, 0, 1, 2);
+    mainLayout -> addWidget(messageEdit, 4, 1);
+    mainLayout -> addWidget(debuggerLabel, 5, 0);
     setLayout(mainLayout);
 
     setWindowTitle(tr("ZAG client"));
@@ -112,9 +122,17 @@ Client::~Client(){
     delete portEdit;
     delete getMessageButton;
     delete quitButton;
+    delete connectToHostButton;
     delete buttonBox;
+    delete debuggerLabel;
+    delete messageEdit;
 }
 
+void Client::connectToHost(){
+    tcpSocket -> connectToHost(hostEdit -> currentText(), port);
+}
+
+/*
 void Client::sendMessage(QString message){
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
@@ -126,10 +144,10 @@ void Client::sendMessage(QString message){
     out.device() -> seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
 
-    tcpSocket -> abort();
-    tcpSocket -> connectToHost(hostEdit -> currentText(), port);
+    //tcpSocket -> abort();
     tcpSocket -> write(block);
 }
+*/
 
 void Client::setHostAndPort(){
     //hostName = hostEdit -> currentText();
@@ -140,13 +158,19 @@ void Client::requestNewMessage(){
     //This is for test
     statusLabel -> setText(tr("Resquest new Message!"));
     //end test part
+    QString message = messageEdit -> text();
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
 
+    //out << (quint16)0;
+    //statusLabel -> setText(message);
+    out << message;
+    //out.device() -> seek(0);
+    //out << (quint16)(block.size() - sizeof(quint16));
 
-    QString mes = "this string is sent by client";
-    sendMessage(mes);
-    //blockSize = 0;
     //tcpSocket -> abort();
-    //tcpSocket -> connectToHost(hostEdit -> currentText(), port);
+    tcpSocket -> write(block);
 }
 
 void Client::readMessage(){
@@ -154,7 +178,7 @@ void Client::readMessage(){
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_0);
 
-    if(blockSize == 0){
+    /*if(blockSize == 0){
         if(tcpSocket -> bytesAvailable() < (int)sizeof(quint16))
             return;
 
@@ -163,7 +187,7 @@ void Client::readMessage(){
 
     if(tcpSocket -> bytesAvailable() < blockSize)
         return;
-
+    */
     QString nextMessage;
     in >> nextMessage;
 

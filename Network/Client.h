@@ -22,7 +22,8 @@ public:
     ~Client();
 
 private slots:
-    void sendMessage(QString);
+    void connectToHost();
+    //void sendMessage(QString);
     void requestNewMessage();
     void readMessage();
     void displayError(QAbstractSocket::SocketError);
@@ -34,13 +35,16 @@ private slots:
 
 private:
     //This is for test
+    QLabel *debuggerLabel;
     QLabel *statusLabel;
     QLabel *hostLabel;
     QLabel *portLabel;
     QComboBox *hostEdit;
     QLineEdit *portEdit;
+    QLineEdit *messageEdit;
     QPushButton *getMessageButton;
     QPushButton *quitButton;
+    QPushButton *connectToHostButton;
     QDialogButtonBox *buttonBox;
     //End test part */
 

@@ -18,10 +18,10 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui(new Ui::MainWindow)
 {
     //ui->setupUi(this);
-    setGeometry(20, 20, 700, 700);
+    setGeometry(mainWindowLUx, mainWindowLUy, mainWindowWidth, mainWindowHeight);
 
     bf = new BattleField(this);
-    bf->setGeometry(0, 0, width(), height());
+    //bf->setGeometry(0, 0, width(), height());
 
     //rule = new BFRCollision(bf->getManager());
     rule = new BFRShoot(bf->getManager());
@@ -132,8 +132,8 @@ MainWindow::MainWindow(QWidget *parent) :
         circles[i] = circle;
     }
 
-    for (int i = 0; i < 10; i++)
-        for (int j = 0; j < 50; j++)
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 10; j++)
         {
             circle = new BFOColoredCircle;//(bf->getManager());
             circle->p = Vector2d(i / 80.0 - 0.5, -0.9 + j / 80.0);

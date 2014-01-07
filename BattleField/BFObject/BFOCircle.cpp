@@ -1,5 +1,6 @@
 #include <cmath>
-
+#include <GL/gl.h>
+#include "../Geometry.h"
 #include "BFOCircle.h"
 
 BFOCircle::BFOCircle()
@@ -40,10 +41,14 @@ void BFOCircle::draw(QGLWidget *glwidget)
     //qDebug("drawing a circle");
     //glColor4d(1.0, 1.0, 1.0, 1.0);
     glwidget->makeCurrent();
-    glBegin(GL_LINE_STRIP);
+    /*glBegin(GL_LINE_STRIP);
     for (double theta = 0; theta < 2 * 3.1415926 + 0.1; theta += 0.1)
         glVertex2d(p.x + r * cos(theta), p.y + r * sin(theta));
-    glEnd();
+    glEnd();*/
+    glPushMatrix();
+        glTranslatef(p.x * 5.0, p.y * 5.0, 0.0);
+        glutSolidCylinder(r * 5.0, 0.1, 16, 16);
+    glPopMatrix();
 }
 
 BFObjectType BFOCircle::getType() const

@@ -29,7 +29,8 @@ SOURCES += main.cpp\
     BattleField/BFController/BFCAI.cpp \
     BattleField/BFController/AI/BFCAIRandom.cpp \
     BattleField/BFFactory.cpp \
-    BattleField/BFRule/BFRShoot.cpp
+    BattleField/BFRule/BFRShoot.cpp \
+    BattleField/Geometry.cpp
 
 HEADERS  += MainWindow.h \
     BattleField/BFObject/BFObject.h \
@@ -48,6 +49,10 @@ HEADERS  += MainWindow.h \
     BattleField/BFController/BFCAI.h \
     BattleField/BFController/AI/BFCAIRandom.h \
     BattleField/BFFactory.h \
-    BattleField/BFRule/BFRShoot.h
+    BattleField/BFRule/BFRShoot.h \
+    BattleField/Geometry.h
 
 FORMS    += MainWindow.ui
+
+INCLUDEPATH += -I /usr/include/
+LIBS += -lglut

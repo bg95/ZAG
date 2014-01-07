@@ -108,6 +108,11 @@ void BFManager::mouseEvent(Vector2d mousepos, Qt::MouseButtons mousebut)
     mousebuttons = mousebut;
 }
 
+void BFManager::wheelEvent(QWheelEvent *wheelevent)
+{
+
+}
+
 void BFManager::nextFrame(double deltatime)
 {
     dt = deltatime;

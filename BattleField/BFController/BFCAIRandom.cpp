@@ -2,8 +2,8 @@
 
 #include "BFCAIRandom.h"
 
-BFCAIRandom::BFCAIRandom(BFObject *_obj) :
-    BFController(_obj), obj(_obj)
+BFCAIRandom::BFCAIRandom(BFManager *_manager, BFObject *_obj) :
+    BFController(manager, _obj), obj(_obj)
 {
     count = 0;
 }

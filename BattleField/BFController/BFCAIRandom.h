@@ -6,7 +6,7 @@
 class BFCAIRandom : public BFController
 {
 public:
-    BFCAIRandom(BFObject *_obj);
+    BFCAIRandom(BFManager *_manager, BFObject *_obj);
     virtual ~BFCAIRandom();
     virtual BFControllerType getType() const;
     virtual void applyControl(); //apply control to the object

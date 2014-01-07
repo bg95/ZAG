@@ -1,7 +1,7 @@
 #include "BFController.h"
 
-BFController::BFController(BFObject *_obj) :
-    obj(_obj)
+BFController::BFController(BFManager *_manager, BFObject *_obj) :
+    manager(_manager), obj(_obj)
 {
     obj->controller = this;
 }

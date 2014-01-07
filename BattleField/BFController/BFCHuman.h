@@ -12,7 +12,7 @@ class BFCHuman : public BFController
 public:
     static Qt::Key XNegKey, XPosKey, YNegKey, YPosKey;
 
-    BFCHuman(BFObject *_obj);
+    BFCHuman(BFManager *_manager, BFObject *_obj);
     virtual ~BFCHuman();
     virtual BFControllerType getType() const;
     virtual void applyControl();

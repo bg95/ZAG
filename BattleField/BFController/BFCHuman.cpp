@@ -1,11 +1,12 @@
 #include <sstream>
+#include <cmath>
 
 #include "BFCHuman.h"
 
 Qt::Key BFCHuman::XNegKey = Qt::Key_A, BFCHuman::XPosKey = Qt::Key_D, BFCHuman::YNegKey = Qt::Key_S, BFCHuman::YPosKey = Qt::Key_W;
 
-BFCHuman::BFCHuman(BFObject *_obj) :
-    BFController(_obj)
+BFCHuman::BFCHuman(BFManager *_manager, BFObject *_obj) :
+    BFController(_manager, _obj)
 {
 }
 
@@ -37,7 +38,31 @@ void BFCHuman::applyControl()
         if (mousebut & Qt::LeftButton)
         {
             double theta = (mousepos - cir->p).arg();
-            cir->setProperty("shoot", theta);
+            if (keyPressed(Qt::Key_Shift))
+            {
+                double closesttheta;
+                double closestcos = -2;
+                std::set<BFObject *>::iterator iter;
+                for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
+                    if ((*iter) != cir && (*iter)->getProperty("isBullet") != "Yes")
+                    {
+                        BFOCircle *aim = (BFOCircle *)(*iter);
+                        double t = ((*iter)->getPosition() - cir->p).abs() / 6.0;
+                        double ttheta = (aim->p + aim->v * t - cir->p).arg();
+                        if (cos(ttheta - theta) > closestcos)
+                        {
+                            closestcos = cos(ttheta - theta);
+                            closesttheta = ttheta;
+                        }
+                    }
+                if (closestcos == -2)
+                    closesttheta = theta;
+                cir->setProperty("shoot", closesttheta);
+            }
+            else
+            {
+                cir->setProperty("shoot", theta);
+            }
 
             //qDebug("mouse left button pressed. %lf %s", theta);
         }

@@ -124,6 +124,7 @@ void BFRShoot::processInput()
     }
     BFRule::processInput();
     for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
+        if ((*iter)->getProperty("isBullet") != "Yes")
     {
         BFOCircle *cir = (BFOCircle *)(*iter);
         cir->a = cir->a + -6.0 * PI * eta * cir->r * cir->v / cir->m;
@@ -131,6 +132,16 @@ void BFRShoot::processInput()
     for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
     {
         //qDebug("object %lX", (unsigned long long)(*iter));
+        BFObject *const &obj = (*iter);
+        if (obj->getProperty("cooldowncount").isValid())
+        {
+            double cooldowncount = obj->getProperty("cooldowncount").toDouble();
+            //qDebug("cooldown = %lf/%lf dt=%lf", cooldowncount, cooldown, manager->getDT());
+            cooldowncount -= manager->getDT();
+            if (cooldowncount < 0)
+                cooldowncount = 0;
+            obj->setProperty("cooldowncount", cooldowncount);
+        }
         QVariant vartheta = (*iter)->getProperty("shoot");
         if (vartheta.isValid())
         {
@@ -158,7 +169,7 @@ void BFRShoot::processInput()
         circle->setProperty("shoot", "");
         circle->setProperty("health", 1.0);
         manager->insertObject(circle);
-        controller = new BFCAIRandom(circle);
+        controller = new BFCAIRandom(manager, circle);
         manager->registerController(controller);
         //circles[i] = circle;
     }
@@ -173,9 +184,6 @@ void BFRShoot::shoot(BFObject *obj, double theta)
 
     double cooldown = obj->getProperty("cooldown").toDouble();
     double cooldowncount = obj->getProperty("cooldowncount").toDouble();
-    //qDebug("cooldown = %lf/%lf dt=%lf", cooldowncount, cooldown, manager->getDT());
-    cooldowncount -= manager->getDT();
-    obj->setProperty("cooldowncount", cooldowncount);
 
     if (cooldowncount <= 0.0)
         //for (double dtheta = -PI / 9.0; dtheta <= PI / 9.0 + 1E-7; dtheta += PI / 81.0)

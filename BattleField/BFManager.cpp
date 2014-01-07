@@ -28,7 +28,7 @@ BFManager::~BFManager()
 {
     std::set<BFObject *>::iterator iter;
     for (iter = objects.begin(); iter != objects.end(); iter++)
-        delete (*iter);
+        factory.deleteObject(*iter);
 }
 
 bool BFManager::insertObject(BFObject *o)
@@ -46,7 +46,7 @@ void BFManager::destructObject(BFObject *o)
 {
     if (o->getController())
         destructController(o->getController());
-    delete o;
+    factory.deleteObject(o);
     removeObject(o);
 }
 
@@ -59,7 +59,7 @@ void BFManager::destructObjects()
 {
     std::set<BFObject *>::iterator iter;
     for (iter = objects.begin(); iter != objects.end(); iter++)
-        delete *iter;
+        factory.deleteObject(*iter);
     clearObjects();
 }
 

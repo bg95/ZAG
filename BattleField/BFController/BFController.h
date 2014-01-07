@@ -6,6 +6,7 @@
 #include "../Vector2d.h"
 
 class BFObject;
+class BFManager;
 
 enum BFControllerType
 {
@@ -17,7 +18,7 @@ enum BFControllerType
 class BFController
 {
 public:
-    BFController(BFObject *_obj);
+    BFController(BFManager *_manager, BFObject *_obj);
     virtual ~BFController();
     virtual BFControllerType getType() const = 0;
     virtual void applyControl() = 0; //apply control to the object
@@ -25,6 +26,7 @@ public:
 
 protected:
     BFObject *obj;
+    BFManager *manager;
 
     std::set<Qt::Key> keys;
     Vector2d mousepos;
@@ -34,5 +36,6 @@ protected:
 };
 
 #include "../BFObject/BFObject.h"
+#include "../BFManager.h"
 
 #endif // BFCONTROLLER_H

@@ -5,5 +5,5 @@
 
 static void fghCircleTable(double **, double **, const int );
 void glutSolidCylinder(GLdouble radius, GLdouble height, GLint slices, GLint stacks);
-void drawBattleField();
+void glutSolidSphere(GLdouble radius, GLint slices, GLint stacks);
 #endif // GEOMETRY_H

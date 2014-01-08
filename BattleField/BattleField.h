@@ -34,6 +34,7 @@ protected:
     void paintGL();
     void resizeGL(int w, int h);
     void gluPerspective(GLdouble, GLdouble, GLdouble, GLdouble);
+    void drawGrid();
 
     //methods below are for BFCHuman
     void keyPressEvent(QKeyEvent *);
@@ -44,10 +45,9 @@ protected:
     void wheelEvent(QWheelEvent *);
 
     //methods for changing the view port
-    void zoom(double dz);
-    void moveHorizontal(double dx);
-    void moveVertical(double dy);
-    void rotateClockwise(double dangle);//in degree
+    void scale(double k);
+    void move(double dx, double dy);
+    void rotate(double dangle);//in degree, rotate stands for positive degree
 private slots:
     void refresh();
 
@@ -59,7 +59,7 @@ private:
     int display_counter;
     bool fullscreen;
     //information on the view port
-    float zNear;
+    float unit;
     float angle;
     float delta_x, delta_y;
 };

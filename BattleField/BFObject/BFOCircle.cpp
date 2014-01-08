@@ -46,8 +46,8 @@ void BFOCircle::draw(QGLWidget *glwidget)
         glVertex2d(p.x + r * cos(theta), p.y + r * sin(theta));
     glEnd();*/
     glPushMatrix();
-        glTranslatef(p.x * 5.0, p.y * 5.0, 0.0);
-        glutSolidCylinder(r * 5.0, 0.1, 16, 16);
+        glTranslatef(p.x / 2.0, p.y / 2.0, 0.0);
+        glutSolidCylinder(r / 2.0, 0.01, 16, 16);
     glPopMatrix();
 }
 

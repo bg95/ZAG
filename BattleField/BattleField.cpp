@@ -1,5 +1,6 @@
 #include <QPainter>
 #include <math.h>
+#include <cmath>
 #include <GL/gl.h>
 #include "Geometry.h"
 #include "../main.h"
@@ -10,7 +11,8 @@ int BattleField::display_refreshes = 1;
 
 BattleField::BattleField(QWidget *parent, bool fs) :
     main_window(parent),
-    zNear(10.0),
+    unit(1.0),
+    angle(0.0),
     delta_x(0.0),
     delta_y(0.0),
     QGLWidget(parent),
@@ -77,7 +79,7 @@ void BattleField::initializeGL()
     GLfloat lightPosition[4][4] = {{ 15.0, 15.0, -18.0, 1.0 },
                                    { 15.0, -15.0, -18.0, 1.0 },
                                    { -15.0, -15.0, -18.0, 1.0 },
-                                   { 0.0, 0.0, -9.0, 1.0 }};
+                                   { 0.0, 0.0, -0.5, 1.0 }};
     glLightfv( GL_LIGHT0, GL_AMBIENT, lightAmbient[0] );
     glLightfv( GL_LIGHT0, GL_DIFFUSE, lightDiffuse[0] );
     glLightfv( GL_LIGHT0, GL_POSITION, lightPosition[0] );
@@ -104,16 +106,45 @@ void BattleField::paintGL()
 {
     //clear the screen and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
 
-    //below is just for test
-    glTranslatef(0.0, 10.0, -20.0);
-    glRotatef(-15.0, 1.0, 0.0, 0.0);
-    glTranslatef(0.0, -10.0, 0.0);
-
-    drawBattleField();
+    glPushMatrix();
+        glTranslatef(delta_x, delta_y, 0.0);
+        glRotatef(angle, 0.0, 0.0, 1.0);
+        glScalef(unit, unit, unit);
+        drawGrid();
+        manager.paintAll(this);
+    glPopMatrix();
     //qDebug("painting");
-    manager.paintAll(this);
+}
+
+void BattleField::drawGrid() {
+    int numBar = 35;
+    double step = 2.0 / (double)numBar;
+    double radius = step / 20;
+    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glPushMatrix();
+//        glTranslatef(delta_x, delta_y, 0.0);
+        glPushMatrix();
+            glRotatef(-90.0, 1.0, 0.0, 0.0);
+            glTranslatef(-1.0, 0.0, -1.0);
+            for(double x = 0; x <= 2.0 + step; x += step) {
+                for(double z = 0; z < 2.0; z += step) {
+                    glutSolidCylinder(radius, step, 6, 10);
+                    glTranslated(0.0, 0.0, step);
+                }
+                glTranslated(0.0, 0.0, -2.0);
+                glTranslated(step, 0.0, 0.0);
+            }
+        glPopMatrix();
+        glPushMatrix();
+            glRotatef(90.0, 0.0, 1.0, 0.0);
+            glTranslatef(0.0, -1.0, -1.0);
+            for(double y = 0; y <= 2.0 + step; y += step) {
+                glutSolidCylinder(radius, 2.0, 6, 10);
+                glTranslated(0.0, step, 0.0);
+            }
+        glPopMatrix();
+    glPopMatrix();
 }
 
 void BattleField::resizeGL(int w, int h)
@@ -122,17 +153,18 @@ void BattleField::resizeGL(int w, int h)
         h = 1;
 
     int size = w < h ? w : h;
+    double scaleW = (double)w / (double) size;
+    double scaleH = (double)h / (double) size;
     glViewport(0, 0, w, h);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glRotatef(-angle, 0.0, 0.0, 1.0);
-    glFrustum(-7.5 * (double)w / (double)size + delta_x, 7.5 * (double)w / (double)size + delta_x,
-              -7.5 * (double)h / (double)size + delta_y, 7.5 * (double)h / (double)size + delta_y,
-              zNear, 20.0);
+    glFrustum(-0.65 * scaleW, 0.65 * scaleW, -0.65 * scaleH, 0.65 * scaleH, 1.0, 3.0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    glTranslatef(0.0, 0.0, -2.0);
+    glRotatef(-15.0, 1.0, 0.0, 0.0);
 }
 
 //This function has been replaced by glFrustum()=_+
@@ -169,14 +201,29 @@ void BattleField::keyPressEvent(QKeyEvent *event)
         }
         updateGL();
         return;
-    case Qt::Key_N:
-        rotateClockwise(30.0);
+    case Qt::Key_Up:
+        move(0.0, -0.3);
         return;
-    case Qt::Key_H:
-        moveHorizontal(-1.0);
+    case Qt::Key_Down:
+        move(0.0, 0.3);
         return;
-    case Qt::Key_J:
-        moveVertical(-1.0);
+    case Qt::Key_Left:
+        move(0.3, 0.0);
+        return;
+    case Qt::Key_Right:
+        move(-0.3, 0.0);
+        return;
+    case Qt::Key_J://rotate counter-clockwise
+        rotate(10.0);
+        return;
+    case Qt::Key_K://rotate clockwise
+        rotate(-10.0);
+        return;
+    case Qt::Key_H://zoom in, this can be raplaced by wheel of mouse
+        scale(1.2);
+        return;
+    case Qt::Key_L://zoom out
+        scale(0.83333);
         return;
     case Qt::Key_Escape://escape
         this->main_window->close();
@@ -185,39 +232,38 @@ void BattleField::keyPressEvent(QKeyEvent *event)
     manager.keyPressEvent(event);
 }
 
-void BattleField::zoom(double dz)
+void BattleField::scale(double k)
 {
-    if(zNear + dz <= 14.0 && zNear + dz >= 9.0)
+    if(unit * k < 20 && unit * k > 0.8)
     {
-        qDebug("scale %lf\n", dz);
-        zNear += dz;
-        resizeGL(width(), height());
+        delta_x *= k;
+        delta_y *= k;
+        unit *= k;
     }
 }
 
-void BattleField::moveHorizontal(double dx)
+void BattleField::move(double dx, double dy)
 {
-
+    if(pow(delta_x + dx, 2.0) + pow(delta_y + dy, 2.0) >= pow(unit, 2.0) * 2.0)
+        return;
     delta_x += dx;
-    resizeGL(width(), height());
-}
-
-void BattleField::moveVertical(double dy)
-{
     delta_y += dy;
-    resizeGL(width(), height());
 }
 
-void BattleField::rotateClockwise(double dangle)
+void BattleField::rotate(double dangle)
 {
     angle += dangle;
-    resizeGL(width(), height());
+    double tmp_x = delta_x, tmp_y = delta_y;
+    dangle = dangle * PI / 180.0;
+    delta_x = tmp_x * cos(dangle) - tmp_y * sin(dangle);
+    delta_y = tmp_x * sin(dangle) + tmp_y * cos(dangle);
+    qDebug("After rotation, angle = %f, delta_x = %f, delta_y = %f", angle, delta_x, delta_y);
 }
 
 void BattleField::wheelEvent(QWheelEvent *event)
 {
-    double delta_z = (double)event->delta() / 8.0 / 15.0;//.../8.0 is in degree
-    zoom(delta_z);
+    double delta = event->delta() / ( 8.0 * 15.0);
+    scale(delta);
     event->ignore();
     manager.wheelEvent(event);
 }
@@ -255,9 +301,31 @@ void BattleField::refresh()
 
 void BattleField::mouseEvent(QMouseEvent *mouseevent)
 {
-    double px = (double)mouseevent->x() / (double)width();
+/*    double px = (double)mouseevent->x() / (double)width();
     double py = (double)mouseevent->y() / (double)height();
+
     manager.mouseEvent(Vector2d(px * manager.getRight() + (1.0 - px) * manager.getLeft(),
                                 py * manager.getBottom() + (1.0 - py) * manager.getTop()),
+                       mouseevent->buttons());*/
+    double w = (double)width();
+    double h = (double)height();
+    double size = w < h ? w : h;
+    double x_prime = ( (double)mouseevent->x() - w / 2 ) / (w / 2.0) * (w / size * 0.65);
+    double y_prime = - ( (double)mouseevent->y() - h / 2 ) / (h / 2.0) * ( h / size * 0.65);
+    double tan15 = tan(15.0 * PI / 180.0), cos15 = cos(15.0 * PI / 180.0);
+    double z = 2 / (y_prime * tan15 - 1);
+    //x and y are the coordinates in the battlefield
+    double y = - z * y_prime / cos15;//-1.0 ~ 1.0
+    double x = - z * x_prime;//-1.0 ~ 1.0
+    qDebug("x = %f, y = %f", x, y);
+    double alpha = - ( angle * PI / 180.0 - atan2(y - delta_y, x - delta_x) );//in radian
+    double r = sqrt(pow(x - delta_x, 2.0) + pow(y - delta_y, 2.0)) / unit;
+    double X = r * cos(alpha), Y = r * sin(alpha);//-1.0 ~ 1.0
+    qDebug("alpha = %f, X = %f, Y = %f", alpha * 180.0 / PI, X, Y);
+    double px = (X + 1.0) / 2.0;
+    double py = (Y + 1.0) / 2.0;
+    qDebug("px = %f, py = %f\n", px, py);
+    manager.mouseEvent(Vector2d(px * manager.getRight() + (1.0 - px) * manager.getLeft(),
+                                (1.0 - py) * manager.getBottom() + py * manager.getTop()),
                        mouseevent->buttons());
 }

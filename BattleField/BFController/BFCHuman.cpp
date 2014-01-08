@@ -24,15 +24,20 @@ void BFCHuman::applyControl()
     if (obj->getShape() == BFO_CIRCULAR)
     {
         BFOCircle *cir = (BFOCircle *)obj;
-        cir->a = Vector2d(0, 0);
+        Vector2d a = Vector2d(0, 0);
         if (keyPressed(XNegKey))
-            cir->a = cir->a - Vector2d(cir->maxa, 0);
+            a = a - Vector2d(1, 0);
         if (keyPressed(XPosKey))
-            cir->a = cir->a + Vector2d(cir->maxa, 0);
+            a = a + Vector2d(1, 0);
         if (keyPressed(YNegKey))
-            cir->a = cir->a - Vector2d(0, cir->maxa);
+            a = a - Vector2d(0, 1);
         if (keyPressed(YPosKey))
-            cir->a = cir->a + Vector2d(0, cir->maxa);
+            a = a + Vector2d(0, 1);
+        double bfrot = manager->getBattleField()->getRotation();
+        a = a.rotate(-bfrot);
+        if (a.abs() > 0)
+            a = a / a.abs();
+        cir->a = a * cir->maxa;
         //qDebug("appling to object %lX: %lf,%lf", (long)obj, cir->a.x, cir->a.y);
 
         if (mousebut & Qt::LeftButton)

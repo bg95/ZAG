@@ -9,6 +9,7 @@ public:
     Vector2d &operator =(Vector2d b);
     double abs(); //the length of the vector
     double arg(); //the argument (angle between this and the x-axis) of the vector (in radians)
+    Vector2d rotate(double theta); //rotate the vector by theta radians
 
     double c[2];
     double &x = c[0], &y = c[1]; //aliases

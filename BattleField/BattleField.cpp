@@ -18,7 +18,8 @@ BattleField::BattleField(QWidget *parent, bool fs) :
     delta_y(0.0),
     QGLWidget(parent),
     refreshtimer(this),
-    display_counter(0)
+    display_counter(0),
+    manager(this)
 {
     refreshtimer.setInterval(refresh_interval);
     connect(&refreshtimer, SIGNAL(timeout()), this, SLOT(refresh()));
@@ -243,12 +244,22 @@ void BattleField::scale(double k)
     }
 }
 
+double BattleField::getScale() const
+{
+    return unit;
+}
+
 void BattleField::move(double dx, double dy)
 {
     if(pow(delta_x + dx, 2.0) + pow(delta_y + dy, 2.0) >= pow(unit, 2.0) * 2.0)
         return;
     delta_x += dx;
     delta_y += dy;
+}
+
+Vector2d BattleField::getTranslation() const
+{
+    return Vector2d(delta_x, delta_y);
 }
 
 void BattleField::rotate(double dangle)
@@ -261,10 +272,15 @@ void BattleField::rotate(double dangle)
     qDebug("After rotation, angle = %f, delta_x = %f, delta_y = %f", angle, delta_x, delta_y);
 }
 
+double BattleField::getRotation() const
+{
+    return angle / 180.0 * PI;
+}
+
 void BattleField::wheelEvent(QWheelEvent *event)
 {
-    double delta = event->delta() / ( 8.0 * 15.0);
-    scale(delta);
+    double delta = event->delta() / ( 8.0 * 15.0) / 10.0;
+    scale(exp(delta));
     event->ignore();
     manager.wheelEvent(event);
 }

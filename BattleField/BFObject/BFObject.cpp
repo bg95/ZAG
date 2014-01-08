@@ -13,8 +13,8 @@ BFObject::BFObject()//BFManager *_manager)
 
 BFObject::~BFObject()
 {
-    if (created_from_factory && !deleting_from_factory)
-        qCritical("Deleting Object %lX (id=%ld) outside BFFactory!", this, id);
+    //if (created_from_factory && !deleting_from_factory)
+    //    qCritical("Deleting Object %lX (id=%ld) outside BFFactory!", this, id);
 }
 
 BFObject *BFObject::duplicate()

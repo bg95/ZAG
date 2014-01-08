@@ -29,6 +29,13 @@ double Vector2d::arg()
     return atan2(y, x);
 }
 
+Vector2d Vector2d::rotate(double theta)
+{
+    double s = sin(theta);
+    double c = cos(theta);
+    return Vector2d(x * c - y * s, x * s + y * c);
+}
+
 Vector2d operator +(Vector2d a, Vector2d b)
 {
     return Vector2d(a.x + b.x, a.y + b.y);

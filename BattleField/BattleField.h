@@ -23,7 +23,15 @@ public:
     bool insertObject(BFObject *o); //unused, should be deleted later
     void removeObject(BFObject *o); //unused, should be deleted later
     BFManager *getManager();
-    
+
+    //methods for changing the view port
+    void scale(double k);
+    double getScale() const;
+    void move(double dx, double dy);
+    Vector2d getTranslation() const;
+    void rotate(double dangle); //in degree, rotate stands for positive degree
+    double getRotation() const;
+
 signals:
     
 public slots:
@@ -45,10 +53,6 @@ protected:
     void mouseReleaseEvent(QMouseEvent *);
     void wheelEvent(QWheelEvent *);
 
-    //methods for changing the view port
-    void scale(double k);
-    void move(double dx, double dy);
-    void rotate(double dangle);//in degree, rotate stands for positive degree
 private slots:
     void refresh();
 

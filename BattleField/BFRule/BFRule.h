@@ -1,7 +1,7 @@
 #ifndef BFRULE_H
 #define BFRULE_H
 
-#include "../BFManager.h"
+class BFManager;
 
 enum BFRuleType
 {
@@ -22,5 +22,7 @@ protected:
     BFManager *manager;
 
 };
+
+#include "../BFManager.h"
 
 #endif // BFRULE_H

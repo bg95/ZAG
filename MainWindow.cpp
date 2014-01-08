@@ -80,10 +80,10 @@ MainWindow::MainWindow(QWidget *parent) :
     circle->setProperty("cooldowncount", 0.0);
     circle->setProperty("health", 1.0);
     bf->getManager()->insertObject(circle);
-*/
+
     hum = new BFCHuman(bf->getManager(), circle);
     bf->getManager()->registerController(hum);
-
+*/
     QBuffer *buf = new QBuffer;
     BFFactory *fac = bf->getManager()->getFactory();
     circle = (BFOColoredCircle *)bf->getManager()->getFactory()->newObject(typehash(BFOColoredCircle));//(bf->getManager());

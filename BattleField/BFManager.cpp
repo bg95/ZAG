@@ -9,8 +9,8 @@
 int BFManager::process_independent_intersections = 10;
 double BFManager::epsi = 0.01;
 
-BFManager::BFManager() :
-    qtree(this)
+BFManager::BFManager(BattleField *bf) :
+    battlefield(bf), qtree(this)
 {
     /*
     left = -1.0;
@@ -29,6 +29,11 @@ BFManager::~BFManager()
     std::set<BFObject *>::iterator iter;
     for (iter = objects.begin(); iter != objects.end(); iter++)
         factory.deleteObject(*iter);
+}
+
+BattleField *BFManager::getBattleField()
+{
+    return battlefield;
 }
 
 bool BFManager::insertObject(BFObject *o)

@@ -180,6 +180,9 @@ void Client::readMessage(){
         out << messageEdit->text();
         tcpSocket->write(block);
     }
+    else{
+        tcpSocket->write(*setMessage());
+    }
 
     //Test part
     statusLabel -> setText(currentMessage);

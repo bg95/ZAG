@@ -26,17 +26,18 @@ private slots:
     void acceptConnection();
     void sessionOpened();
     void sendMessage();
-    void encodeMessage();
+    //void encodeMessage();
 
 private:
     QTcpServer *tcpServer;
-    QString messages;
+    //QString messages;
     QNetworkSession *networkSession;
     QTcpSocket *clientConnection;
 
     quint16 blockSize;
     QString currentMessageGot;
 
+    QByteArray *getMessage();
     //This part is for test
     QLabel *debuggerLabel;
     QLabel *statusLabel;

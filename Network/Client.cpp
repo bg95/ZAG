@@ -158,19 +158,18 @@ void Client::requestNewMessage(){
     //This is for test
     statusLabel -> setText(tr("Resquest new Message!"));
     //end test part
-    QString message = messageEdit -> text();
+
+    //tcpSocket->write(*(setMessage()));
+
+    /*QString temString;
+    temString = messageEdit->text();
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
 
-    //out << (quint16)0;
-    //statusLabel -> setText(message);
-    out << message;
-    //out.device() -> seek(0);
-    //out << (quint16)(block.size() - sizeof(quint16));
-
-    //tcpSocket -> abort();
-    tcpSocket -> write(block);
+    out << temString;
+    */
+    tcpSocket->write(*setMessage());
 }
 
 void Client::readMessage(){
@@ -178,24 +177,8 @@ void Client::readMessage(){
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_0);
 
-    /*if(blockSize == 0){
-        if(tcpSocket -> bytesAvailable() < (int)sizeof(quint16))
-            return;
-
-        in >> blockSize;
-    }
-
-    if(tcpSocket -> bytesAvailable() < blockSize)
-        return;
-    */
     QString nextMessage;
     in >> nextMessage;
-
-    /*if(nextMessage == currentMessage){
-        QTimer::singleShot(0, this, SLOT(requestNewMessage()));
-        return;
-    }*/
-
     currentMessage = nextMessage;
 
     //Test part
@@ -232,4 +215,12 @@ void Client::sessionOpened(){
     settings.beginGroup(QLatin1String("QtNetwork"));
     settings.setValue(QLatin1String("DefaultNetworkConfiguration"), id);
     settings.endGroup();
+}
+
+QByteArray *Client::setMessage(){
+    QByteArray *message = new QByteArray;
+    QDataStream out(message, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << messageEdit->text();
+    return message;
 }

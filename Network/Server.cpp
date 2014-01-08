@@ -58,55 +58,40 @@ Server::~Server(){
     delete debuggerLabel;
     delete statusLabel;
     delete quitButton;
-    if(clientConnection != NULL){
+    delete sentMessage;
+    /*if(clientConnection != NULL){
         clientConnection -> disconnectFromHost();
-    }
+    }*/
 }
 
 void Server::acceptConnection(){
-    clientConnection = tcpServer -> nextPendingConnection();
+    debuggerLabel->setText(tr("Accept a new connection"));
+    clientConnection = tcpServer->nextPendingConnection();
     connect(clientConnection, SIGNAL(readyRead()), this, SLOT(sendMessage()));
     connect(clientConnection, SIGNAL(disconnected()), clientConnection, SLOT(deleteLater()));
 }
 
 void Server::sendMessage(){
     //This part is for test
-    debuggerLabel -> setText(tr("Messages sent!"));
+    debuggerLabel->setText(tr("Messages sent!"));
     //Test part end
 
     // Set transformed message
     // May be set another class later
-    encodeMessage();
-
+    //encodeMessage();
     QDataStream in(clientConnection);
     in.setVersion(QDataStream::Qt_4_0);
-    /*if(blockSize == 0){
-        if(clientConnection -> bytesAvailable() < (int)sizeof(quint16)){
-            return;
-        }
-        in >> blockSize;
-    }
-    if(clientConnection -> bytesAvailable() < blockSize){
-        return;
-    }*/
-    in >> currentMessageGot;
-    debuggerLabel -> setText(currentMessageGot);
 
+    in >> currentMessageGot;
+    debuggerLabel->setText(currentMessageGot);
+
+    /*
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
-
-    //out << (quint16)0;
     out << messages;
-    //out.device() -> seek(0);
-    //out << (quint16)(block.size() - sizeof(quint16));
-
-    clientConnection -> write(block);
-    //clientConnection -> disconnectFromHost();
-
-    //This part is for test
-    //debuggerLabel -> setText();
-    //debuggerLabel -> setText(tr("All done!"));
+    */
+    clientConnection->write(*getMessage());
 }
 
 void Server::sessionOpened(){
@@ -156,7 +141,17 @@ void Server::sessionOpened(){
     statusLabel -> setText(tr("The server is running on \n\n IP: %1\nport: %2\n\n").arg(ipAddress).arg(tcpServer -> serverPort()));
 }
 
-
+/*
 void Server::encodeMessage(){
     messages = sentMessage->text();
+}
+*/
+QByteArray *Server::getMessage(){
+
+    QByteArray *block = new QByteArray;
+    QDataStream out(block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+
+    out << sentMessage->text();
+    return block;
 }

@@ -46,13 +46,15 @@ private:
     QPushButton *quitButton;
     QPushButton *connectToHostButton;
     QDialogButtonBox *buttonBox;
+
+    QByteArray *setMessage();
     //End test part */
 
     //QHostAddress hostName;
     quint16 port;
 
     QTcpSocket *tcpSocket;
-    QStringList messageList;
+    //QByteArray *message;
     QString currentMessage;
     quint16 blockSize;
 

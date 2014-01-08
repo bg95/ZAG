@@ -14,7 +14,9 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QWidget(parent),
-    bf(0)
+    bf(0),
+    server(0),
+    client(0)
     //QMainWindow(parent)//,
     //ui(new Ui::MainWindow)
 {

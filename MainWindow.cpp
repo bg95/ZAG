@@ -21,10 +21,10 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui(new Ui::MainWindow)
 {
     //ui->setupUi(this);
-    setGeometry(20, 20, 700, 700);
+    setGeometry(mainWindowLUx, mainWindowLUy, mainWindowWidth, mainWindowHeight);
 
     bf = new BattleField(this);
-    bf->setGeometry(0, 0, width(), height());
+    //bf->setGeometry(0, 0, width(), height());
 
     //rule = new BFRCollision(bf->getManager());
     rule = new BFRShoot(bf->getManager());

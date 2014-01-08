@@ -52,6 +52,7 @@ public:
     void keyPressEvent(QKeyEvent *keyevent);
     void keyReleaseEvent(QKeyEvent *keyevent);
     void mouseEvent(Vector2d mousepos, Qt::MouseButtons mousebut);
+    void wheelEvent(QWheelEvent* wheelevent);
 
     //Process user inputs, calculate positions of objects in the next frame, apply the rule
     void nextFrame(double deltatime);

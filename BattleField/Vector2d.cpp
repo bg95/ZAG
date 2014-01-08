@@ -16,11 +16,17 @@ Vector2d &Vector2d::operator =(Vector2d b)
 {
     c[0] = b.c[0];
     c[1] = b.c[1];
+    return *this;
 }
 
 double Vector2d::abs()
 {
     return sqrt(x * x + y * y);
+}
+
+double Vector2d::arg()
+{
+    return atan2(y, x);
 }
 
 Vector2d operator +(Vector2d a, Vector2d b)

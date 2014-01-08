@@ -7,6 +7,6 @@
 #include "MainWindow.h"
 #include "BattleField/BFObject/BFOCircle.h"
 extern MainWindow *mw;
-extern BFOCircle *circles[3];
+extern BFOCircle *circles[10];
 
 #endif // MAIN_H

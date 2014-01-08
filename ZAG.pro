@@ -11,6 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ZAG
 TEMPLATE = app
+CONFIG += c++11
 
 
 SOURCES += main.cpp\
@@ -27,11 +28,12 @@ SOURCES += main.cpp\
     BattleField/QuadTree.cpp \
     BattleField/BFRule/BFRule.cpp \
     BattleField/BFRule/BFRCollision.cpp \
-    WindowManagement.cpp\
-    BattleField/BFController/BFCAI.cpp \
-    BattleField/BFCodec.cpp \
     Network/Client.cpp \
-    Network/Server.cpp
+    Network/Server.cpp\
+    BattleField/BFFactory.cpp \
+    BattleField/BFRule/BFRShoot.cpp \
+    BattleField/BFController/BFCAIRandom.cpp \
+    BattleField/Geometry.cpp
 
 HEADERS  += MainWindow.h \
     BattleField/BFObject/BFObject.h \
@@ -47,10 +49,13 @@ HEADERS  += MainWindow.h \
     main.h \
     BattleField/BFRule/BFRule.h \
     BattleField/BFRule/BFRCollision.h \
-    WindowManagement.h\
-    BattleField/BFCodec.h \
-    BattleField/BFController/BFCAI.h \
     Network/Client.h \
-    Network/Server.h
+    Network/Server.h \
+    BattleField/BFFactory.h \
+    BattleField/BFRule/BFRShoot.h \
+    BattleField/BFController/BFCAIRandom.h \
+    BattleField/Geometry.h
 
 FORMS    += MainWindow.ui
+
+INCLUDEPATH += -I /usr/include/

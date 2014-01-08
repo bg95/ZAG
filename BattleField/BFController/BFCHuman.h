@@ -5,23 +5,17 @@
 #include "BFController.h"
 #include "../Vector2d.h"
 
-class BFCHuman : public BFController //A controller controled by human (mouse and keyboard)
+//A controller controled directly by human (mouse and keyboard)
+//Seen as an AI that strictly follows human instructions
+class BFCHuman : public BFController
 {
 public:
     static Qt::Key XNegKey, XPosKey, YNegKey, YPosKey;
 
-    BFCHuman(BFObject *_obj);
+    BFCHuman(BFManager *_manager, BFObject *_obj);
     virtual ~BFCHuman();
     virtual BFControllerType getType() const;
     virtual void applyControl();
-
-    void setKeysAndMouse(std::set<Qt::Key> keyspressed, Vector2d mouseposition, Qt::MouseButtons mousebuttons);
-
-private:
-    std::set<Qt::Key> keys;
-    Vector2d mousepos;
-    Qt::MouseButtons mousebut;
-    bool keyPressed(Qt::Key key);
 
 };
 

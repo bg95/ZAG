@@ -19,6 +19,23 @@ BFOColoredCircle::BFOColoredCircle(BFManager *manager) :
     alpha = 1;
 }
 */
+
+BFOColoredCircle::~BFOColoredCircle()
+{
+}
+
+BFObject *BFOColoredCircle::newObject()
+{
+    return new BFOColoredCircle;
+}
+
+BFObject *BFOColoredCircle::duplicate()
+{
+    BFOColoredCircle *ptr = (BFOColoredCircle *)BFOCircle::duplicate();
+    memcpy(ptr->c, c, sizeof(c));
+    return ptr;
+}
+
 void BFOColoredCircle::draw(QGLWidget *glwidget)
 {
     glwidget->makeCurrent();
@@ -27,6 +44,12 @@ void BFOColoredCircle::draw(QGLWidget *glwidget)
     green = 0.9 * green + 0.1;
     blue = 0.9 * blue + 0.1;*/
     BFOCircle::draw(glwidget);
+}
+
+BFObjectType BFOColoredCircle::getType() const
+{
+    return typeid(BFOColoredCircle).hash_code();
+    //return BFO_COLORED_CIRCLE;
 }
 
 void BFOColoredCircle::setColor(double r, double g, double b, double a)
@@ -41,16 +64,17 @@ const double *BFOColoredCircle::getColor() const
 {
     return c;
 }
-/*
-void BFOColoredCircle::onIntersection(BFObject *b0, Vector2d impulse)
+
+void BFOColoredCircle::encode(QIODevice *device)
 {
-    if (b0->getType() == BFO_CIRCLE)
-    {
-        BFOCircle *b = (BFOCircle *)b0;
-        double t = 1.0 - atan2(impulse.abs(), m) / (3.141592653 / 2.0);
-        blue *= t;
-        green *= t;
-        green *= 0.9;
-    }
+    BFOCircle::encode(device);
+
+    device->write((const char *)c, sizeof(c));
 }
-*/
+
+void BFOColoredCircle::decode(QIODevice *device)
+{
+    BFOCircle::decode(device);
+
+    device->read((char *)c, sizeof(c));
+}

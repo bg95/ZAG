@@ -10,12 +10,13 @@ public:
     {
         LEFT, RIGHT, BOTTOM, TOP, NONE
     };
-    const static double INVALID = 1.0; //invalid time
+    const static double INVALID; //invalid time
 
     IntersectionEvent();
     IntersectionEvent(BFObject *_obj, Boundary _b, double _time);
     IntersectionEvent(BFObject *_obj1, BFObject *_obj2, double _time);
-    bool operator <(const IntersectionEvent &b) const;
+    bool operator <(const IntersectionEvent &b) const; //earlier than
+    bool operator ==(const IntersectionEvent &b) const;
     union
     {
         struct
@@ -30,6 +31,7 @@ public:
     };
     bool boundary; //true if it is a boundary intersection
     double time; //time when collision occurs (from now, so it's always negative). time == INVALID if this is a invalid collision
+    bool ignored; //whether this intersections is ignored by BFRule
 };
 
 #include "BFObject/BFObject.h"

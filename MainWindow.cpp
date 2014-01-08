@@ -2,13 +2,20 @@
 #include "BattleField/BFObject/BFOCircle.h"
 #include "BattleField/BFObject/BFOColoredCircle.h"
 #include "BattleField/BFController/BFCHuman.h"
+#include "BattleField/BFController/BFCAIRandom.h"
 
 #include "BattleField/BFRule/BFRCollision.h"
 #include "Network/Client.h"
 #include "Network/Server.h"
+#include "BattleField/BFRule/BFRShoot.h"
+
+#include "BattleField/BFFactory.h"
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+
+#include <sstream>
+#include <QBuffer>
 
 #include "main.h"
 
@@ -49,93 +56,131 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 void MainWindow::singlePlayer(){
-    setGeometry(50, 50, 600, 600);
+    /*setGeometry(50, 50, 600, 600);
 
     bf = new BattleField(this);
     bf->setGeometry(0, 0, width(), height());
-    bf->show();
+    bf->show();*/
+    setGeometry(mainWindowLUx, mainWindowLUy, mainWindowWidth, mainWindowHeight);
 
-    rule = new BFRCollision(bf->getManager());
+    bf = new BattleField(this);
+    //bf->setGeometry(0, 0, width(), height());
+
+    //rule = new BFRCollision(bf->getManager());
+    rule = new BFRShoot(bf->getManager());
     bf->getManager()->setRule(rule);
 
     BFOColoredCircle *circle;
-/*
-    circle = new BFOColoredCircle(bf->getManager());
-    circle->p = Vector2d(0.89, 0.05);
+    BFCAIRandom *controller;
+
+    BFOColoredCircle *bullet = (BFOColoredCircle *)bf->getManager()->getFactory()->newObject(typehash(BFOColoredCircle));
+    bullet->setColor(1.0, 0, 0, 1.0);
+    bullet->r = 0.01;
+    bullet->v = Vector2d(0, 6);
+    bullet->m = 0.01;
+    bullet->setProperty("isBullet", "Yes");
+    bullet->setProperty("damage", 0.2);
+    QBuffer bulletbuf;
+    bulletbuf.open(QIODevice::ReadWrite);
+    bf->getManager()->getFactory()->encodeObject(bullet, &bulletbuf);
+    bulletbuf.seek(0);
+    bf->getManager()->getFactory()->deleteObject(bullet);
+    //shooter property is set in BFRShoot
+
+    circle = new BFOColoredCircle;//(bf->getManager());
+    //bullet->setProperty("shooter", (unsigned long long)circle);
+    circle->p = Vector2d(0, 0.9);
     circle->r = 0.1;
-    circle->v = Vector2d(-0.4, 0);
+    circle->v = Vector2d(0, 0.5);
     circle->m = 1;
     circle->maxa = 5;
+    circle->setColor(0.0, 0.5, 1.0, 1.0);
+    circle->setProperty("shoot", "");
+    circle->setProperty("bullet prototype", bulletbuf.data());
+    circle->setProperty("cooldown", 0.05);
+    circle->setProperty("cooldowncount", 0.0);
+    circle->setProperty("health", 1.0);
     bf->getManager()->insertObject(circle);
-    BFCHuman *hum = new BFCHuman(circle);
-    bf->getManager()->registerController(hum);*/
+
+    BFCHuman *hum = new BFCHuman(bf->getManager(), circle);
+    //BFCAIRandom *air = new BFCAIRandom(bf->getManager(), circle);
+    bf->getManager()->registerController(hum);
 /*
-    circle = new BFOColoredCircle(bf->getManager());
-    circle->p = Vector2d(0, -0.05);
-    circle->r = 0.1;
-    circle->v = Vector2d(0.4, 0);
-    circle->m = 1;
-    bf->getManager()->insertObject(circle);
-
-    circle = new BFOColoredCircle(bf->getManager());
-    circle->p = Vector2d(-0.89, 0.03);
-    circle->r = 0.14;
-    circle->v = Vector2d(0.4, 0.1);
-    circle->m = 2;
-    bf->getManager()->insertObject(circle);
-*//*
-    circle = new BFOColoredCircle(bf->getManager());
-    circle->p = Vector2d(-0.89, 0.03);
-    circle->r = 0.05;
-    circle->v = Vector2d(0.8, 0.5);
-    circle->m = 5;
-    bf->getManager()->insertObject(circle);
-*/
-
-    for (int i = 0; i < 5; i++)
-    {
-        circle = new BFOColoredCircle;//(bf->getManager());
-        circle->p = Vector2d(i / 8.0 - 0.9, 0.9);
-        circle->r = 0.05;
-        circle->v = Vector2d(0.8, 0.5);
-        circle->m = 0.25;
-        bf->getManager()->insertObject(circle);
-        circles[i] = circle;
-    }
     circle = new BFOColoredCircle;//(bf->getManager());
-    circle->p = Vector2d(0, 0.9);
+    //bullet->setProperty("shooter", (unsigned long long)circle);
+    circle->p = Vector2d(0, 0.8);
     circle->r = 0.05;
     circle->v = Vector2d(0, 0.5);
     circle->m = 0.25;
-    bf->getManager()->insertObject(circle);
-
     circle->maxa = 5;
-    BFCHuman *hum = new BFCHuman(circle);
+    circle->setColor(0.0, 0.5, 1.0, 1.0);
+    circle->setProperty("shoot", "");
+    circle->setProperty("bullet prototype", bulletbuf.data());
+    circle->setProperty("cooldown", 0.1);
+    circle->setProperty("cooldowncount", 0.0);
+    circle->setProperty("health", 1.0);
+    bf->getManager()->insertObject(circle);
+*/
+    hum = new BFCHuman(bf->getManager(), circle);
     bf->getManager()->registerController(hum);
 
+    QBuffer *buf = new QBuffer;
+    BFFactory *fac = bf->getManager()->getFactory();
+    circle = (BFOColoredCircle *)bf->getManager()->getFactory()->newObject(typehash(BFOColoredCircle));//(bf->getManager());
+    circle->p = Vector2d(-0.7, 0.9);
+    circle->r = 0.05;
+    circle->v = Vector2d(0.8, 0.5);
+    circle->m = 0.25;
+    circle->maxa = 5;
+    circle->setProperty("shoot", "");
+    circle->setProperty("health", 1.0);
+    buf->open(QBuffer::WriteOnly);
+    fac->encodeObject(circle, buf);
+    buf->close();
+    qDebug("prototype id = %ld", circle->getID());
+    //delete circle;
+    bf->getManager()->getFactory()->deleteObject(circle);
+
+    buf->open(QBuffer::ReadOnly);
     for (int i = 0; i < 5; i++)
     {
-        circle = new BFOColoredCircle;//(bf->getManager());
-        circle->p = Vector2d(-(i / 8.0 - 0.9), 0.9);
-        circle->r = 0.05;
-        circle->v = Vector2d(-0.8, 0.5);
-        circle->m = 0.25;
+        buf->seek(0);
+        circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
+        circle->p = Vector2d(i / 8.0 - 0.8, 0.9);
         bf->getManager()->insertObject(circle);
+        controller = new BFCAIRandom(bf->getManager(), circle);
+        bf->getManager()->registerController(controller);
         circles[i] = circle;
     }
-
+    for (int i = 0; i < 5; i++)
+    {
+        buf->seek(0);
+        circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
+        circle->p = Vector2d(-(i / 8.0 - 0.9), 0.9);
+        bf->getManager()->insertObject(circle);
+        controller = new BFCAIRandom(bf->getManager(), circle);
+        bf->getManager()->registerController(controller);
+        //circles[i] = circle;
+    }
+    buf->close();
+    delete buf;
+/*
     for (int i = 0; i < 10; i++)
-        for (int j = 0; j < 50; j++)
+        for (int j = 0; j < 5; j++)
         {
             circle = new BFOColoredCircle;//(bf->getManager());
             circle->p = Vector2d(i / 80.0 - 0.5, -0.9 + j / 80.0);
             circle->r = 0.005;
             circle->v = Vector2d(i / 350.0 - 0.5, 0.5 + i / 180.0 - 0.5);
             circle->m = 0.0025;
+            circle->setProperty("shoot", "");
+            circle->setProperty("health", 0.4);
             bf->getManager()->insertObject(circle);
         }
     bf -> update();
-
+*/
+    bf->start();
+    bf->show();
 }
 
 void MainWindow::serverMode(){
@@ -171,4 +216,9 @@ void MainWindow::resizeEvent(QResizeEvent *)
 {
     if (bf)
         bf->setGeometry(0, 0, width(), height());
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    qDebug("mainwindow key %d", event->key());
 }

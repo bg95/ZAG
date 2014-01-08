@@ -14,6 +14,7 @@ public:
     explicit BFRule(BFManager *_manager);
     virtual ~BFRule();
     virtual BFRuleType getType() const;
+    virtual void filterIntersections();
     virtual void processIntersections();
     virtual void processInput();
 

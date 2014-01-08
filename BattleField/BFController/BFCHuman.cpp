@@ -1,9 +1,12 @@
+#include <sstream>
+#include <cmath>
+
 #include "BFCHuman.h"
 
 Qt::Key BFCHuman::XNegKey = Qt::Key_A, BFCHuman::XPosKey = Qt::Key_D, BFCHuman::YNegKey = Qt::Key_S, BFCHuman::YPosKey = Qt::Key_W;
 
-BFCHuman::BFCHuman(BFObject *_obj) :
-    BFController(_obj)
+BFCHuman::BFCHuman(BFManager *_manager, BFObject *_obj) :
+    BFController(_manager, _obj)
 {
 }
 
@@ -18,7 +21,7 @@ BFControllerType BFCHuman::getType() const
 
 void BFCHuman::applyControl()
 {
-    if (obj->getType() == BFO_CIRCLE)
+    if (obj->getShape() == BFO_CIRCULAR)
     {
         BFOCircle *cir = (BFOCircle *)obj;
         cir->a = Vector2d(0, 0);
@@ -31,25 +34,45 @@ void BFCHuman::applyControl()
         if (keyPressed(YPosKey))
             cir->a = cir->a + Vector2d(0, cir->maxa);
         //qDebug("appling to object %lX: %lf,%lf", (long)obj, cir->a.x, cir->a.y);
+
+        if (mousebut & Qt::LeftButton)
+        {
+            double bulletv = 6.0;
+            double theta = (mousepos - cir->p).arg();
+            if (keyPressed(Qt::Key_Shift))
+            {
+                double closesttheta;
+                double closestcos = -2;
+                std::set<BFObject *>::iterator iter;
+                for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
+                    if ((*iter) != cir && (*iter)->getProperty("isBullet") != "Yes")
+                    {
+                        BFOCircle *aim = (BFOCircle *)(*iter);
+                        double t = ((*iter)->getPosition() - cir->p).abs() / bulletv;
+                        double ttheta = (aim->p + aim->v * t - cir->p).arg();
+                        if (cos(ttheta - theta) > closestcos)
+                        {
+                            closestcos = cos(ttheta - theta);
+                            closesttheta = ttheta;
+                        }
+                    }
+                if (closestcos == -2)
+                    closesttheta = theta;
+                //cir->setProperty("shoot", closesttheta);
+                theta = closesttheta;
+            }
+
+            Vector2d r(cos(theta), sin(theta));
+            Vector2d v0 = ((BFOCircle *)obj)->v;
+            double k = (-(r & v0) + sqrt((r & v0) * (r & v0) - (r & r) * ((v0 & v0) - bulletv * bulletv))) / (r & r);
+            theta = (k * r - v0).arg();
+
+            cir->setProperty("shoot", theta);
+            //qDebug("mouse left button pressed. %lf %s", theta);
+        }
+
     }
 
     //...
     //not completed
-}
-
-void BFCHuman::setKeysAndMouse(std::set<Qt::Key> keyspressed, Vector2d mouseposition, Qt::MouseButtons mousebuttons)
-{
-    keys = keyspressed;
-    mousepos = mouseposition;
-    mousebut = mousebuttons;
-}
-
-bool BFCHuman::keyPressed(Qt::Key key)
-{
-    keys.find(key); //not completed
-    std::set<Qt::Key>::iterator iter;
-    for (iter = keys.begin(); iter != keys.end(); iter++)
-        if ((*iter) == key)
-            return true;
-    return false;
 }

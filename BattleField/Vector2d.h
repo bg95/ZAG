@@ -8,6 +8,7 @@ public:
     Vector2d(double _x, double _y);
     Vector2d &operator =(Vector2d b);
     double abs(); //the length of the vector
+    double arg(); //the argument (angle between this and the x-axis) of the vector (in radians)
 
     double c[2];
     double &x = c[0], &y = c[1]; //aliases

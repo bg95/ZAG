@@ -17,6 +17,7 @@ class BFRule;
 #include "IntersectionEvent.h"
 #include "QuadTree.h"
 #include "Vector2d.h"
+#include "BFFactory.h"
 
 class BFManager
 {
@@ -36,12 +37,14 @@ public:
     //Object operations
     bool insertObject(BFObject *o);
     void removeObject(BFObject *o);
+    void destructObject(BFObject *o);
     void clearObjects();
     void destructObjects();
 
     //Controller operations
     bool registerController(BFController *c);
     void unregisterController(BFController *c);
+    void destructController(BFController *c);
     void clearControllers();
     void destructControllers();
 
@@ -49,6 +52,7 @@ public:
     void keyPressEvent(QKeyEvent *keyevent);
     void keyReleaseEvent(QKeyEvent *keyevent);
     void mouseEvent(Vector2d mousepos, Qt::MouseButtons mousebut);
+    void wheelEvent(QWheelEvent* wheelevent);
 
     //Process user inputs, calculate positions of objects in the next frame, apply the rule
     void nextFrame(double deltatime);
@@ -64,6 +68,11 @@ public:
     std::set<Qt::Key> &getKeysPressed();
     Vector2d getMousePosition();
     Qt::MouseButtons getMouseButtons();
+    double getDT();
+
+    //Factory operations
+    BFFactory *getFactory();
+    void encodeAllObjects(QIODevice *device);
 
     //Calculate intersections
     double intersectingTime(const BFObject *a, const BFObject *b);
@@ -90,6 +99,8 @@ private:
     QuadTree qtree;
 
     BFRule *rule;
+
+    BFFactory factory;
 
     void findAllIntersections();
     void processAllIntersections();

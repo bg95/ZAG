@@ -1,5 +1,6 @@
 #include <cmath>
-
+#include <GL/gl.h>
+#include "../Geometry.h"
 #include "BFOCircle.h"
 
 BFOCircle::BFOCircle()
@@ -16,6 +17,23 @@ BFOCircle::~BFOCircle()
 {
 }
 
+BFObject *BFOCircle::newObject()
+{
+    return new BFOCircle;
+}
+
+BFObject *BFOCircle::duplicate()
+{
+    BFOCircle *ptr = (BFOCircle *)BFObject::duplicate();
+    ptr->p = p;
+    ptr->v = v;
+    ptr->a = a;
+    ptr->m = m;
+    ptr->r = r;
+    ptr->maxa = maxa;
+    return ptr;
+}
+
 void BFOCircle::draw(QGLWidget *glwidget)
 {
     //QRectF region(p.x - r, p.y - r, p.x + r, p.y + r);
@@ -23,15 +41,25 @@ void BFOCircle::draw(QGLWidget *glwidget)
     //qDebug("drawing a circle");
     //glColor4d(1.0, 1.0, 1.0, 1.0);
     glwidget->makeCurrent();
-    glBegin(GL_LINE_STRIP);
+    /*glBegin(GL_LINE_STRIP);
     for (double theta = 0; theta < 2 * 3.1415926 + 0.1; theta += 0.1)
         glVertex2d(p.x + r * cos(theta), p.y + r * sin(theta));
-    glEnd();
+    glEnd();*/
+    glPushMatrix();
+        glTranslatef(p.x / 2.0, p.y / 2.0, 0.0);
+        glutSolidCylinder(r / 2.0, 0.01, 16, 16);
+    glPopMatrix();
 }
 
 BFObjectType BFOCircle::getType() const
 {
-    return BFO_CIRCLE;
+    return typeid(BFOCircle).hash_code();
+    //return BFO_CIRCLE;
+}
+
+BFObjectShape BFOCircle::getShape() const
+{
+    return BFO_CIRCULAR;
 }
 
 double BFOCircle::getRoughRadius() const
@@ -53,9 +81,9 @@ void BFOCircle::encode(QIODevice *device)
 {
     BFObject::encode(device);
 
-    device->write((const char *)&p, sizeof(p));
-    device->write((const char *)&v, sizeof(v));
-    device->write((const char *)&a, sizeof(a));
+    writeVector2d(device, p);
+    writeVector2d(device, v);
+    writeVector2d(device, a);
     device->write((const char *)&m, sizeof(m));
     device->write((const char *)&r, sizeof(r));
     device->write((const char *)&maxa, sizeof(maxa));
@@ -65,9 +93,9 @@ void BFOCircle::decode(QIODevice *device)
 {
     BFObject::decode(device);
 
-    device->read((char *)&p, sizeof(p));
-    device->read((char *)&v, sizeof(v));
-    device->read((char *)&a, sizeof(a));
+    readVector2d(device, p);
+    readVector2d(device, v);
+    readVector2d(device, a);
     device->read((char *)&m, sizeof(m));
     device->read((char *)&r, sizeof(r));
     device->read((char *)&maxa, sizeof(maxa));

@@ -17,10 +17,15 @@ class BFFactory
 public:
     BFFactory();
     ~BFFactory();
-    BFObject *newObject(size_t type);
+
+    BFObject *newObject(BFObjectType type);
     void deleteObject(BFObject *o);
+    BFObject *replaceObject(long id, BFObjectType type); //not tested
+
     void encodeObject(BFObject *o, QIODevice *device);
     BFObject *decodeNewObject(QIODevice *device);
+    BFObject *decodeReplaceObject(long id, QIODevice *device); //not tested
+
     void clear();
 
 private:

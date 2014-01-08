@@ -85,7 +85,8 @@ void BFRShoot::processIntersections()
                     manager->destructObject(b);
                 else
                 {
-                    b->setProperty("health", newhealth);
+                    //b->setProperty("health", newhealth);
+                    (*b)["health"] = newhealth;
                     ((BFOColoredCircle *)b)->setColor(1.0, newhealth, newhealth, 1.0);
                     ((BFOCircle *)b)->v = (((BFOCircle *)b)->v * ((BFOCircle *)b)->m + ((BFOCircle *)a)->v * ((BFOCircle *)a)->m) / (((BFOCircle *)b)->m + ((BFOCircle *)a)->m);
                 }

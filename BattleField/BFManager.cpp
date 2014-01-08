@@ -213,6 +213,12 @@ BFFactory *BFManager::getFactory()
     return &factory;
 }
 
+void BFManager::encodeAllObjects(QIODevice *device)
+{
+    for (auto iter = objects.begin(); iter != objects.end(); iter++)
+        factory.encodeObject(*iter, device);
+}
+
 ///intersection between objects
 double BFManager::intersectingTime(const BFObject *a, const BFObject *b)
 {

@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     bulletbuf.open(QIODevice::ReadWrite);
     bf->getManager()->getFactory()->encodeObject(bullet, &bulletbuf);
     bulletbuf.seek(0);
-    delete bullet;
+    bf->getManager()->getFactory()->deleteObject(bullet);
     //shooter property is set in BFRShoot
 
     circle = new BFOColoredCircle;//(bf->getManager());
@@ -86,7 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QBuffer *buf = new QBuffer;
     BFFactory *fac = bf->getManager()->getFactory();
-    circle = new BFOColoredCircle;//(bf->getManager());
+    circle = (BFOColoredCircle *)bf->getManager()->getFactory()->newObject(typehash(BFOColoredCircle));//(bf->getManager());
     circle->p = Vector2d(-0.7, 0.9);
     circle->r = 0.05;
     circle->v = Vector2d(0.8, 0.5);
@@ -98,7 +98,8 @@ MainWindow::MainWindow(QWidget *parent) :
     fac->encodeObject(circle, buf);
     buf->close();
     qDebug("prototype id = %ld", circle->getID());
-    delete circle;
+    //delete circle;
+    bf->getManager()->getFactory()->deleteObject(circle);
 
     buf->open(QBuffer::ReadOnly);
     for (int i = 0; i < 5; i++)

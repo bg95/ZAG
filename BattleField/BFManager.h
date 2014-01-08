@@ -69,7 +69,9 @@ public:
     Qt::MouseButtons getMouseButtons();
     double getDT();
 
+    //Factory operations
     BFFactory *getFactory();
+    void encodeAllObjects(QIODevice *device);
 
     //Calculate intersections
     double intersectingTime(const BFObject *a, const BFObject *b);

@@ -7,6 +7,7 @@ class BFOColoredCircle : public BFOCircle
 {
 public:
     BFOColoredCircle();
+    ~BFOColoredCircle();
     //BFOColoredCircle(BFManager *manager = 0);
     BFObject *newObject();
     BFObject *duplicate();

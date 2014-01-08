@@ -30,7 +30,6 @@ enum BFObjectShape
 class BFObject
 {
 public:
-
     static const std::string empty_string;
     static long count;
     static void readStdString(QIODevice *device, std::string &str); //read a string from device
@@ -72,14 +71,17 @@ public:
     void setProperty(const std::string &prop, const QVariant &val);
     const QVariant &getProperty(const std::string &prop);
     //void setProperty(const std::string &prop, const std::string &val);
-    const QVariant &operator[](const std::string &prop);
+    QVariant &operator[](const std::string &prop);
 
 private:
     long id;
     //BFManager *manager;
-    std::string info;  //unused
     std::map<std::string, QVariant> properties;
     BFController *controller;
+
+    friend class BFFactory;
+    bool created_from_factory;
+    bool deleting_from_factory;
 
 };
 

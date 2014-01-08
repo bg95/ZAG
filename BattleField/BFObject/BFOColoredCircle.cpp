@@ -20,6 +20,10 @@ BFOColoredCircle::BFOColoredCircle(BFManager *manager) :
 }
 */
 
+BFOColoredCircle::~BFOColoredCircle()
+{
+}
+
 BFObject *BFOColoredCircle::newObject()
 {
     return new BFOColoredCircle;

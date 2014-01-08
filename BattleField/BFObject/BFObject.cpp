@@ -4,7 +4,7 @@ const std::string BFObject::empty_string("");
 long BFObject::count = 0;
 
 BFObject::BFObject()//BFManager *_manager)
-    :/*manager(_manager), */info()
+    :created_from_factory(false), deleting_from_factory(false)
 {
     id = count;
     count++;
@@ -13,6 +13,8 @@ BFObject::BFObject()//BFManager *_manager)
 
 BFObject::~BFObject()
 {
+    if (created_from_factory && !deleting_from_factory)
+        qCritical("Deleting Object %lX (id=%ld) outside BFFactory!", this, id);
 }
 
 BFObject *BFObject::duplicate()
@@ -81,9 +83,12 @@ const QVariant &BFObject::getProperty(const std::string &prop)
     return (*iter).second;
 }
 
-const QVariant &BFObject::operator [](const std::string &prop)
+QVariant &BFObject::operator [](const std::string &prop)
 {
-    return getProperty(prop);
+    auto iter = properties.find(prop);
+    if (iter == properties.end())
+        ;//return QVariant(QVariant::Invalid); //don't know what to do
+    return (*iter).second;
 }
 
 /*

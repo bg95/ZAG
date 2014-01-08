@@ -2,6 +2,8 @@
 #define SERVER_H
 
 #include <QDialog>
+#include <QList>
+#include <QTimer>
 //#include <QTcpServer>
 //#include <QNetworkSession>
 
@@ -12,6 +14,7 @@ class QPushButton;
 class QLineEdit;
 class QTcpServer;
 class QNetworkSession;
+class QListWidget;
 QT_END_NAMESPACE
 
 class Server: public QDialog
@@ -24,8 +27,10 @@ public:
 
 private slots:
     void acceptConnection();
+    void auth();
     void sessionOpened();
-    void sendMessage();
+    void gameBegin();
+    void updateNetwork();
     //void encodeMessage();
 
 private:
@@ -33,16 +38,22 @@ private:
     //QString messages;
     QNetworkSession *networkSession;
     QTcpSocket *clientConnection;
+    QList<QTcpSocket*> connectionList;
+    QTimer *networkTimer;
 
     quint16 blockSize;
     QString currentMessageGot;
 
     QByteArray *getMessage();
+    void sendMessage(QTcpSocket *connection);
+
     //This part is for test
     QLabel *debuggerLabel;
     QLabel *statusLabel;
     QLineEdit *sentMessage;
     QPushButton *quitButton;
+    QPushButton *gameBeginButton;
+    QListWidget *participantList;
 };
 
 #endif // SERVER_H

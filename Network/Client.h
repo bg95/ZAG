@@ -35,6 +35,7 @@ private slots:
 
 private:
     //This is for test
+    QLabel *nickLabel;
     QLabel *debuggerLabel;
     QLabel *statusLabel;
     QLabel *hostLabel;

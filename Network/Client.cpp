@@ -7,6 +7,7 @@ Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
     //This is for test
     hostLabel = new QLabel(tr("Server IP:"));
     portLabel = new QLabel(tr("Server port:"));
+    nickLabel = new QLabel(tr("Input your name:"));
     debuggerLabel = new QLabel(tr("This is for debug"));
 
     messageEdit = new QLineEdit;
@@ -50,9 +51,9 @@ Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
     connectToHostButton = new QPushButton(tr("ConnectToHost"));
 
     buttonBox = new QDialogButtonBox;
-    buttonBox -> addButton(connectToHostButton, QDialogButtonBox::ActionRole);
-    buttonBox -> addButton(getMessageButton, QDialogButtonBox::ActionRole);
-    buttonBox -> addButton(quitButton, QDialogButtonBox::RejectRole);
+    buttonBox->addButton(connectToHostButton, QDialogButtonBox::ActionRole);
+    buttonBox->addButton(getMessageButton, QDialogButtonBox::ActionRole);
+    buttonBox->addButton(quitButton, QDialogButtonBox::RejectRole);
 
     connect(connectToHostButton, SIGNAL(clicked()), this, SLOT(connectToHost()));
     connect(getMessageButton, SIGNAL(clicked()), this, SLOT(requestNewMessage()));
@@ -61,14 +62,15 @@ Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
     connect(portEdit, SIGNAL(textChanged(QString)), this, SLOT(setHostAndPort()));
 
     QGridLayout *mainLayout = new QGridLayout;
-    mainLayout -> addWidget(hostLabel, 0, 0);
-    mainLayout -> addWidget(hostEdit, 0, 1);
-    mainLayout -> addWidget(portLabel, 1, 0);
-    mainLayout -> addWidget(portEdit, 1, 1);
-    mainLayout -> addWidget(statusLabel, 2, 0, 1, 2);
-    mainLayout -> addWidget(buttonBox, 3, 0, 1, 2);
-    mainLayout -> addWidget(messageEdit, 4, 1);
-    mainLayout -> addWidget(debuggerLabel, 5, 0);
+    mainLayout->addWidget(hostLabel, 0, 0);
+    mainLayout->addWidget(hostEdit, 0, 1);
+    mainLayout->addWidget(portLabel, 1, 0);
+    mainLayout->addWidget(portEdit, 1, 1);
+    mainLayout->addWidget(statusLabel, 2, 0, 1, 2);
+    mainLayout->addWidget(buttonBox, 3, 0, 1, 2);
+    mainLayout->addWidget(nickLabel, 4, 0);
+    mainLayout->addWidget(messageEdit, 4, 1);
+    mainLayout->addWidget(debuggerLabel, 5, 0);
     setLayout(mainLayout);
 
     setWindowTitle(tr("ZAG client"));
@@ -126,6 +128,7 @@ Client::~Client(){
     delete buttonBox;
     delete debuggerLabel;
     delete messageEdit;
+    delete nickLabel;
 }
 
 void Client::connectToHost(){
@@ -159,16 +162,6 @@ void Client::requestNewMessage(){
     statusLabel -> setText(tr("Resquest new Message!"));
     //end test part
 
-    //tcpSocket->write(*(setMessage()));
-
-    /*QString temString;
-    temString = messageEdit->text();
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
-
-    out << temString;
-    */
     tcpSocket->write(*setMessage());
 }
 
@@ -180,6 +173,13 @@ void Client::readMessage(){
     QString nextMessage;
     in >> nextMessage;
     currentMessage = nextMessage;
+
+    if(nextMessage == "@Greeting"){
+        QByteArray block;
+        QDataStream out(&block, QIODevice::WriteOnly);
+        out << messageEdit->text();
+        tcpSocket->write(block);
+    }
 
     //Test part
     statusLabel -> setText(currentMessage);

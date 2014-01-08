@@ -1,5 +1,7 @@
 #include <QtWidgets>
 #include <QtNetwork>
+#include <QTimer>
+#include <QList>
 
 #include "Server.h"
 
@@ -10,20 +12,33 @@ Server::Server(QWidget *parent):
     debuggerLabel = new QLabel;
     statusLabel = new QLabel;
     sentMessage = new QLineEdit;
-    connect(sentMessage, SIGNAL(textChanged(QString)), this, SLOT(encodeMessage()));
-    quitButton = new QPushButton(tr("Quit"));
-    quitButton -> setAutoDefault(false);
-    connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
-    QHBoxLayout *buttonLayout = new QHBoxLayout;
-    buttonLayout -> addStretch(1);
-    buttonLayout -> addWidget(quitButton);
-    buttonLayout -> addStretch(1);
+    //connect(sentMessage, SIGNAL(textChanged(QString)), this, SLOT(encodeMessage()));
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout -> addWidget(debuggerLabel);
-    mainLayout -> addWidget(statusLabel);
-    mainLayout -> addWidget(sentMessage);
-    mainLayout -> addLayout(buttonLayout);
+    quitButton = new QPushButton(tr("Quit"));
+    quitButton->setAutoDefault(false);
+    connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
+    gameBeginButton = new QPushButton(tr("GameBegin"));
+    gameBeginButton->setAutoDefault(false);
+    connect(gameBeginButton, SIGNAL(clicked()), this, SLOT(gameBegin()));
+
+    QHBoxLayout *buttonLayout = new QHBoxLayout;
+    //buttonLayout->addStretch(1);
+    buttonLayout->addWidget(quitButton);
+    //buttonLayout->addStretch(1);
+    buttonLayout->addWidget(gameBeginButton);
+
+    participantList = new QListWidget;
+    participantList->addItem(tr("Local Host"));
+
+    QVBoxLayout *partLayout = new QVBoxLayout;
+    partLayout->addWidget(debuggerLabel);
+    partLayout->addWidget(statusLabel);
+    partLayout->addWidget(sentMessage);
+    partLayout->addLayout(buttonLayout);
+
+    QHBoxLayout *mainLayout = new QHBoxLayout;
+    mainLayout->addLayout(partLayout);
+    mainLayout->addWidget(participantList);
     setLayout(mainLayout);
 
     setWindowTitle(tr("Server Test"));
@@ -52,6 +67,7 @@ Server::Server(QWidget *parent):
 
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
 
+    //networkTimer = new QTimer(this);
 }
 
 Server::~Server(){
@@ -59,39 +75,49 @@ Server::~Server(){
     delete statusLabel;
     delete quitButton;
     delete sentMessage;
+    delete participantList;
     /*if(clientConnection != NULL){
         clientConnection -> disconnectFromHost();
     }*/
 }
 
 void Server::acceptConnection(){
-    debuggerLabel->setText(tr("Accept a new connection"));
-    clientConnection = tcpServer->nextPendingConnection();
-    connect(clientConnection, SIGNAL(readyRead()), this, SLOT(sendMessage()));
-    connect(clientConnection, SIGNAL(disconnected()), clientConnection, SLOT(deleteLater()));
+    debuggerLabel->setText(tr("Authentification"));
+    QTcpSocket *newConnection = tcpServer->nextPendingConnection();
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << tr("@Greeting");
+    newConnection->write(block);
+    clientConnection = newConnection;
+    QTimer::singleShot(1 * 1000, this, SLOT(auth()));
 }
 
-void Server::sendMessage(){
+void Server::gameBegin(){
+    networkTimer = new QTimer(this);
+    connect(networkTimer, SIGNAL(timeout()), this, SLOT(updateNetwork()));
+    networkTimer->start(1000);
+}
+
+void Server::updateNetwork(){
+    foreach(QTcpSocket *connection, connectionList){
+        sendMessage(connection);
+    }
+    networkTimer->start(1000);
+}
+
+void Server::sendMessage(QTcpSocket *connection){
     //This part is for test
     debuggerLabel->setText(tr("Messages sent!"));
     //Test part end
 
-    // Set transformed message
-    // May be set another class later
-    //encodeMessage();
-    QDataStream in(clientConnection);
+    QDataStream in(connection);
     in.setVersion(QDataStream::Qt_4_0);
 
     in >> currentMessageGot;
     debuggerLabel->setText(currentMessageGot);
 
-    /*
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
-    out << messages;
-    */
-    clientConnection->write(*getMessage());
+    connection->write(*getMessage());
 }
 
 void Server::sessionOpened(){
@@ -154,4 +180,24 @@ QByteArray *Server::getMessage(){
 
     out << sentMessage->text();
     return block;
+}
+
+void Server::auth(){
+    qDebug("Verifying");
+    debuggerLabel->setText(tr("Verifiring"));
+    if(clientConnection->bytesAvailable() > 0){
+        QDataStream in(clientConnection);
+        in.setVersion(QDataStream::Qt_4_0);
+        QString nickName;
+        in >> nickName;
+
+        //connect(clientConnection, SIGNAL(readyRead()), this, SLOT(sendMessage()));
+        connect(clientConnection, SIGNAL(disconnected()), clientConnection, SLOT(deleteLater()));
+        connectionList << clientConnection;
+        participantList->addItem(nickName);
+    }
+    else{
+        debuggerLabel->setText(tr("Rejected"));
+        clientConnection->disconnectFromHost();
+    }
 }

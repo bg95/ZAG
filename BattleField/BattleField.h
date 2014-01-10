@@ -10,7 +10,7 @@ class BFManager;
 #include <QTimer>
 #include "MainWindow.h"
 #include "BFManager.h"
-#include "BattleFieldOverlay.h"
+//#include "BattleFieldOverlay.h"
 
 class BattleField : public QGLWidget
 {
@@ -71,7 +71,7 @@ private:
     float angle;
     float delta_x, delta_y;
 
-    BattleFieldOverlay overlay;
+    //BattleFieldOverlay overlay;
 
 };
 

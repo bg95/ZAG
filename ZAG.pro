@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui opengl
+QT += network widgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,6 +28,8 @@ SOURCES += main.cpp\
     BattleField/QuadTree.cpp \
     BattleField/BFRule/BFRule.cpp \
     BattleField/BFRule/BFRCollision.cpp \
+    Network/Client.cpp \
+    Network/Server.cpp\
     BattleField/BFFactory.cpp \
     BattleField/BFRule/BFRShoot.cpp \
     BattleField/BFController/BFCAIRandom.cpp \
@@ -46,6 +49,8 @@ HEADERS  += MainWindow.h \
     main.h \
     BattleField/BFRule/BFRule.h \
     BattleField/BFRule/BFRCollision.h \
+    Network/Client.h \
+    Network/Server.h \
     BattleField/BFFactory.h \
     BattleField/BFRule/BFRShoot.h \
     BattleField/BFController/BFCAIRandom.h \

@@ -5,8 +5,11 @@ class BattleField;
 
 #include "BattleField/BattleField.h"
 #include "BattleField/BFRule/BFRCollision.h"
+#include "Network/Client.h"
+#include "Network/Server.h"
 
 #include <QMainWindow>
+#include <QPushButton>
 
 #define mainWindowWidth 500.0
 #define mainWindowHeight 500.0
@@ -17,7 +20,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public QWidget//public QMainWindow
 {
     Q_OBJECT
     
@@ -31,9 +34,19 @@ protected:
 
 private:
     Ui::MainWindow *ui;
+    QPushButton *serverButton;
+    QPushButton *clientButton;
+    QPushButton *singleButton;
+    QPushButton *quitButton;
+    Client *client;
+    Server *server;
 public: //for debugging
     BattleField *bf;
     BFRule *rule;
+private slots:
+    void serverMode();
+    void clientMode();
+    void singlePlayer();
 };
 
 #endif // MAINWINDOW_H

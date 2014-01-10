@@ -24,6 +24,7 @@ public:
 
     void encodeObject(BFObject *o, QIODevice *device);
     BFObject *decodeNewObject(QIODevice *device);
+    BFObject *decodeNewObject(QByteArray ba);
     BFObject *decodeReplaceObject(long id, QIODevice *device); //not tested
 
     void clear();

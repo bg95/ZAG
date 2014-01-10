@@ -50,7 +50,7 @@ public:
     virtual BFObjectShape getShape() const = 0;
     virtual double getRoughRadius() const = 0; //The radius of a circle centered at the object's center, large enough to cover the whole object, used for Quadtree
     virtual Vector2d getPosition() const = 0;
-    //virtual Vector2d getVelocity() const = 0;
+    virtual Vector2d getVelocity() const = 0;
 
     virtual void move(double time) = 0;
 
@@ -67,7 +67,6 @@ public:
         return id < b.id;
     }
 
-    //set/getProperty not tested
     void setProperty(const std::string &prop, const QVariant &val);
     const QVariant &getProperty(const std::string &prop);
     //void setProperty(const std::string &prop, const std::string &val);

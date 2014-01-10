@@ -11,12 +11,12 @@ BFCAIRandom::BFCAIRandom(BFManager *_manager, BFObject *_obj) :
 BFCAIRandom::~BFCAIRandom()
 {
 }
-
+/*
 BFControllerType BFCAIRandom::getType() const
 {
     return BFC_AI;//...
 }
-
+*/
 void BFCAIRandom::applyControl()
 {
     if (obj->getShape() == BFO_CIRCULAR)

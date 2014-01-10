@@ -82,7 +82,10 @@ void BFRShoot::processIntersections()
             {
                 double newhealth = b->getProperty("health").toDouble() - a->getProperty("damage").toDouble();
                 if (newhealth <= 0)
+                {
                     manager->destructObject(b);
+                    qDebug("object killed by bullet");
+                }
                 else
                 {
                     //b->setProperty("health", newhealth);
@@ -169,7 +172,27 @@ void BFRShoot::processInput()
         circle->maxa = 5;
         circle->setProperty("shoot", "");
         circle->setProperty("health", 1.0);
+        circle->setProperty("fraction", 1);
+        circle->setProperty("cooldown", 0.05);
+        circle->setProperty("cooldowncount", 0.0);
+
+        BFOColoredCircle *bullet = (BFOColoredCircle *)manager->getFactory()->newObject(typehash(BFOColoredCircle));
+        bullet->setColor(1.0, 0, 0, 1.0);
+        bullet->r = 0.01;
+        bullet->v = Vector2d(0, 6);
+        bullet->m = 0.01;
+        bullet->setProperty("isBullet", "Yes");
+        bullet->setProperty("damage", 0.2);
+        QBuffer bulletbuf;
+        bulletbuf.open(QIODevice::ReadWrite);
+        manager->getFactory()->encodeObject(bullet, &bulletbuf);
+        bulletbuf.seek(0);
+        manager->getFactory()->deleteObject(bullet);
+
+        //(*circle)["bullet prototype"] = bulletbuf.data();
+        circle->setProperty("bullet prototype", bulletbuf.data());
         manager->insertObject(circle);
+
         controller = new BFCAIRandom(manager, circle);
         manager->registerController(controller);
         //circles[i] = circle;
@@ -199,6 +222,7 @@ void BFRShoot::shoot(BFObject *obj, double theta)
         newcir->v = ((BFOCircle *)obj)->v + vabs * Vector2d(cos(theta + dtheta + ddtheta), sin(theta + dtheta + ddtheta));
         newcir->setProperty("isBullet", "Yes");
         newcir->setProperty("shooter", (unsigned long long)obj);
+        newcir->setProperty("fraction", obj->getProperty("fraction"));
         manager->insertObject(newcir);
         obj->setProperty("cooldowncount", cooldown + cooldowncount); //reset cooldowncount
         ((BFOCircle *)obj)->v = ((BFOCircle *)obj)->v - newcir->v * newcir->m / ((BFOCircle *)obj)->m;

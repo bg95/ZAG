@@ -3,6 +3,7 @@
 #include "BattleField/BFObject/BFOColoredCircle.h"
 #include "BattleField/BFController/BFCHuman.h"
 #include "BattleField/BFController/BFCAIRandom.h"
+#include "BattleField/BFController/BFCRandomShootDodge.h"
 
 #include "BattleField/BFRule/BFRCollision.h"
 #include "Network/Client.h"
@@ -100,11 +101,13 @@ void MainWindow::singlePlayer(){
     circle->setProperty("cooldown", 0.05);
     circle->setProperty("cooldowncount", 0.0);
     circle->setProperty("health", 1.0);
+    circle->setProperty("fraction", 0);
     bf->getManager()->insertObject(circle);
 
-    BFCHuman *hum = new BFCHuman(bf->getManager(), circle);
+    //BFCHuman *hum = new BFCHuman(bf->getManager(), circle);
+    BFCRandomShootDodge *rsd = new BFCRandomShootDodge(bf->getManager(), circle);
     //BFCAIRandom *air = new BFCAIRandom(bf->getManager(), circle);
-    bf->getManager()->registerController(hum);
+    bf->getManager()->registerController(rsd);
 /*
     circle = new BFOColoredCircle;//(bf->getManager());
     //bullet->setProperty("shooter", (unsigned long long)circle);

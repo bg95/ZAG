@@ -20,7 +20,7 @@ class BFController
 public:
     BFController(BFManager *_manager, BFObject *_obj);
     virtual ~BFController();
-    virtual BFControllerType getType() const = 0;
+    //virtual BFControllerType getType() const = 0;
     virtual void applyControl() = 0; //apply control to the object
     void setKeysAndMouse(std::set<Qt::Key> keyspressed, Vector2d mouseposition, Qt::MouseButtons mousebuttons);
 

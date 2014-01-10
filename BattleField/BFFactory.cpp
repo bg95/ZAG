@@ -2,6 +2,8 @@
 #include "BFObject/BFOColoredCircle.h"
 #include "BFController/BFController.h"
 
+#include <QBuffer>
+
 #include "BFFactory.h"
 
 BFFactory::BFFactory()
@@ -23,7 +25,7 @@ BFObject *BFFactory::newObject(BFObjectType type)
     BFObject *p = (*iter).second->newObject();
     p->created_from_factory = true;
     objects[p->getID()] = p;
-    qDebug("new object of type %d id=%ld", (int)type, p->getID());
+    qDebug("new object of type %ld id=%ld", (long)type, p->getID());
     return p;
 }
 
@@ -50,7 +52,7 @@ BFObject *BFFactory::replaceObject(long id, BFObjectType type)
     (*iter).second->deleting_from_factory = true;
     delete (*iter).second;
     (*iter).second = p;
-    qDebug("replace object of type %d id=%ld", (int)type, p->getID());
+    qDebug("replace object of type %ld id=%ld", (long)type, p->getID());
     return p;
 }
 
@@ -58,7 +60,7 @@ void BFFactory::encodeObject(BFObject *o, QIODevice *device)
 {
     BFObjectType type;
     type = o->getType();
-    qDebug("encode object type %d", (int)type);
+    qDebug("encode object type %ld", (long)type);
     device->write((const char *)&type, sizeof(type)); //Change to a string? No.
     o->encode(device);
 }
@@ -69,8 +71,16 @@ BFObject *BFFactory::decodeNewObject(QIODevice *device)
     BFObject *o;
     device->read((char *)&type, sizeof(type));
     o = newObject(type);
-    o->decode(device);
+    if (o)
+        o->decode(device);
     return o;
+}
+
+BFObject *BFFactory::decodeNewObject(QByteArray ba)
+{
+    QBuffer buf(&ba);
+    buf.open(QIODevice::ReadOnly);
+    return decodeNewObject(&buf);
 }
 
 BFObject *BFFactory::decodeReplaceObject(long id, QIODevice *device)

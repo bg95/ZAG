@@ -6,19 +6,19 @@
 Qt::Key BFCHuman::XNegKey = Qt::Key_A, BFCHuman::XPosKey = Qt::Key_D, BFCHuman::YNegKey = Qt::Key_S, BFCHuman::YPosKey = Qt::Key_W;
 
 BFCHuman::BFCHuman(BFManager *_manager, BFObject *_obj) :
-    BFController(_manager, _obj)
+    BFCRandomShootDodge(_manager, _obj)
 {
 }
 
 BFCHuman::~BFCHuman()
 {
 }
-
+/*
 BFControllerType BFCHuman::getType() const
 {
     return BFC_HUMAN;
 }
-
+*/
 void BFCHuman::applyControl()
 {
     if (obj->getShape() == BFO_CIRCULAR)
@@ -42,7 +42,6 @@ void BFCHuman::applyControl()
 
         if (mousebut & Qt::LeftButton)
         {
-            double bulletv = 6.0;
             double theta = (mousepos - cir->p).arg();
             if (keyPressed(Qt::Key_Shift))
             {

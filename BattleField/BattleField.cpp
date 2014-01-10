@@ -227,7 +227,9 @@ void BattleField::keyPressEvent(QKeyEvent *event)
         scale(0.83333);
         return;
     case Qt::Key_Escape://escape
-        this->main_window->close();
+        //this->main_window->close();
+        this->close();
+        emit battleEnd();
         return;
     }
     manager.keyPressEvent(event);

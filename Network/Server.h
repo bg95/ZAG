@@ -7,6 +7,9 @@
 //#include <QTcpServer>
 //#include <QNetworkSession>
 
+#include "BattleField/BattleField.h"
+#include "BattleField/BFRule/BFRCollision.h"
+
 QT_BEGIN_NAMESPACE
 class QTcpSocket;
 class QLabel;
@@ -31,6 +34,7 @@ private slots:
     void sessionOpened();
     void gameBegin();
     void updateNetwork();
+    void battleEnd();
     //void encodeMessage();
 
 private:
@@ -44,8 +48,13 @@ private:
     quint16 blockSize;
     QString currentMessageGot;
 
+    bool gameOn;
+    BattleField *bf;
+    BFRule *bfRule;
+
     QByteArray *getMessage();
     void sendMessage(QTcpSocket *connection);
+    void prepareInitialState();
 
     //This part is for test
     QLabel *debuggerLabel;

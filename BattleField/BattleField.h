@@ -25,6 +25,7 @@ public:
     BFManager *getManager();
     
 signals:
+    void battleEnd();
     
 public slots:
     void start();

@@ -19,10 +19,12 @@ BattleField::BattleField(QWidget *parent, bool fs) :
     QGLWidget(parent),
     refreshtimer(this),
     display_counter(0),
-    manager(this)
+    manager(this),
+    overlay(this)
 {
     refreshtimer.setInterval(refresh_interval);
     connect(&refreshtimer, SIGNAL(timeout()), this, SLOT(refresh()));
+    connect(&refreshtimer, SIGNAL(timeout()), &overlay, SLOT(update()));
     //refreshtimer.start();
     fullscreen = fs;
     if(fullscreen)
@@ -167,6 +169,8 @@ void BattleField::resizeGL(int w, int h)
     glLoadIdentity();
     glTranslatef(0.0, 0.0, -2.0);
     glRotatef(-15.0, 1.0, 0.0, 0.0);
+
+    overlay.setGeometry(0, 0, width() / 4, height() / 4);
 }
 
 //This function has been replaced by glFrustum()=_+

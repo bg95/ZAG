@@ -10,6 +10,7 @@ class BFManager;
 #include <QTimer>
 #include "MainWindow.h"
 #include "BFManager.h"
+#include "BattleFieldOverlay.h"
 
 class BattleField : public QGLWidget
 {
@@ -31,6 +32,8 @@ public:
     Vector2d getTranslation() const;
     void rotate(double dangle); //in degree, rotate stands for positive degree
     double getRotation() const;
+
+
 
 signals:
     
@@ -67,6 +70,9 @@ private:
     float unit;
     float angle;
     float delta_x, delta_y;
+
+    BattleFieldOverlay overlay;
+
 };
 
 #endif // BATTLEFIELD_H

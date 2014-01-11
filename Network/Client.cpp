@@ -295,7 +295,7 @@ void Client::clientGameUpdate(){
     //in.setVersion(QDataStream::Qt_4_0);
 
     qDebug("Client Updating");
-
+/*
     QBuffer *buf = new QBuffer(tcpSocket);
     buf->open(QIODevice::ReadWrite);
 
@@ -306,7 +306,7 @@ void Client::clientGameUpdate(){
 
     buf->close();
     delete buf;
-
+*/
 }
 
 void Client::battleEnd(){

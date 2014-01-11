@@ -100,6 +100,21 @@ void BFManager::destructControllers()
 
 void BFManager::applyControlEvents(std::vector<ControlEvent> &events)
 {
+    //testing encode/decode of ControlEvent
+    /*
+    std::vector<ControlEvent> events0;
+    QBuffer *buf = new QBuffer();
+    buf->open(QIODevice::ReadWrite);
+    buf->seek(0);
+    int zero = 0;
+    buf->write((const char *)&zero, sizeof(zero));
+    encodeControlEventList(events, buf);
+    buf->seek(0);
+    buf->read((char *)&zero, sizeof(zero));
+    decodeAppendControlEventList(events0, buf);
+    events = events0;
+    delete buf;*/
+
     BFObject *obj;
     for (auto iter = events.begin(); iter != events.end(); iter++)
     {

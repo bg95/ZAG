@@ -12,7 +12,7 @@ ControlEvent::ControlEvent(QIODevice *device)
 
 void ControlEvent::encode(QIODevice *device)
 {
-    device->write((const char *)objid, sizeof(objid));
+    device->write((const char *)&objid, sizeof(objid));
     BFObject::writeVector2d(device, acc);
     auto size = difference.size();
     device->write((const char *)&size, sizeof(size));
@@ -25,15 +25,17 @@ void ControlEvent::encode(QIODevice *device)
 
 void ControlEvent::decode(QIODevice *device)
 {
-    device->read((char *)objid, sizeof(objid));
+    device->read((char *)&objid, sizeof(objid));
     BFObject::readVector2d(device, acc);
     difference.clear();
     auto size = difference.size();
     device->read((char *)&size, sizeof(size));
-    for (auto iter = difference.begin(); iter != difference.end(); iter++)
+    std::pair<std::string, QVariant> pair;
+    for (size_t i = 0; i < size; i++)
     {
-        BFObject::readStdString(device, (*iter).first);
-        BFObject::readQVariant(device, (*iter).second);
+        BFObject::readStdString(device, pair.first);
+        BFObject::readQVariant(device, pair.second);
+        difference.push_back(pair);
     }
 }
 
@@ -45,7 +47,7 @@ void ControlEvent::addPropertyChange(const std::string &prop, const QVariant &va
 void encodeControlEventList(std::vector<ControlEvent> &list, QIODevice *device)
 {
     auto size = list.size();
-    device->write((const char *)size, sizeof(size));
+    device->write((const char *)&size, sizeof(size));
     for (auto iter = list.begin(); iter != list.end(); iter++)
         (*iter).encode(device);
 }

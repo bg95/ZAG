@@ -322,23 +322,22 @@ void BattleField::refresh()
 {
     manager.nextFrame(refresh_interval / 1000.0 * timescale);
 
-//Send message to clients
-    //QByteArray message;
-    //QBuffer buf(&message);
-    //manager.encodeAllObjects(&buf);
-
-    //Test message
-    QByteArray message;
-    QDataStream out(&message, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
-    out << "This is a message";
-    //End
-
-    emit sendMessage(message);
-
     display_counter++;
     if (display_counter == display_refreshes)
     {
+        //Send message to clients
+        QByteArray message;
+        QBuffer buf(&message);
+        buf.open(QIODevice::ReadWrite);
+        manager.encodeAllObjects(&buf);
+        qDebug("%d", message.size());
+
+        //QDataStream out(&message, QIODevice::WriteOnly);
+        //out << QString("Here");
+
+        emit sendMessage(message);
+        buf.close();
+
         display_counter = 0;
         update();
     }

@@ -409,6 +409,8 @@ void Server::battleEnd(){
 }
 
 void Server::updateClient(QByteArray message){
+    //qDebug("Send message to Client");
+
     foreach(QTcpSocket *client, connectionList){
         client->readAll();
         client->write(message);

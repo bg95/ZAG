@@ -179,7 +179,7 @@ void BFManager::nextFrame(double deltatime)
 
 void BFManager::paintAll(QGLWidget *glwidget)
 {
-    //qDebug("paintAll");
+    qDebug("paintAll, #objects = %d", (int)objects.size());
     std::set<BFObject *>::iterator iter;
     for (iter = objects.begin(); iter != objects.end(); iter++)
         (*iter)->draw(glwidget);

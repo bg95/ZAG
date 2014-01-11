@@ -8,13 +8,13 @@ BFObject::BFObject()//BFManager *_manager)
 {
     id = count;
     count++;
-    controller = 0;
+    //controller = 0;
 }
 
 BFObject::~BFObject()
 {
-    if (created_from_factory && !deleting_from_factory)
-        qCritical("Deleting Object %lX (id=%ld) outside BFFactory!", this, id);
+    //if (created_from_factory && !deleting_from_factory)
+    //    qCritical("Deleting Object %lX (id=%ld) outside BFFactory!", this, id);
 }
 
 BFObject *BFObject::duplicate()
@@ -57,13 +57,13 @@ void BFObject::decode(QIODevice *device)
         setProperty(prop, val);
     }
 }
-
+/*
 BFController *BFObject::getController()
 {
     return controller;
 }
-
-long BFObject::getID()
+*/
+BFObjectID BFObject::getID()
 {
     return id;
 }
@@ -127,7 +127,7 @@ void BFObject::readQVariant(QIODevice *device, QVariant &var)
     device->read(ba.data(), size);
     var.setValue(ba);
     bool ok = var.convert(type);
-    qDebug("read  from type %s to %s, %d", QVariant::typeToName(QVariant::ByteArray), QVariant::typeToName(type), ok);
+    //qDebug("read  from type %s to %s, %d", QVariant::typeToName(QVariant::ByteArray), QVariant::typeToName(type), ok);
 }
 
 void BFObject::writeQVariant(QIODevice *device, const QVariant &var)
@@ -137,7 +137,7 @@ void BFObject::writeQVariant(QIODevice *device, const QVariant &var)
     bool ok = bavar.convert(QVariant::ByteArray);
     QByteArray ba = bavar.toByteArray();
     int size = ba.size();
-    qDebug("write from type %s to %s, %d", QVariant::typeToName(type), QVariant::typeToName(QVariant::ByteArray), ok);
+    //qDebug("write from type %s to %s, %d", QVariant::typeToName(type), QVariant::typeToName(QVariant::ByteArray), ok);
     device->write((const char *)&type, sizeof(type));
     device->write((const char *)&size, sizeof(size));
     device->write(ba.data(), ba.size());

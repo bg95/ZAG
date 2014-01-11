@@ -17,6 +17,7 @@ class BFController;
 
 typedef size_t BFObjectType;
 #define typehash(TYPE) (typeid(TYPE).hash_code())
+typedef long BFObjectID;
 /*
 enum BFObjectType
 {
@@ -31,7 +32,7 @@ class BFObject
 {
 public:
     static const std::string empty_string;
-    static long count;
+    static BFObjectID count;
     static void readStdString(QIODevice *device, std::string &str); //read a string from device
     static void writeStdString(QIODevice *device, const std::string &str); //write a string to device
     static void readQVariant(QIODevice *device, QVariant &var); //read a QVariant
@@ -50,7 +51,7 @@ public:
     virtual BFObjectShape getShape() const = 0;
     virtual double getRoughRadius() const = 0; //The radius of a circle centered at the object's center, large enough to cover the whole object, used for Quadtree
     virtual Vector2d getPosition() const = 0;
-    //virtual Vector2d getVelocity() const = 0;
+    virtual Vector2d getVelocity() const = 0;
 
     virtual void move(double time) = 0;
 
@@ -59,25 +60,24 @@ public:
     virtual void decode(QIODevice *device); //must be called if overwritten by subclasses
 
     friend class BFController;
-    BFController *getController();
+    //BFController *getController();
 
-    long getID();
+    BFObjectID getID();
     bool operator <(BFObject &b)
     {
         return id < b.id;
     }
 
-    //set/getProperty not tested
     void setProperty(const std::string &prop, const QVariant &val);
     const QVariant &getProperty(const std::string &prop);
     //void setProperty(const std::string &prop, const std::string &val);
     QVariant &operator[](const std::string &prop);
 
 private:
-    long id;
+    BFObjectID id;
     //BFManager *manager;
     std::map<std::string, QVariant> properties;
-    BFController *controller;
+    //BFController *controller;
 
     friend class BFFactory;
     bool created_from_factory;

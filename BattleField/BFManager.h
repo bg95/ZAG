@@ -7,6 +7,7 @@ class BFOCircle;
 class IntersectionEvent;
 class BFController;
 class BFRule;
+class BattleField;
 
 #include <Qt>
 #include <QKeyEvent>
@@ -25,9 +26,10 @@ public:
     static int process_independent_intersections;
     static double epsi;
 
-    BFManager();
+    BFManager(BattleField *bf);
     ~BFManager();
 
+    BattleField *getBattleField();
     //Range of the battlefield
     double getLeft() const {return left;}
     double getRight() const {return right;}
@@ -73,6 +75,8 @@ public:
     //Factory operations
     BFFactory *getFactory();
     void encodeAllObjects(QIODevice *device);
+    void decodeNewAllObjects(QIODevice *device);
+    void decodeReplaceAllObjects(QIODevice *device);
 
     //Calculate intersections
     double intersectingTime(const BFObject *a, const BFObject *b);
@@ -86,6 +90,7 @@ public:
     bool intersectingBoundary(BFOCircle *a, IntersectionEvent::Boundary b);
 
 private:
+    BattleField *battlefield;
     double left, right, bottom, top;
     std::set<BFObject *> objects;
     std::vector<IntersectionEvent> intersections;
@@ -110,6 +115,7 @@ private:
 
 };
 
+#include "BattleField.h"
 #include "BFObject/BFObject.h"
 #include "BFObject/BFOCircle.h"
 #include "BFController/BFController.h"

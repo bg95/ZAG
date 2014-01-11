@@ -10,6 +10,7 @@ class BFManager;
 #include <QTimer>
 #include "MainWindow.h"
 #include "BFManager.h"
+//#include "BattleFieldOverlay.h"
 
 class BattleField : public QGLWidget
 {
@@ -23,7 +24,17 @@ public:
     bool insertObject(BFObject *o); //unused, should be deleted later
     void removeObject(BFObject *o); //unused, should be deleted later
     BFManager *getManager();
-    
+
+    //methods for changing the view port
+    void scale(double k);
+    double getScale() const;
+    void move(double dx, double dy);
+    Vector2d getTranslation() const;
+    void rotate(double dangle); //in degree, rotate stands for positive degree
+    double getRotation() const;
+
+
+
 signals:
     void battleEnd();
     void sendMessage(QByteArray);
@@ -47,10 +58,6 @@ protected:
     void mouseReleaseEvent(QMouseEvent *);
     void wheelEvent(QWheelEvent *);
 
-    //methods for changing the view port
-    void scale(double k);
-    void move(double dx, double dy);
-    void rotate(double dangle);//in degree, rotate stands for positive degree
 private slots:
     void refresh();
 
@@ -65,6 +72,9 @@ private:
     float unit;
     float angle;
     float delta_x, delta_y;
+
+    //BattleFieldOverlay overlay;
+
 };
 
 #endif // BATTLEFIELD_H

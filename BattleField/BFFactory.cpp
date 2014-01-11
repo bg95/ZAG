@@ -2,6 +2,8 @@
 #include "BFObject/BFOColoredCircle.h"
 #include "BFController/BFController.h"
 
+#include <QBuffer>
+
 #include "BFFactory.h"
 
 BFFactory::BFFactory()
@@ -23,13 +25,13 @@ BFObject *BFFactory::newObject(BFObjectType type)
     BFObject *p = (*iter).second->newObject();
     p->created_from_factory = true;
     objects[p->getID()] = p;
-    qDebug("new object of type %d id=%ld", (int)type, p->getID());
+    //qDebug("new object of type %ld id=%ld", (long)type, p->getID());
     return p;
 }
 
 void BFFactory::deleteObject(BFObject *o)
 {
-    std::map<long, BFObject *>::iterator iter = objects.find(o->getID());
+    std::map<BFObjectID, BFObject *>::iterator iter = objects.find(o->getID());
     if (iter == objects.end())
         return;
     objects.erase(iter);
@@ -37,12 +39,12 @@ void BFFactory::deleteObject(BFObject *o)
     delete o;
 }
 
-BFObject *BFFactory::replaceObject(long id, BFObjectType type)
+BFObject *BFFactory::replaceObject(BFObjectID id, BFObjectType type)
 {
     std::map<BFObjectType, BFObject *>::iterator piter = prototypes.find(type);
     if (piter == prototypes.end())
         return 0;
-    std::map<long, BFObject *>::iterator iter = objects.find(id);
+    std::map<BFObjectID, BFObject *>::iterator iter = objects.find(id);
     if (iter == objects.end())
         return 0;
     BFObject *p = (*iter).second->newObject();
@@ -50,7 +52,7 @@ BFObject *BFFactory::replaceObject(long id, BFObjectType type)
     (*iter).second->deleting_from_factory = true;
     delete (*iter).second;
     (*iter).second = p;
-    qDebug("replace object of type %d id=%ld", (int)type, p->getID());
+    //qDebug("replace object of type %ld id=%ld", (long)type, p->getID());
     return p;
 }
 
@@ -58,8 +60,9 @@ void BFFactory::encodeObject(BFObject *o, QIODevice *device)
 {
     BFObjectType type;
     type = o->getType();
-    qDebug("encode object type %d", (int)type);
+    //qDebug("encode object type %ld", (long)type);
     device->write((const char *)&type, sizeof(type)); //Change to a string? No.
+    device->write((const char *)&o->id, sizeof(o->id));
     o->encode(device);
 }
 
@@ -67,25 +70,37 @@ BFObject *BFFactory::decodeNewObject(QIODevice *device)
 {
     BFObjectType type;
     BFObject *o;
+    BFObjectID tid;
     device->read((char *)&type, sizeof(type));
+    device->read((char *)&tid, sizeof(tid));
     o = newObject(type);
-    o->decode(device);
+    if (o)
+        o->decode(device);
     return o;
 }
 
-BFObject *BFFactory::decodeReplaceObject(long id, QIODevice *device)
+BFObject *BFFactory::decodeNewObject(QByteArray ba)
+{
+    QBuffer buf(&ba);
+    buf.open(QIODevice::ReadOnly);
+    return decodeNewObject(&buf);
+}
+
+BFObject *BFFactory::decodeReplaceObject(/*BFObjectID id, */QIODevice *device)
 {
     BFObjectType type;
     BFObject *o;
+    BFObjectID tid;
     device->read((char *)&type, sizeof(type));
-    o = replaceObject(id, type);
+    device->read((char *)&tid, sizeof(tid));
+    o = replaceObject(tid, type);
     o->decode(device);
     return o;
 }
 
 void BFFactory::clear()
 {
-    std::map<long, BFObject *>::iterator oiter;
+    std::map<BFObjectID, BFObject *>::iterator oiter;
     for (oiter = objects.begin(); oiter != objects.end(); oiter++)
         delete (*oiter).second;
     objects.clear();
@@ -93,4 +108,12 @@ void BFFactory::clear()
     for (piter = prototypes.begin(); piter != prototypes.end(); piter++)
         delete (*piter).second;
     prototypes.clear();
+}
+
+BFObject *BFFactory::objectByID(BFObjectID id)
+{
+    auto iter = objects.find(id);
+    if (iter == objects.end())
+        return 0;
+    return (*iter).second;
 }

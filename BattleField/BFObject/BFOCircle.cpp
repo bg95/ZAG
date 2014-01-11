@@ -70,6 +70,10 @@ Vector2d BFOCircle::getPosition() const
 {
     return p;
 }
+Vector2d BFOCircle::getVelocity() const
+{
+    return v;
+}
 
 void BFOCircle::move(double time)
 {

@@ -23,6 +23,7 @@ public:
     //{}
     double getRoughRadius() const;
     Vector2d getPosition() const;
+    Vector2d getVelocity() const;
 
     void move(double time);
 

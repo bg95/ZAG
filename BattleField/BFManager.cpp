@@ -10,8 +10,8 @@
 int BFManager::process_independent_intersections = 10;
 double BFManager::epsi = 0.01;
 
-BFManager::BFManager() :
-    qtree(this)
+BFManager::BFManager(BattleField *bf) :
+    battlefield(bf), qtree(this)
 {
     /*
     left = -1.0;
@@ -32,6 +32,11 @@ BFManager::~BFManager()
         factory.deleteObject(*iter);
 }
 
+BattleField *BFManager::getBattleField()
+{
+    return battlefield;
+}
+
 bool BFManager::insertObject(BFObject *o)
 {
     std::pair<std::set<BFObject *>::iterator, bool> pair = objects.insert(o);
@@ -45,8 +50,8 @@ void BFManager::removeObject(BFObject *o)
 
 void BFManager::destructObject(BFObject *o)
 {
-    if (o->getController())
-        destructController(o->getController());
+    //if (o->getController())
+    //    destructController(o->getController());
     factory.deleteObject(o);
     removeObject(o);
 }
@@ -228,8 +233,30 @@ BFFactory *BFManager::getFactory()
 
 void BFManager::encodeAllObjects(QIODevice *device)
 {
+    int numobj = objects.size();
+    device->write((const char *)&numobj, sizeof(objects.size()));
     for (auto iter = objects.begin(); iter != objects.end(); iter++)
         factory.encodeObject(*iter, device);
+}
+
+void BFManager::decodeNewAllObjects(QIODevice *device)
+{
+    int numobj;
+    device->read((char *)&numobj, sizeof(std::set<BFObject *>::size_type));
+    while (numobj--)
+    {
+        insertObject(factory.decodeNewObject(device));
+    }
+}
+
+void BFManager::decodeReplaceAllObjects(QIODevice *device)
+{
+    int numobj;
+    device->read((char *)&numobj, sizeof(std::set<BFObject *>::size_type));
+    while (numobj--)
+    {
+        insertObject(factory.decodeReplaceObject(device));
+    }
 }
 
 ///intersection between objects

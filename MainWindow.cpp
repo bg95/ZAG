@@ -104,10 +104,10 @@ void MainWindow::singlePlayer(){
     circle->setProperty("fraction", 0);
     bf->getManager()->insertObject(circle);
 
-    //BFCHuman *hum = new BFCHuman(bf->getManager(), circle);
-    BFCRandomShootDodge *rsd = new BFCRandomShootDodge(bf->getManager(), circle);
-    //BFCAIRandom *air = new BFCAIRandom(bf->getManager(), circle);
-    bf->getManager()->registerController(rsd);
+    BFCHuman *ctrl = new BFCHuman(bf->getManager(), circle);
+    //BFCRandomShootDodge *ctrl = new BFCRandomShootDodge(bf->getManager(), circle);
+    //BFCAIRandom *ctrl = new BFCAIRandom(bf->getManager(), circle);
+    bf->getManager()->registerController(ctrl);
 /*
     circle = new BFOColoredCircle;//(bf->getManager());
     //bullet->setProperty("shooter", (unsigned long long)circle);
@@ -137,6 +137,7 @@ void MainWindow::singlePlayer(){
     circle->maxa = 5;
     circle->setProperty("shoot", "");
     circle->setProperty("health", 1.0);
+    (*circle)["fraction"] = 2;
     buf->open(QBuffer::WriteOnly);
     fac->encodeObject(circle, buf);
     buf->close();

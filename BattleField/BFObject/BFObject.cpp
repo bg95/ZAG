@@ -127,7 +127,7 @@ void BFObject::readQVariant(QIODevice *device, QVariant &var)
     device->read(ba.data(), size);
     var.setValue(ba);
     bool ok = var.convert(type);
-    qDebug("read  from type %s to %s, %d", QVariant::typeToName(QVariant::ByteArray), QVariant::typeToName(type), ok);
+    //qDebug("read  from type %s to %s, %d", QVariant::typeToName(QVariant::ByteArray), QVariant::typeToName(type), ok);
 }
 
 void BFObject::writeQVariant(QIODevice *device, const QVariant &var)
@@ -137,7 +137,7 @@ void BFObject::writeQVariant(QIODevice *device, const QVariant &var)
     bool ok = bavar.convert(QVariant::ByteArray);
     QByteArray ba = bavar.toByteArray();
     int size = ba.size();
-    qDebug("write from type %s to %s, %d", QVariant::typeToName(type), QVariant::typeToName(QVariant::ByteArray), ok);
+    //qDebug("write from type %s to %s, %d", QVariant::typeToName(type), QVariant::typeToName(QVariant::ByteArray), ok);
     device->write((const char *)&type, sizeof(type));
     device->write((const char *)&size, sizeof(size));
     device->write(ba.data(), ba.size());

@@ -42,36 +42,45 @@ void BFCHuman::applyControl()
 
         if (mousebut & Qt::LeftButton)
         {
+            BFObject *faim = 0;
             double theta = (mousepos - cir->p).arg();
             if (keyPressed(Qt::Key_Shift))
             {
-                double closesttheta;
+                //qDebug("shift pressed");
                 double closestcos = -2;
                 std::set<BFObject *>::iterator iter;
                 for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
-                    if ((*iter) != cir && (*iter)->getProperty("isBullet") != "Yes")
+                {
+                    //qDebug("object");
+                    if ((*iter) != cir &&
+                            (*iter)->getProperty("isBullet") != "Yes" &&
+                            (*iter)->getProperty("fraction") != (*obj)["fraction"])
                     {
-                        BFOCircle *aim = (BFOCircle *)(*iter);
-                        double t = ((*iter)->getPosition() - cir->p).abs() / bulletv;
-                        double ttheta = (aim->p + aim->v * t - cir->p).arg();
+                        BFObject *aim = (*iter);
+                        double t = (aim->getPosition() - obj->getPosition()).abs() / bulletv;
+                        double ttheta = (aim->getPosition() + aim->getVelocity() * t - obj->getPosition()).arg();
+
+                        //qDebug("ttheta = %lf (%lf deg)", ttheta, ttheta / PI * 180.0);
                         if (cos(ttheta - theta) > closestcos)
                         {
                             closestcos = cos(ttheta - theta);
-                            closesttheta = ttheta;
+                            faim = aim;
                         }
                     }
-                if (closestcos == -2)
-                    closesttheta = theta;
-                //cir->setProperty("shoot", closesttheta);
-                theta = closesttheta;
+                }
+                if (!faim)
+                {
+                    //closesttheta = theta;
+                    shoot(theta);
+                }
+                else
+                {
+                    //theta = closesttheta;
+                    shoot(faim);
+                }
             }
-
-            Vector2d r(cos(theta), sin(theta));
-            Vector2d v0 = ((BFOCircle *)obj)->v;
-            double k = (-(r & v0) + sqrt((r & v0) * (r & v0) - (r & r) * ((v0 & v0) - bulletv * bulletv))) / (r & r);
-            theta = (k * r - v0).arg();
-
-            cir->setProperty("shoot", theta);
+            else
+                shoot(theta);
             //qDebug("mouse left button pressed. %lf %s", theta);
         }
 

@@ -2,6 +2,7 @@
 #include "../BFObject/BFOColoredCircle.h"
 #include "../BFController/BFCHuman.h"
 #include "../BFController/BFCAIRandom.h"
+#include "../BFController/BFCRandomShootDodge.h"
 
 //#include "BFRCollision.h"
 #include <sstream>
@@ -84,7 +85,7 @@ void BFRShoot::processIntersections()
                 if (newhealth <= 0)
                 {
                     manager->destructObject(b);
-                    qDebug("object killed by bullet");
+                    //qDebug("object killed by bullet");
                 }
                 else
                 {
@@ -162,7 +163,8 @@ void BFRShoot::processInput()
     if (!pspace && (manager->getKeysPressed().find(Qt::Key_Space) != manager->getKeysPressed().end()))
     {
         BFOColoredCircle *circle;
-        BFCAIRandom *controller;
+        //BFCAIRandom *controller;
+        BFController *controller;
         //circle = new BFOColoredCircle;//(bf->getManager());
         circle = (BFOColoredCircle *)manager->getFactory()->newObject(typehash(BFOColoredCircle));
         circle->p = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
@@ -172,8 +174,16 @@ void BFRShoot::processInput()
         circle->maxa = 5;
         circle->setProperty("shoot", "");
         circle->setProperty("health", 1.0);
-        circle->setProperty("fraction", 1);
-        circle->setProperty("cooldown", 0.05);
+        circle->setProperty("fraction", 10);
+        if (manager->getKeysPressed().find(Qt::Key_1) != manager->getKeysPressed().end())
+        {
+            circle->setProperty("fraction", 11);
+        }
+        if (manager->getKeysPressed().find(Qt::Key_2) != manager->getKeysPressed().end())
+        {
+            circle->setProperty("fraction", 12);
+        }
+        circle->setProperty("cooldown", 1.0);
         circle->setProperty("cooldowncount", 0.0);
 
         BFOColoredCircle *bullet = (BFOColoredCircle *)manager->getFactory()->newObject(typehash(BFOColoredCircle));
@@ -182,7 +192,7 @@ void BFRShoot::processInput()
         bullet->v = Vector2d(0, 6);
         bullet->m = 0.01;
         bullet->setProperty("isBullet", "Yes");
-        bullet->setProperty("damage", 0.2);
+        bullet->setProperty("damage", 0.1);
         QBuffer bulletbuf;
         bulletbuf.open(QIODevice::ReadWrite);
         manager->getFactory()->encodeObject(bullet, &bulletbuf);
@@ -193,7 +203,8 @@ void BFRShoot::processInput()
         circle->setProperty("bullet prototype", bulletbuf.data());
         manager->insertObject(circle);
 
-        controller = new BFCAIRandom(manager, circle);
+        //controller = new BFCAIRandom(manager, circle);
+        controller = new BFCRandomShootDodge(manager, circle);
         manager->registerController(controller);
         //circles[i] = circle;
     }

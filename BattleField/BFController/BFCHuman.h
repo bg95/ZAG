@@ -18,9 +18,6 @@ public:
     //virtual BFControllerType getType() const;
     virtual void applyControl();
 
-protected:
-    double bulletv;
-
 };
 
 #endif // BFCHUMAN_H

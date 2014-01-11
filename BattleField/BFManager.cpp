@@ -251,6 +251,7 @@ void BFManager::decodeNewAllObjects(QIODevice *device)
 
 void BFManager::decodeReplaceAllObjects(QIODevice *device)
 {
+    destructObjects();
     int numobj;
     device->read((char *)&numobj, sizeof(std::set<BFObject *>::size_type));
     while (numobj--)

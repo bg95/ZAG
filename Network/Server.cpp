@@ -44,6 +44,7 @@ Server::Server(QWidget *parent):
 
     participantList = new QListWidget;
     participantList->addItem(tr("Host"));
+    nickNameList << QString("Host");
 
     messageList = new QListWidget;
 
@@ -268,6 +269,7 @@ void Server::gameBegin(){
 
     QByteArray block = writeString("@GameBegin");
     foreach(QTcpSocket *connection, connectionList){
+        disconnect(connection, SIGNAL(readyRead()), this, SLOT(newMessage()));
         connection->write(block);
     }
 
@@ -321,11 +323,13 @@ void Server::prepareInitialState(){
     circle->setProperty("cooldown", 0.05);
     circle->setProperty("cooldowncount", 0.0);
     circle->setProperty("health", 1.0);
+    circle->setProperty("fraction", 0);
     bf->getManager()->insertObject(circle);
 
-    BFCHuman *hum = new BFCHuman(bf->getManager(), circle->getID());
-    //BFCAIRandom *air = new BFCAIRandom(bf->getManager(), circle);
-    bf->getManager()->registerController(hum);
+    BFCHuman *ctrl = new BFCHuman(bf->getManager(), circle->getID());
+    //BFCRandomShootDodge *ctrl = new BFCRandomShootDodge(bf->getManager(), circle);
+    //BFCAIRandom *ctrl = new BFCAIRandom(bf->getManager(), circle);
+    bf->getManager()->registerController(ctrl);
 /*
     circle = new BFOColoredCircle;//(bf->getManager());
     //bullet->setProperty("shooter", (unsigned long long)circle);
@@ -341,10 +345,9 @@ void Server::prepareInitialState(){
     circle->setProperty("cooldowncount", 0.0);
     circle->setProperty("health", 1.0);
     bf->getManager()->insertObject(circle);
-*/
     hum = new BFCHuman(bf->getManager(), circle->getID());
     bf->getManager()->registerController(hum);
-
+*/
     QBuffer *buf = new QBuffer;
     BFFactory *fac = bf->getManager()->getFactory();
     circle = (BFOColoredCircle *)bf->getManager()->getFactory()->newObject(typehash(BFOColoredCircle));//(bf->getManager());
@@ -355,6 +358,8 @@ void Server::prepareInitialState(){
     circle->maxa = 5;
     circle->setProperty("shoot", "");
     circle->setProperty("health", 1.0);
+    //(*circle)["fraction"] = 2;
+    circle->setProperty("fraction", 2);
     buf->open(QBuffer::WriteOnly);
     fac->encodeObject(circle, buf);
     buf->close();

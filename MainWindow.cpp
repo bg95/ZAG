@@ -67,9 +67,9 @@ void MainWindow::singlePlayer(){
     bf = new BattleField(this);
     bf->setGeometry(0, 0, width(), height());
     bf->show();*/
-    setGeometry(mainWindowLUx, mainWindowLUy, mainWindowWidth, mainWindowHeight);
+    //setGeometry(mainWindowLUx, mainWindowLUy, mainWindowWidth, mainWindowHeight);
 
-    bf = new BattleField(this);
+    bf = new BattleField(0);
     //bf->setGeometry(0, 0, width(), height());
 
     //rule = new BFRCollision(bf->getManager());
@@ -193,6 +193,7 @@ void MainWindow::singlePlayer(){
 */
 
     bf->show();
+    this->hide();
     bf->start();
 }
 

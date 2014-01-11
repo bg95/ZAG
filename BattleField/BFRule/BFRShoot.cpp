@@ -128,7 +128,6 @@ void BFRShoot::processInput()
     buffer.seek(0);
     manager->encodeAllObjects(&buffer);
     buffer.seek(0);
-    manager->destructObjects();
     manager->decodeReplaceAllObjects(&buffer);
 */
 

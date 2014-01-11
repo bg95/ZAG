@@ -201,10 +201,16 @@ void BattleField::keyPressEvent(QKeyEvent *event)
     switch(event->key()) {
     case Qt::Key_F1://full screen
         fullscreen = !fullscreen;
-        if(fullscreen)  this->main_window->showFullScreen();
+        if(fullscreen)
+            this->showFullScreen();
+            //this->main_window->showFullScreen();
         else {
+            /*
             this->main_window->showNormal();
             this->main_window->setGeometry(mainWindowLUx, mainWindowLUy, mainWindowWidth, mainWindowHeight);
+            */
+            this->showNormal();
+            this->setGeometry(mainWindowLUx, mainWindowLUy, mainWindowWidth, mainWindowHeight);
         }
         updateGL();
         return;

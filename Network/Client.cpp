@@ -295,21 +295,23 @@ void Client::clientGameUpdate(){
     //in.setVersion(QDataStream::Qt_4_0);
 
     qDebug("Client Updating");
-/*
+
     QBuffer *buf = new QBuffer(tcpSocket);
     buf->open(QIODevice::ReadWrite);
 
     bf->getManager()->destructObjects();
-    bf->getManager()->getFactory()->decodeReplaceObject(buf);
+    bf->getManager()->decodeReplaceAllObjects(buf);
 
-    bf->getManager()->paintAll(bf);
+    bf->update();
 
     buf->close();
     delete buf;
-*/
+
 }
 
 void Client::battleEnd(){
+    disconnect(tcpSocket, SIGNAL(readyRead()), this, SLOT(clientGameUpdate()));
+    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMessage()));
     delete bf;
     delete rule;
 

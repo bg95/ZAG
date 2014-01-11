@@ -402,6 +402,12 @@ void Server::updateNetwork(){
 */
 
 void Server::battleEnd(){
+    bf->pause();
+    foreach(QTcpSocket *cli, connectionList){
+        connect(cli, SIGNAL(readyRead()), this, SLOT(newMessage()));
+    }
+    gameBeginButton->setEnabled(true);
+
     delete bf;
     delete bfRule;
 

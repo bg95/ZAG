@@ -308,7 +308,7 @@ void Server::prepareInitialState(){
     bf->getManager()->getFactory()->deleteObject(bullet);
     //shooter property is set in BFRShoot
 
-    circle = new BFOColoredCircle;//(bf->getManager());
+    circle = (BFOColoredCircle *)bf->getManager()->getFactory()->newObject(typehash(BFOColoredCircle));
     //bullet->setProperty("shooter", (unsigned long long)circle);
     circle->p = Vector2d(0, 0.9);
     circle->r = 0.1;
@@ -323,7 +323,7 @@ void Server::prepareInitialState(){
     circle->setProperty("health", 1.0);
     bf->getManager()->insertObject(circle);
 
-    BFCHuman *hum = new BFCHuman(bf->getManager(), circle);
+    BFCHuman *hum = new BFCHuman(bf->getManager(), circle->getID());
     //BFCAIRandom *air = new BFCAIRandom(bf->getManager(), circle);
     bf->getManager()->registerController(hum);
 /*
@@ -342,7 +342,7 @@ void Server::prepareInitialState(){
     circle->setProperty("health", 1.0);
     bf->getManager()->insertObject(circle);
 */
-    hum = new BFCHuman(bf->getManager(), circle);
+    hum = new BFCHuman(bf->getManager(), circle->getID());
     bf->getManager()->registerController(hum);
 
     QBuffer *buf = new QBuffer;
@@ -369,7 +369,7 @@ void Server::prepareInitialState(){
         circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
         circle->p = Vector2d(i / 8.0 - 0.8, 0.9);
         bf->getManager()->insertObject(circle);
-        controller = new BFCAIRandom(bf->getManager(), circle);
+        controller = new BFCAIRandom(bf->getManager(), circle->getID());
         bf->getManager()->registerController(controller);
         //circles[i] = circle;
     }
@@ -379,7 +379,7 @@ void Server::prepareInitialState(){
         circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
         circle->p = Vector2d(-(i / 8.0 - 0.9), 0.9);
         bf->getManager()->insertObject(circle);
-        controller = new BFCAIRandom(bf->getManager(), circle);
+        controller = new BFCAIRandom(bf->getManager(), circle->getID());
         bf->getManager()->registerController(controller);
         //circles[i] = circle;
     }

@@ -54,6 +54,11 @@ MainWindow::MainWindow(QWidget *parent) :
     setLayout(mainLayout);
     setWindowTitle(tr("ZAG"));
     //setCentralWidget(mainLayout);
+
+    initx = x();
+    inity = y();
+    initw = width();
+    inith = height();
 }
 
 void MainWindow::singlePlayer(){
@@ -232,7 +237,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 }
 
 void MainWindow::battleEnd(){
+    setGeometry(initx, inity, initw, inith);
+    this->showNormal();
+    this->show();
     delete bf;
     delete rule;
-    this->show();
 }

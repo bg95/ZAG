@@ -17,7 +17,7 @@
 //#include "main.h"
 
 Server::Server(QWidget *parent):
-    QDialog(parent), tcpServer(0), networkSession(0), gameOn(false), counter(0){
+    QDialog(parent), tcpServer(0), networkSession(0), gameOn(false), counter(0), blockSize(0){
 
     // This part is for test
     debuggerLabel = new QLabel;
@@ -419,31 +419,9 @@ void Server::battleEnd(){
 void Server::updateClient(){
     //qDebug("Send message to Client");
     //qDebug("Size of message SENT: %d", message.size());
-
-    qDebug("New message got on server");
-    numberOfConnections++;
-    if(numberOfConnections < connectionList.size())
+    //qDebug("New message got on server");
+    if(!checkConnectionNumber())
         return;
-
-    qDebug("Message sent");
-    numberOfConnections = 0;
-/*
-    QByteArray message;
-    QBuffer buf(&message);
-    buf.open(QIODevice::WriteOnly);
-
-    quint32 zero = 0;
-    buf.write((const char *)&zero, sizeof(zero));
-
-    //bf->getManager()->encodeAllObjects(&buf);
-    for(int i = 0; i != 100; i++){
-        buf.write((const char *) &i, sizeof(i));
-    }
-
-    buf.seek(0);
-    quint32 size = quint32(buf.size() - sizeof(quint32));
-    buf.write((const char *) &size, sizeof(size));
-*/
 
     QByteArray message;
     QDataStream out(&message, QIODevice::WriteOnly);
@@ -454,24 +432,38 @@ void Server::updateClient(){
     out.device()->seek(0);
     out << quint32(message.size() - sizeof(quint32));
 
-    qDebug("Block size sent is %d", int(message.size() - sizeof(quint32)));
+    //qDebug("Block size sent is %d", int(message.size() - sizeof(quint32)));
 
-    //buf.close();
     foreach(QTcpSocket *client, connectionList){
-        client->readAll();
+        updateClientControl(client);
         client->write(message);
-
-/*Temporary just for test
-        QByteArray block;
-        QDataStream out(&block, QIODevice::WriteOnly);
-        out << counter;
-        for(int i = 0; i != 1000; i++){
-            out << i;
-        }
-        //qDebug("Size of message is %d", block.size());
-        client->write(block);
-        counter++;
-*/
     }
-    //buf.close();
+}
+
+void Server::updateClientControl(QTcpSocket *client){
+    QDataStream in(client);
+
+    if(blockSize == 0){
+        if(client->bytesAvailable() < (int)sizeof(quint32)){
+            //qDebug("Head broken");
+            return;
+        }
+        in >> blockSize;
+        //qDebug("Got message of size: %d", blockSize);
+    }
+    if(client->bytesAvailable() < blockSize)
+        return;
+
+    blockSize = 0;
+    client->readAll();
+}
+
+
+bool Server::checkConnectionNumber(){
+    numberOfConnections++;
+    if(numberOfConnections < connectionList.size())
+        return false;
+
+    numberOfConnections = 0;
+    return true;
 }

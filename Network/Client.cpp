@@ -358,11 +358,23 @@ void Client::battleEnd(){
 }
 
 void Client::sendReturnMessage(){
-    writeString(QString("Return"));
+    QByteArray message;
+    QDataStream out(&message, QIODevice::WriteOnly);
+    out << quint32(0);
+
+    out << "TestInfo";
+
+    out.device()->seek(0);
+    out << quint32(message.size() - sizeof(quint32));
+
+    tcpSocket->write(message);
 }
 
 void Client::sendAck(){
-    //qDebug("Sent");
-    writeString(QString("ACK"));
+    QByteArray message;
+    QDataStream out(&message, QIODevice::WriteOnly);
+    out << quint32(0);
+
+    tcpSocket->write(message);
 }
 

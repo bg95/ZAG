@@ -50,7 +50,7 @@ private:
     QList<QString> nickNameList;
     QTimer *networkTimer;
 
-    //quint16 blockSize;
+    quint32 blockSize;
     //QString currentMessageGot;
 
     bool gameOn;
@@ -61,6 +61,8 @@ private:
     QByteArray *getMessage();
     //void sendMessage(QTcpSocket *connection);
     void prepareInitialState();
+    void updateClientControl(QTcpSocket *);
+    bool checkConnectionNumber();
     QByteArray writeString(QString str);
 
     int counter; //Counter used for test network complecity

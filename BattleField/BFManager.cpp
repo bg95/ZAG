@@ -98,6 +98,16 @@ void BFManager::destructControllers()
     clearControllers();
 }
 
+void BFManager::applyControlEvents(std::vector<ControlEvent> events)
+{
+    BFObject *obj;
+    for (auto iter = events.begin(); iter != events.end(); iter++)
+    {
+        obj = factory.objectByID((*iter).id);
+        obj->applyControlEvent(*iter);
+    }
+}
+
 void BFManager::keyPressEvent(QKeyEvent *keyevent)
 {
     //qDebug("key %d pressed", keyevent->key());

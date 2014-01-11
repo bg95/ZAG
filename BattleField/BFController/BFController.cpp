@@ -20,6 +20,11 @@ void BFController::setKeysAndMouse(std::set<Qt::Key> keyspressed, Vector2d mouse
     mousebut = mousebuttons;
 }
 
+bool BFController::lostObject()
+{
+    return getObjectPointer() == 0;
+}
+
 bool BFController::keyPressed(Qt::Key key)
 {
     keys.find(key); //not completed

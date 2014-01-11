@@ -26,6 +26,8 @@ public:
     virtual void applyControl() = 0; //apply control to the object
     void setKeysAndMouse(std::set<Qt::Key> keyspressed, Vector2d mouseposition, Qt::MouseButtons mousebuttons);
 
+    bool lostObject();
+
 protected:
     BFObjectID objid;
     BFManager *manager;

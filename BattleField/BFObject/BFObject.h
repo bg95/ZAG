@@ -14,6 +14,7 @@ const double PI = 3.14159265358979323846264338327950288419716939937510;
 
 class BFManager;
 class BFController;
+class ControlEvent;
 
 typedef size_t BFObjectType;
 #define typehash(TYPE) (typeid(TYPE).hash_code())
@@ -74,6 +75,8 @@ public:
     //void setProperty(const std::string &prop, const std::string &val);
     QVariant &operator[](const std::string &prop);
 
+    void applyControlEvent(ControlEvent &ce);
+
 private:
     BFObjectID id;
     //BFManager *manager;
@@ -88,5 +91,6 @@ private:
 
 #include "../BFManager.h"
 #include "../BFController/BFController.h"
+#include "../ControlEvent.h"
 
 #endif // BFOBJECT_H

@@ -426,6 +426,9 @@ void Server::updateClient(QByteArray message){
         QByteArray block;
         QDataStream out(&block, QIODevice::WriteOnly);
         out << counter;
+        for(int i = 0; i != 1000; i++){
+            out << i;
+        }
         client->write(block);
         counter++;
     }

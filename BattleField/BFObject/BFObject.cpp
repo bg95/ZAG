@@ -152,3 +152,10 @@ void BFObject::writeVector2d(QIODevice *device, const Vector2d &vec)
 {
     device->write((const char *)vec.c, sizeof(vec.c));
 }
+
+void BFObject::applyControlEvent(ControlEvent &ce)
+{
+    setAcceleration(ce.acc);
+    for (auto iter = ce.difference.begin(); iter != ce.difference.end(); iter++)
+        setProperty((*iter).first, (*iter).second);
+}

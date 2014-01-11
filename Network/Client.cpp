@@ -306,7 +306,10 @@ void Client::clientGameUpdate(){
     bf->update();
 */
 
-    QDataStream in(tcpSocket);
+    //QDataStream in(tcpSocket);
+    qDebug("The size received is: %d", tcpSocket->size());
+    tcpSocket->readAll();
+    /*
     int temNumber;
     in >> temNumber;
     if(temNumber < 10 && temNumber >= 0){
@@ -316,6 +319,7 @@ void Client::clientGameUpdate(){
         qDebug("Missing happened when: %d", counter);
     }
     counter = temNumber;
+    */
 }
 
 void Client::battleEnd(){

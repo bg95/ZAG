@@ -1,4 +1,5 @@
 #include <QPainter>
+#include <QBuffer>
 #include <math.h>
 #include <cmath>
 #include <GL/gl.h>
@@ -232,7 +233,9 @@ void BattleField::keyPressEvent(QKeyEvent *event)
         scale(0.83333);
         return;
     case Qt::Key_Escape://escape
-        this->main_window->close();
+        //this->main_window->close();
+        this->close();
+        emit battleEnd();
         return;
     }
     manager.keyPressEvent(event);
@@ -312,6 +315,21 @@ void BattleField::mouseReleaseEvent(QMouseEvent *event)
 void BattleField::refresh()
 {
     manager.nextFrame(refresh_interval / 1000.0 * timescale);
+
+//Send message to clients
+    //QByteArray message;
+    //QBuffer buf(&message);
+    //manager.encodeAllObjects(&buf);
+
+    //Test message
+    QByteArray message;
+    QDataStream out(&message, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << "This is a message";
+    //End
+
+    emit sendMessage(message);
+
     display_counter++;
     if (display_counter == display_refreshes)
     {

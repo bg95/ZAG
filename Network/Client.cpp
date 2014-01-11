@@ -1,7 +1,16 @@
 #include <QtWidgets>
 #include <QtNetwork>
 
-#include "Client.h"
+#include "BattleField/BFObject/BFOCircle.h"
+#include "BattleField/BFObject/BFOColoredCircle.h"
+#include "BattleField/BFController/BFCHuman.h"
+#include "BattleField/BFController/BFCAIRandom.h"
+
+#include "BattleField/BFRule/BFRCollision.h"
+#include "BattleField/BFRule/BFRShoot.h"
+#include "Network/Client.h"
+
+#include "BattleField/BFFactory.h"
 
 Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
     //This is for test
@@ -43,34 +52,43 @@ Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
 
     statusLabel = new QLabel(tr("This is for test."));
 
-    getMessageButton = new QPushButton(tr("GetMessage"));
-    getMessageButton -> setDefault(true);
+    sendMessageButton = new QPushButton(tr("SendMessage"));
+    //sendMessageButton -> setDefault(false);
+    sendMessageButton->setEnabled(false);
 
     quitButton = new QPushButton(tr("Quit"));
 
     connectToHostButton = new QPushButton(tr("ConnectToHost"));
 
+    playerList = new QListWidget;
+    messageList = new QListWidget;
+
     buttonBox = new QDialogButtonBox;
     buttonBox->addButton(connectToHostButton, QDialogButtonBox::ActionRole);
-    buttonBox->addButton(getMessageButton, QDialogButtonBox::ActionRole);
+    buttonBox->addButton(sendMessageButton, QDialogButtonBox::ActionRole);
     buttonBox->addButton(quitButton, QDialogButtonBox::RejectRole);
 
     connect(connectToHostButton, SIGNAL(clicked()), this, SLOT(connectToHost()));
-    connect(getMessageButton, SIGNAL(clicked()), this, SLOT(requestNewMessage()));
+    connect(sendMessageButton, SIGNAL(clicked()), this, SLOT(sendMessage()));
     connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(hostEdit, SIGNAL(editTextChanged(QString)), this, SLOT(setHostAndPort()));
     connect(portEdit, SIGNAL(textChanged(QString)), this, SLOT(setHostAndPort()));
 
-    QGridLayout *mainLayout = new QGridLayout;
-    mainLayout->addWidget(hostLabel, 0, 0);
-    mainLayout->addWidget(hostEdit, 0, 1);
-    mainLayout->addWidget(portLabel, 1, 0);
-    mainLayout->addWidget(portEdit, 1, 1);
-    mainLayout->addWidget(statusLabel, 2, 0, 1, 2);
-    mainLayout->addWidget(buttonBox, 3, 0, 1, 2);
-    mainLayout->addWidget(nickLabel, 4, 0);
-    mainLayout->addWidget(messageEdit, 4, 1);
-    mainLayout->addWidget(debuggerLabel, 5, 0);
+    QGridLayout *partLayout = new QGridLayout;
+    partLayout->addWidget(hostLabel, 0, 0);
+    partLayout->addWidget(hostEdit, 0, 1);
+    partLayout->addWidget(portLabel, 1, 0);
+    partLayout->addWidget(portEdit, 1, 1);
+    partLayout->addWidget(statusLabel, 3, 0, 1, 2);
+    partLayout->addWidget(nickLabel, 2, 0);
+    partLayout->addWidget(messageEdit, 2, 1);
+    partLayout->addWidget(debuggerLabel, 4, 0, 1, 2);
+    partLayout->addWidget(buttonBox, 5, 0, 1, 2);
+    partLayout->addWidget(messageList, 6, 0, 3, 2);
+
+    QHBoxLayout *mainLayout = new QHBoxLayout;
+    mainLayout->addLayout(partLayout);
+    mainLayout->addWidget(playerList);
     setLayout(mainLayout);
 
     setWindowTitle(tr("ZAG client"));
@@ -122,47 +140,51 @@ Client::~Client(){
     delete portLabel;
     delete hostEdit;
     delete portEdit;
-    delete getMessageButton;
+    delete sendMessageButton;
     delete quitButton;
     delete connectToHostButton;
     delete buttonBox;
     delete debuggerLabel;
     delete messageEdit;
     delete nickLabel;
+    delete messageList;
+}
+
+void Client::writeString(QString str){
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << str;
+    tcpSocket->readAll();
+    tcpSocket->write(block);
 }
 
 void Client::connectToHost(){
     tcpSocket -> connectToHost(hostEdit -> currentText(), port);
 }
 
-/*
-void Client::sendMessage(QString message){
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
-
-    out << (quint16)0;
-    //statusLabel -> setText(message);
-    out << message;
-    out.device() -> seek(0);
-    out << (quint16)(block.size() - sizeof(quint16));
-
-    //tcpSocket -> abort();
-    tcpSocket -> write(block);
-}
-*/
-
 void Client::setHostAndPort(){
     //hostName = hostEdit -> currentText();
     port = (portEdit -> text()).toInt();
 }
 
+/*
 void Client::requestNewMessage(){
     //This is for test
     statusLabel -> setText(tr("Resquest new Message!"));
     //end test part
 
     tcpSocket->write(*setMessage());
+}
+*/
+
+void Client::sendMessage(){
+    QString str;
+    str += nickLabel->text();
+    str += ": ";
+    str += messageEdit->text();
+
+    writeString(str);
 }
 
 void Client::readMessage(){
@@ -172,20 +194,51 @@ void Client::readMessage(){
 
     QString nextMessage;
     in >> nextMessage;
-    currentMessage = nextMessage;
 
-    if(nextMessage == "@Greeting"){
-        QByteArray block;
-        QDataStream out(&block, QIODevice::WriteOnly);
-        out << messageEdit->text();
-        tcpSocket->write(block);
+    if(nextMessage[0] == '@'){
+        //QString mode;
+        //in >> mode;
+        if(nextMessage == "@Greeting"){
+            QString name = messageEdit->text();
+            writeString(name);
+
+            nickLabel->setText(name + ":");
+            sendMessageButton->setEnabled(true);
+            connectToHostButton->setEnabled(false);
+        }
+        else if(nextMessage == "@GameBegin"){
+            disconnect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMessage()));
+            bf = new BattleField;
+            rule = new BFRShoot(bf->getManager());
+            bf->getManager()->setRule(rule);
+            connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
+            connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(clientGameUpdate()));
+
+            bf->show();
+            this->hide();
+        }
+        else{
+            QStringList nameList = nextMessage.split('@', QString::SkipEmptyParts);
+            playerList->clear();
+            foreach(QString name, nameList){
+                playerList->addItem(name);
+            }
+        }
+    }
+    else if(nextMessage[0] == '#'){
+        //tcpSocket->write(*setMessage());
+        //statusLabel->setText(nextMessage);
+        QStringList mesList = nextMessage.split("#", QString::SkipEmptyParts);
+        foreach(QString mes, mesList){
+            messageList->addItem(mes);
+        }
     }
     else{
-        tcpSocket->write(*setMessage());
+        statusLabel->setText(nextMessage);
     }
 
     //Test part
-    statusLabel -> setText(currentMessage);
+    //statusLabel -> setText(nextMessage);
     //End test part
 }
 
@@ -220,10 +273,36 @@ void Client::sessionOpened(){
     settings.endGroup();
 }
 
+/*
 QByteArray *Client::setMessage(){
     QByteArray *message = new QByteArray;
     QDataStream out(message, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
     out << messageEdit->text();
     return message;
+}
+*/
+
+
+//***************************************
+//Following is the game part
+
+void Client::clientGameUpdate(){
+    //QDataStream in(tcpSocket);
+    //in.setVersion(QDataStream::Qt_4_0);
+
+    //QBuffer *buf = new QBuffer(tcpSocket);
+
+    //bf->getManager()->destructObjects();
+    //bf->getManager()->getFactory()->decodeNewObject(buf);
+
+    //bf->getManager()->paintAll(bf);
+
+}
+
+void Client::battleEnd(){
+    delete bf;
+    delete rule;
+
+    this->show();
 }

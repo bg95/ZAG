@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 class BattleField;
+class Server;
+class Client;
 
 #include "BattleField/BattleField.h"
 #include "BattleField/BFRule/BFRCollision.h"
@@ -47,6 +49,7 @@ private slots:
     void serverMode();
     void clientMode();
     void singlePlayer();
+    void battleEnd();
 };
 
 #endif // MAINWINDOW_H

@@ -4,8 +4,12 @@
 #include <QDialog>
 #include <QList>
 #include <QTimer>
+//#include <QString>
 //#include <QTcpServer>
 //#include <QNetworkSession>
+
+#include "BattleField/BattleField.h"
+#include "BattleField/BFRule/BFRCollision.h"
 
 QT_BEGIN_NAMESPACE
 class QTcpSocket;
@@ -30,7 +34,11 @@ private slots:
     void auth();
     void sessionOpened();
     void gameBegin();
-    void updateNetwork();
+    //void updateNetwork();
+    void battleEnd();
+    void updateClient(QByteArray);
+    void newMessage();
+    void sendMessage();
     //void encodeMessage();
 
 private:
@@ -39,13 +47,20 @@ private:
     QNetworkSession *networkSession;
     QTcpSocket *clientConnection;
     QList<QTcpSocket*> connectionList;
+    QList<QString> nickNameList;
     QTimer *networkTimer;
 
     quint16 blockSize;
     QString currentMessageGot;
 
+    bool gameOn;
+    BattleField *bf;
+    BFRule *bfRule;
+
     QByteArray *getMessage();
-    void sendMessage(QTcpSocket *connection);
+    //void sendMessage(QTcpSocket *connection);
+    void prepareInitialState();
+    QByteArray writeString(QString str);
 
     //This part is for test
     QLabel *debuggerLabel;
@@ -53,7 +68,9 @@ private:
     QLineEdit *sentMessage;
     QPushButton *quitButton;
     QPushButton *gameBeginButton;
+    QPushButton *sendMessageButton;
     QListWidget *participantList;
+    QListWidget *messageList;
 };
 
 #endif // SERVER_H

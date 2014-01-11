@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include <QTcpSocket>
+#include "BattleField/BattleField.h"
+#include "BattleField/BFRule/BFRCollision.h"
 
 QT_BEGIN_NAMESPACE
 class QTcpSocket;
@@ -12,6 +14,7 @@ class QLineEdit;
 class QPushButton;
 class QDialogButtonBox;
 class QComboBox;
+class QListWidget;
 QT_END_NAMESPACE
 
 class Client : public QDialog{
@@ -23,11 +26,14 @@ public:
 
 private slots:
     void connectToHost();
-    //void sendMessage(QString);
-    void requestNewMessage();
+    void sendMessage();
+    //void requestNewMessage();
     void readMessage();
     void displayError(QAbstractSocket::SocketError);
     void sessionOpened();
+    void battleEnd();
+
+    void clientGameUpdate();
 
     //This is for test
     void setHostAndPort();
@@ -43,12 +49,14 @@ private:
     QComboBox *hostEdit;
     QLineEdit *portEdit;
     QLineEdit *messageEdit;
-    QPushButton *getMessageButton;
+    QPushButton *sendMessageButton;
     QPushButton *quitButton;
     QPushButton *connectToHostButton;
     QDialogButtonBox *buttonBox;
+    QListWidget *playerList;
+    QListWidget *messageList;
 
-    QByteArray *setMessage();
+    //QByteArray *setMessage();
     //End test part */
 
     //QHostAddress hostName;
@@ -56,10 +64,15 @@ private:
 
     QTcpSocket *tcpSocket;
     //QByteArray *message;
-    QString currentMessage;
+    //QString currentMessage;
     quint16 blockSize;
 
     QNetworkSession *networkSession;
+
+    BattleField *bf;
+    BFRule *rule;
+
+    void writeString(QString);
 };
 
 

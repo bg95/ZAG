@@ -70,6 +70,7 @@ void MainWindow::singlePlayer(){
     //rule = new BFRCollision(bf->getManager());
     rule = new BFRShoot(bf->getManager());
     bf->getManager()->setRule(rule);
+    connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
 
     BFOColoredCircle *circle;
     BFCAIRandom *controller;
@@ -156,7 +157,7 @@ void MainWindow::singlePlayer(){
         bf->getManager()->insertObject(circle);
         controller = new BFCAIRandom(bf->getManager(), circle->getID());
         bf->getManager()->registerController(controller);
-        circles[i] = circle;
+        //circles[i] = circle;
     }
     for (int i = 0; i < 5; i++)
     {
@@ -185,8 +186,9 @@ void MainWindow::singlePlayer(){
         }
     bf -> update();
 */
-    bf->start();
+
     bf->show();
+    bf->start();
 }
 
 void MainWindow::serverMode(){
@@ -227,4 +229,10 @@ void MainWindow::resizeEvent(QResizeEvent *)
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     qDebug("mainwindow key %d", event->key());
+}
+
+void MainWindow::battleEnd(){
+    delete bf;
+    delete rule;
+    this->show();
 }

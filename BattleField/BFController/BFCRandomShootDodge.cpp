@@ -1,8 +1,11 @@
 #include "BFCRandomShootDodge.h"
 
-BFCRandomShootDodge::BFCRandomShootDodge(BFManager *_manager, BFObject *_obj) :
-    BFController(_manager, _obj)
+BFCRandomShootDodge::BFCRandomShootDodge(BFManager *_manager, BFObjectID _obj) :
+    BFController(_manager, _obj), count(0)
 {
+    obj = getObjectPointer();
+    if (!obj)
+        return;
     if (!(*obj)["bullet prototype"].isValid())
         bulletv = -1.0;
     else
@@ -22,6 +25,9 @@ BFCRandomShootDodge::~BFCRandomShootDodge()
 
 void BFCRandomShootDodge::applyControl()
 {
+    obj = getObjectPointer();
+    if (!obj)
+        return;
     BFObject *aim;
     double dist = 1.0 / 0.0;
     for (auto iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
@@ -38,6 +44,8 @@ void BFCRandomShootDodge::applyControl()
     }
     if (dist != 1.0 / 0.0)
         shoot(aim);
+
+    randomWalk();
 }
 
 void BFCRandomShootDodge::shoot(BFObject *aim)
@@ -63,4 +71,20 @@ void BFCRandomShootDodge::shoot(double theta)
 
 void BFCRandomShootDodge::dodge(BFObject *bullet)
 {
+}
+
+void BFCRandomShootDodge::randomWalk()
+{
+    if (obj->getShape() == BFO_CIRCULAR)
+    {
+        BFOCircle *cir = (BFOCircle *)obj;
+        if (count <= 0)
+        {
+            theta = rand() * 2 * PI / (double)RAND_MAX;
+            a = rand() * cir->maxa / (double)RAND_MAX;
+            count = rand() & 255;
+        }
+        count--;
+        cir->a = a * Vector2d(cos(theta), sin(theta));
+    }
 }

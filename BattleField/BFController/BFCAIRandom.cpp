@@ -2,8 +2,8 @@
 
 #include "BFCAIRandom.h"
 
-BFCAIRandom::BFCAIRandom(BFManager *_manager, BFObject *_obj) :
-    BFController(manager, _obj), obj(_obj)
+BFCAIRandom::BFCAIRandom(BFManager *_manager, BFObjectID _obj) :
+    BFController(_manager, _obj)
 {
     count = 0;
 }
@@ -19,6 +19,9 @@ BFControllerType BFCAIRandom::getType() const
 */
 void BFCAIRandom::applyControl()
 {
+    obj = getObjectPointer();
+    if (!obj)
+        return;
     if (obj->getShape() == BFO_CIRCULAR)
     {
         BFOCircle *cir = (BFOCircle *)obj;

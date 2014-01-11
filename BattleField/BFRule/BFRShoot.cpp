@@ -121,6 +121,17 @@ void BFRShoot::processIntersections()
 
 void BFRShoot::processInput()
 {
+    //testing encode/decode
+/*
+    QBuffer buffer;
+    buffer.open(QIODevice::ReadWrite);
+    buffer.seek(0);
+    manager->encodeAllObjects(&buffer);
+    buffer.seek(0);
+    manager->destructObjects();
+    manager->decodeReplaceAllObjects(&buffer);
+*/
+
     std::set<BFObject *>::iterator iter;
     for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
     {
@@ -189,7 +200,7 @@ void BFRShoot::processInput()
         BFOColoredCircle *bullet = (BFOColoredCircle *)manager->getFactory()->newObject(typehash(BFOColoredCircle));
         bullet->setColor(1.0, 0, 0, 1.0);
         bullet->r = 0.01;
-        bullet->v = Vector2d(0, 6);
+        bullet->v = Vector2d(0, 1);
         bullet->m = 0.01;
         bullet->setProperty("isBullet", "Yes");
         bullet->setProperty("damage", 0.1);
@@ -204,7 +215,7 @@ void BFRShoot::processInput()
         manager->insertObject(circle);
 
         //controller = new BFCAIRandom(manager, circle);
-        controller = new BFCRandomShootDodge(manager, circle);
+        controller = new BFCRandomShootDodge(manager, circle->getID());
         manager->registerController(controller);
         //circles[i] = circle;
     }

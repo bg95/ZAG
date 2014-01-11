@@ -75,6 +75,8 @@ public:
     //Factory operations
     BFFactory *getFactory();
     void encodeAllObjects(QIODevice *device);
+    void decodeNewAllObjects(QIODevice *device);
+    void decodeReplaceAllObjects(QIODevice *device);
 
     //Calculate intersections
     double intersectingTime(const BFObject *a, const BFObject *b);

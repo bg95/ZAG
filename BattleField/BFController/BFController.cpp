@@ -1,9 +1,12 @@
 #include "BFController.h"
 
-BFController::BFController(BFManager *_manager, BFObject *_obj) :
-    manager(_manager), obj(_obj)
+BFController::BFController(BFManager *_manager, BFObjectID _obj) :
+    manager(_manager), objid(_obj)
 {
-    obj->controller = this;
+    BFObject *obj = getObjectPointer();
+    if (!obj)
+        return;
+    //obj->controller = this;
 }
 
 BFController::~BFController()
@@ -25,4 +28,9 @@ bool BFController::keyPressed(Qt::Key key)
         if ((*iter) == key)
             return true;
     return false;
+}
+
+BFObject *BFController::getObjectPointer()
+{
+    return manager->getFactory()->objectByID(objid);
 }

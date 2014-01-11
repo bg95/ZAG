@@ -8,7 +8,7 @@ BFObject::BFObject()//BFManager *_manager)
 {
     id = count;
     count++;
-    controller = 0;
+    //controller = 0;
 }
 
 BFObject::~BFObject()
@@ -57,13 +57,13 @@ void BFObject::decode(QIODevice *device)
         setProperty(prop, val);
     }
 }
-
+/*
 BFController *BFObject::getController()
 {
     return controller;
 }
-
-long BFObject::getID()
+*/
+BFObjectID BFObject::getID()
 {
     return id;
 }

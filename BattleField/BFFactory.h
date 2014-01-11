@@ -20,18 +20,20 @@ public:
 
     BFObject *newObject(BFObjectType type);
     void deleteObject(BFObject *o);
-    BFObject *replaceObject(long id, BFObjectType type); //not tested
+    BFObject *replaceObject(BFObjectID id, BFObjectType type); //not tested
 
     void encodeObject(BFObject *o, QIODevice *device);
     BFObject *decodeNewObject(QIODevice *device);
     BFObject *decodeNewObject(QByteArray ba);
-    BFObject *decodeReplaceObject(long id, QIODevice *device); //not tested
+    BFObject *decodeReplaceObject(QIODevice *device); //not tested
 
     void clear();
 
+    BFObject *objectByID(BFObjectID id);
+
 private:
     std::map<BFObjectType, BFObject *> prototypes;
-    std::map<long, BFObject *> objects;
+    std::map<BFObjectID, BFObject *> objects;
 
 };
 

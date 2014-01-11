@@ -88,7 +88,8 @@ void MainWindow::singlePlayer(){
     bf->getManager()->getFactory()->deleteObject(bullet);
     //shooter property is set in BFRShoot
 
-    circle = new BFOColoredCircle;//(bf->getManager());
+    //circle = new BFOColoredCircle;//(bf->getManager());
+    circle = (BFOColoredCircle *)bf->getManager()->getFactory()->newObject(typehash(BFOColoredCircle));
     //bullet->setProperty("shooter", (unsigned long long)circle);
     circle->p = Vector2d(0, 0.9);
     circle->r = 0.1;
@@ -104,7 +105,7 @@ void MainWindow::singlePlayer(){
     circle->setProperty("fraction", 0);
     bf->getManager()->insertObject(circle);
 
-    BFCHuman *ctrl = new BFCHuman(bf->getManager(), circle);
+    BFCHuman *ctrl = new BFCHuman(bf->getManager(), circle->getID());
     //BFCRandomShootDodge *ctrl = new BFCRandomShootDodge(bf->getManager(), circle);
     //BFCAIRandom *ctrl = new BFCAIRandom(bf->getManager(), circle);
     bf->getManager()->registerController(ctrl);
@@ -137,7 +138,8 @@ void MainWindow::singlePlayer(){
     circle->maxa = 5;
     circle->setProperty("shoot", "");
     circle->setProperty("health", 1.0);
-    (*circle)["fraction"] = 2;
+    //(*circle)["fraction"] = 2;
+    circle->setProperty("fraction", 2);
     buf->open(QBuffer::WriteOnly);
     fac->encodeObject(circle, buf);
     buf->close();
@@ -152,7 +154,7 @@ void MainWindow::singlePlayer(){
         circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
         circle->p = Vector2d(i / 8.0 - 0.8, 0.9);
         bf->getManager()->insertObject(circle);
-        controller = new BFCAIRandom(bf->getManager(), circle);
+        controller = new BFCAIRandom(bf->getManager(), circle->getID());
         bf->getManager()->registerController(controller);
         circles[i] = circle;
     }
@@ -162,7 +164,7 @@ void MainWindow::singlePlayer(){
         circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
         circle->p = Vector2d(-(i / 8.0 - 0.9), 0.9);
         bf->getManager()->insertObject(circle);
-        controller = new BFCAIRandom(bf->getManager(), circle);
+        controller = new BFCAIRandom(bf->getManager(), circle->getID());
         bf->getManager()->registerController(controller);
         //circles[i] = circle;
     }

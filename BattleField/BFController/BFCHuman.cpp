@@ -5,7 +5,7 @@
 
 Qt::Key BFCHuman::XNegKey = Qt::Key_A, BFCHuman::XPosKey = Qt::Key_D, BFCHuman::YNegKey = Qt::Key_S, BFCHuman::YPosKey = Qt::Key_W;
 
-BFCHuman::BFCHuman(BFManager *_manager, BFObject *_obj) :
+BFCHuman::BFCHuman(BFManager *_manager, BFObjectID _obj) :
     BFCRandomShootDodge(_manager, _obj)
 {
 }
@@ -21,6 +21,9 @@ BFControllerType BFCHuman::getType() const
 */
 void BFCHuman::applyControl()
 {
+    BFObject *obj = getObjectPointer();
+    if (!obj)
+        return;
     if (obj->getShape() == BFO_CIRCULAR)
     {
         BFOCircle *cir = (BFOCircle *)obj;

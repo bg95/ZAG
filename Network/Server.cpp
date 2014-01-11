@@ -416,6 +416,7 @@ void Server::battleEnd(){
 
 void Server::updateClient(QByteArray message){
     //qDebug("Send message to Client");
+    //qDebug("Size of message SENT: %d", message.size());
 
     foreach(QTcpSocket *client, connectionList){
         client->readAll();

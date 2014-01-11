@@ -43,7 +43,10 @@ BFObject *BFFactory::replaceObject(BFObjectID id, BFObjectType type)
 {
     std::map<BFObjectType, BFObject *>::iterator piter = prototypes.find(type);
     if (piter == prototypes.end())
+    {
+        qDebug("Cannot find prototype");
         return 0;
+    }
     std::map<BFObjectID, BFObject *>::iterator iter = objects.find(id);
     BFObject *p = (*piter).second->newObject();
     p->id = id;
@@ -97,6 +100,8 @@ BFObject *BFFactory::decodeReplaceObject(/*BFObjectID id, */QIODevice *device)
     device->read((char *)&type, sizeof(type));
     device->read((char *)&tid, sizeof(tid));
     o = replaceObject(tid, type);
+    if (!o)
+        return 0;
     o->decode(device);
     return o;
 }

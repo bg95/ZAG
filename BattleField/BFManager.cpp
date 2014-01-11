@@ -249,7 +249,16 @@ void BFManager::decodeReplaceAllObjects(QIODevice *device)
     device->read((char *)&numobj, sizeof(std::set<BFObject *>::size_type));
     while (numobj--)
     {
-        insertObject(factory.decodeReplaceObject(device));
+        BFObject *tobj;
+        tobj = factory.decodeReplaceObject(device);
+        if (tobj)
+            insertObject(tobj);
+        else
+        {
+            qDebug("Cannot decode object, %d left", device->bytesAvailable());
+            device->readAll();
+            return;
+        }
     }
 }
 

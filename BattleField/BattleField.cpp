@@ -330,7 +330,7 @@ void BattleField::refresh()
         QBuffer buf(&message);
         buf.open(QIODevice::ReadWrite);
         manager.encodeAllObjects(&buf);
-        qDebug("%d", message.size());
+        //qDebug("%d", message.size());
 
         //QDataStream out(&message, QIODevice::WriteOnly);
         //out << QString("Here");

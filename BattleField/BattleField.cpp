@@ -1,4 +1,5 @@
 #include <QPainter>
+#include <QBuffer>
 #include <math.h>
 #include <cmath>
 #include <GL/gl.h>
@@ -294,6 +295,21 @@ void BattleField::mouseReleaseEvent(QMouseEvent *event)
 void BattleField::refresh()
 {
     manager.nextFrame(refresh_interval / 1000.0 * timescale);
+
+//Send message to clients
+    //QByteArray message;
+    //QBuffer buf(&message);
+    //manager.encodeAllObjects(&buf);
+
+    //Test message
+    QByteArray message;
+    QDataStream out(&message, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << "This is a message";
+    //End
+
+    emit sendMessage(message);
+
     display_counter++;
     if (display_counter == display_refreshes)
     {

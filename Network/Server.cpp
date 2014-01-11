@@ -31,21 +31,28 @@ Server::Server(QWidget *parent):
     gameBeginButton = new QPushButton(tr("GameBegin"));
     gameBeginButton->setAutoDefault(false);
     connect(gameBeginButton, SIGNAL(clicked()), this, SLOT(gameBegin()));
+    sendMessageButton = new QPushButton(tr("SendMessage"));
+    connect(sendMessageButton, SIGNAL(clicked()), this, SLOT(sendMessage()));
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
-    //buttonLayout->addStretch(1);
+    buttonLayout->addStretch(1);
     buttonLayout->addWidget(quitButton);
-    //buttonLayout->addStretch(1);
+    buttonLayout->addStretch(1);
+    buttonLayout->addWidget(sendMessageButton);
+    buttonLayout->addStretch(1);
     buttonLayout->addWidget(gameBeginButton);
 
     participantList = new QListWidget;
-    participantList->addItem(tr("Local Host"));
+    participantList->addItem(tr("Host"));
+
+    messageList = new QListWidget;
 
     QVBoxLayout *partLayout = new QVBoxLayout;
     partLayout->addWidget(debuggerLabel);
     partLayout->addWidget(statusLabel);
     partLayout->addWidget(sentMessage);
     partLayout->addLayout(buttonLayout);
+    partLayout->addWidget(messageList, 3);
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->addLayout(partLayout);
@@ -78,7 +85,11 @@ Server::Server(QWidget *parent):
 
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
 
-    //networkTimer = new QTimer(this);
+    /*
+    networkTimer = new QTimer(this);
+    connect(networkTimer, SIGNAL(timeout()), this, SLOT(checkMessage()));
+    networkTimer->start(100);
+    */
 }
 
 Server::~Server(){
@@ -87,6 +98,7 @@ Server::~Server(){
     delete quitButton;
     delete sentMessage;
     delete participantList;
+    delete messageList;
     /*if(clientConnection != NULL){
         clientConnection -> disconnectFromHost();
     }*/
@@ -100,27 +112,28 @@ void Server::acceptConnection(){
     }
 
     QTcpSocket *newConnection = tcpServer->nextPendingConnection();
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
-    out << tr("@Greeting");
+    QByteArray block = writeString("@Greeting");
+    //QDataStream out(&block, QIODevice::WriteOnly);
+    //out.setVersion(QDataStream::Qt_4_0);
+    //out << tr("@Greeting");
     newConnection->write(block);
     clientConnection = newConnection;
     QTimer::singleShot(1 * 1000, this, SLOT(auth()));
 }
 
-void Server::sendMessage(QTcpSocket *connection){
+void Server::sendMessage(){
     //This part is for test
     debuggerLabel->setText(tr("Messages sent!"));
     //Test part end
 
-    QDataStream in(connection);
-    in.setVersion(QDataStream::Qt_4_0);
-
-    in >> currentMessageGot;
-    debuggerLabel->setText(currentMessageGot);
-
-    connection->write(*getMessage());
+    QString mes;
+    mes += "#Host:: ";
+    mes += sentMessage->text();
+    foreach(QTcpSocket *connection, connectionList){
+        connection->readAll();
+        connection->write(writeString(mes));
+    }
+    messageList->addItem("Host:: " + sentMessage->text());
 }
 
 void Server::sessionOpened(){
@@ -175,16 +188,17 @@ void Server::encodeMessage(){
     messages = sentMessage->text();
 }
 */
+/*
 QByteArray *Server::getMessage(){
 
-    QByteArray *block = new QByteArray;
-    QDataStream out(block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
+    QByteArray block = writeString(sentMessage->text());
+    //QDataStream out(block, QIODevice::WriteOnly);
+    //out.setVersion(QDataStream::Qt_4_0);
 
-    out << sentMessage->text();
+    //out << sentMessage->text();
     return block;
 }
-
+*/
 void Server::auth(){
     qDebug("Verifying");
     debuggerLabel->setText(tr("Verifiring"));
@@ -194,10 +208,22 @@ void Server::auth(){
         QString nickName;
         in >> nickName;
 
-        //connect(clientConnection, SIGNAL(readyRead()), this, SLOT(sendMessage()));
+        connect(clientConnection, SIGNAL(readyRead()), this, SLOT(newMessage()));
         connect(clientConnection, SIGNAL(disconnected()), clientConnection, SLOT(deleteLater()));
         connectionList << clientConnection;
         participantList->addItem(nickName);
+        nickNameList << nickName;
+
+        QString mes;
+        foreach(QString nickName, nickNameList){
+            mes += ("@" + nickName);
+        }
+
+        QByteArray block = writeString(mes);
+        foreach(QTcpSocket *connection, connectionList){
+            connection->readAll();
+            connection->write(block);
+        }
     }
     else{
         debuggerLabel->setText(tr("Rejected"));
@@ -205,6 +231,33 @@ void Server::auth(){
     }
 }
 
+QByteArray Server::writeString(QString str){
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << str;
+    return block;
+}
+
+void Server::newMessage(){
+    QString mesList;
+    foreach(QTcpSocket *connection, connectionList){
+        if(connection->bytesAvailable() > 0){
+            QString mes;
+            QDataStream in(connection);
+            in.setVersion(QDataStream::Qt_4_0);
+            in >> mes;
+            messageList->addItem(mes);
+
+            mesList += "#";
+            mesList += mes;
+        }
+    }
+
+    foreach(QTcpSocket *connection, connectionList){
+        connection->write(writeString(mesList));
+    }
+}
 
 //****************************************
 //The following part is used for the game
@@ -213,10 +266,16 @@ void Server::gameBegin(){
     gameOn = true;
     gameBeginButton->setEnabled(false);
 
+    QByteArray block = writeString("@GameBegin");
+    foreach(QTcpSocket *connection, connectionList){
+        connection->write(block);
+    }
+
     bf = new BattleField(0);
     bfRule = new BFRShoot(bf->getManager());
     bf->getManager()->setRule(bfRule);
     connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
+    connect(bf, SIGNAL(sendMessage(QByteArray)), this, SLOT(updateClient(QByteArray)));
 
     prepareInitialState();
 
@@ -314,7 +373,7 @@ void Server::prepareInitialState(){
         bf->getManager()->registerController(controller);
         //circles[i] = circle;
     }
-    /*for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 5; i++)
     {
         buf->seek(0);
         circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
@@ -323,22 +382,34 @@ void Server::prepareInitialState(){
         controller = new BFCAIRandom(bf->getManager(), circle);
         bf->getManager()->registerController(controller);
         //circles[i] = circle;
-    }*/
+    }
     buf->close();
     delete buf;
 }
 
+/*
 void Server::updateNetwork(){
     foreach(QTcpSocket *connection, connectionList){
         sendMessage(connection);
     }
-
     //networkTimer->start(1000);
 }
+*/
 
 void Server::battleEnd(){
     delete bf;
     delete bfRule;
 
     this->show();
+}
+
+void Server::updateClient(QByteArray message){
+    foreach(QTcpSocket *client, connectionList){
+        client->readAll();
+        client->write(message);
+
+//Temporary just for test
+        //QByteArray block = writeString("This is a test message");
+        //client->write(block);
+    }
 }

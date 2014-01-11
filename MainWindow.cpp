@@ -151,7 +151,7 @@ void MainWindow::singlePlayer(){
         bf->getManager()->insertObject(circle);
         controller = new BFCAIRandom(bf->getManager(), circle);
         bf->getManager()->registerController(controller);
-        circles[i] = circle;
+        //circles[i] = circle;
     }
     for (int i = 0; i < 5; i++)
     {
@@ -165,6 +165,7 @@ void MainWindow::singlePlayer(){
     }
     buf->close();
     delete buf;
+/*
     for (int i = 0; i < 10; i++)
         for (int j = 0; j < 5; j++)
         {
@@ -178,8 +179,10 @@ void MainWindow::singlePlayer(){
             bf->getManager()->insertObject(circle);
         }
     bf -> update();
-    bf->start();
+*/
+
     bf->show();
+    bf->start();
 }
 
 void MainWindow::serverMode(){

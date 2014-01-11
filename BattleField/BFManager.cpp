@@ -1,4 +1,5 @@
 #include <Qt>
+#include <QBuffer>
 #include "BFController/BFCHuman.h"
 
 #include "BFManager.h"
@@ -162,6 +163,13 @@ void BFManager::nextFrame(double deltatime)
         findAllIntersections();
     }
     processAllIntersections();
+
+/*Network Part
+    QByteArray messageToSend;
+    QBuffer buf(&messageToSend);
+    encodeAllObjects(&buf);
+    emit sendMessage(&messageToSend);
+*/
 }
 
 void BFManager::paintAll(QGLWidget *glwidget)

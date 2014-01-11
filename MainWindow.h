@@ -3,6 +3,7 @@
 
 class BattleField;
 class Server;
+class Client;
 
 #include "BattleField/BattleField.h"
 #include "BattleField/BFRule/BFRCollision.h"

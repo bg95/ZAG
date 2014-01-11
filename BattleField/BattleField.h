@@ -26,6 +26,7 @@ public:
     
 signals:
     void battleEnd();
+    void sendMessage(QByteArray);
     
 public slots:
     void start();

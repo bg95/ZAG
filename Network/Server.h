@@ -62,6 +62,8 @@ private:
     void prepareInitialState();
     QByteArray writeString(QString str);
 
+    int counter; //Counter used for test network complecity
+
     //This part is for test
     QLabel *debuggerLabel;
     QLabel *statusLabel;

@@ -73,6 +73,8 @@ private:
     BFRule *rule;
 
     void writeString(QString);
+
+    int counter; //counter used for test network complecity
 };
 
 

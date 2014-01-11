@@ -12,7 +12,7 @@
 
 #include "BattleField/BFFactory.h"
 
-Client::Client(QWidget *parent): QDialog(parent), networkSession(0){
+Client::Client(QWidget *parent): QDialog(parent), networkSession(0), counter(0){
     //This is for test
     hostLabel = new QLabel(tr("Server IP:"));
     portLabel = new QLabel(tr("Server port:"));
@@ -298,15 +298,24 @@ void Client::clientGameUpdate(){
     //buf->open(QIODevice::ReadWrite);
     //qDebug("Size of message GOT: %d", buf->data().size());
 
+/*
     bf->getManager()->destructObjects();
     bf->getManager()->decodeReplaceAllObjects(tcpSocket);
     qDebug("#objects = %d", bf->getManager()->getObjects().size());
 
     bf->update();
+*/
 
-    //buf->close();
-    //delete buf;
-
+    QDataStream in(tcpSocket);
+    int temNumber;
+    in >> temNumber;
+    if(temNumber < 10 && temNumber >= 0){
+        counter == temNumber;
+    }
+    else if(counter != temNumber - 1){
+        qDebug("Missing happened when: %d", counter);
+    }
+    counter = temNumber;
 }
 
 void Client::battleEnd(){

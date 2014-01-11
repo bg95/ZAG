@@ -45,10 +45,13 @@ BFObject *BFFactory::replaceObject(BFObjectID id, BFObjectType type)
     if (piter == prototypes.end())
         return 0;
     std::map<BFObjectID, BFObject *>::iterator iter = objects.find(id);
-    if (iter == objects.end())
-        return 0;
-    BFObject *p = (*iter).second->newObject();
+    BFObject *p = (*piter).second->newObject();
     p->id = id;
+    if (iter == objects.end())
+    {
+        objects[id] = p;
+        return p;
+    }
     (*iter).second->deleting_from_factory = true;
     delete (*iter).second;
     (*iter).second = p;

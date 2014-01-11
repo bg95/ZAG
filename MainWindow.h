@@ -42,6 +42,9 @@ private:
     QPushButton *quitButton;
     Client *client;
     Server *server;
+
+    int initx, inity, initw, inith;
+
 public: //for debugging
     BattleField *bf;
     BFRule *rule;

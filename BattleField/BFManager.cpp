@@ -168,13 +168,6 @@ void BFManager::nextFrame(double deltatime)
         findAllIntersections();
     }
     processAllIntersections();
-
-/*Network Part
-    QByteArray messageToSend;
-    QBuffer buf(&messageToSend);
-    encodeAllObjects(&buf);
-    emit sendMessage(&messageToSend);
-*/
 }
 
 void BFManager::paintAll(QGLWidget *glwidget)
@@ -251,6 +244,7 @@ void BFManager::decodeNewAllObjects(QIODevice *device)
 
 void BFManager::decodeReplaceAllObjects(QIODevice *device)
 {
+    destructObjects();
     int numobj;
     device->read((char *)&numobj, sizeof(std::set<BFObject *>::size_type));
     while (numobj--)

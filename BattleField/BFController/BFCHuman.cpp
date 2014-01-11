@@ -21,7 +21,7 @@ BFControllerType BFCHuman::getType() const
 */
 void BFCHuman::applyControl()
 {
-    BFObject *obj = getObjectPointer();
+    obj = getObjectPointer();
     if (!obj)
         return;
     if (obj->getShape() == BFO_CIRCULAR)

@@ -188,6 +188,7 @@ void Client::sendMessage(){
 }
 
 void Client::readMessage(){
+    qDebug("Old version of receive");
     //statusLabel -> setText(tr("Message got!"));
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_0);
@@ -207,7 +208,9 @@ void Client::readMessage(){
             connectToHostButton->setEnabled(false);
         }
         else if(nextMessage == "@GameBegin"){
+            tcpSocket->readAll();
             disconnect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMessage()));
+
             bf = new BattleField;
             rule = new BFRShoot(bf->getManager());
             bf->getManager()->setRule(rule);
@@ -291,16 +294,24 @@ void Client::clientGameUpdate(){
     //QDataStream in(tcpSocket);
     //in.setVersion(QDataStream::Qt_4_0);
 
-    //QBuffer *buf = new QBuffer(tcpSocket);
+    qDebug("Client Updating");
 
-    //bf->getManager()->destructObjects();
-    //bf->getManager()->getFactory()->decodeNewObject(buf);
+    QBuffer *buf = new QBuffer(tcpSocket);
+    buf->open(QIODevice::ReadWrite);
 
-    //bf->getManager()->paintAll(bf);
+    bf->getManager()->destructObjects();
+    bf->getManager()->decodeReplaceAllObjects(buf);
+
+    bf->update();
+
+    buf->close();
+    delete buf;
 
 }
 
 void Client::battleEnd(){
+    disconnect(tcpSocket, SIGNAL(readyRead()), this, SLOT(clientGameUpdate()));
+    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMessage()));
     delete bf;
     delete rule;
 

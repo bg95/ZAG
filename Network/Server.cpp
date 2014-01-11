@@ -44,6 +44,7 @@ Server::Server(QWidget *parent):
 
     participantList = new QListWidget;
     participantList->addItem(tr("Host"));
+    nickNameList << QString("Host");
 
     messageList = new QListWidget;
 

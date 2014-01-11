@@ -269,6 +269,7 @@ void Server::gameBegin(){
 
     QByteArray block = writeString("@GameBegin");
     foreach(QTcpSocket *connection, connectionList){
+        disconnect(connection, SIGNAL(readyRead()), this, SLOT(newMessage()));
         connection->write(block);
     }
 
@@ -309,7 +310,8 @@ void Server::prepareInitialState(){
     bf->getManager()->getFactory()->deleteObject(bullet);
     //shooter property is set in BFRShoot
 
-    circle = new BFOColoredCircle;//(bf->getManager());
+    //circle = new BFOColoredCircle;//(bf->getManager());
+    circle = (BFOColoredCircle *)bf->getManager()->getFactory()->newObject(typehash(BFOColoredCircle));
     //bullet->setProperty("shooter", (unsigned long long)circle);
     circle->p = Vector2d(0, 0.9);
     circle->r = 0.1;
@@ -322,11 +324,13 @@ void Server::prepareInitialState(){
     circle->setProperty("cooldown", 0.05);
     circle->setProperty("cooldowncount", 0.0);
     circle->setProperty("health", 1.0);
+    circle->setProperty("fraction", 0);
     bf->getManager()->insertObject(circle);
 
-    BFCHuman *hum = new BFCHuman(bf->getManager(), circle);
-    //BFCAIRandom *air = new BFCAIRandom(bf->getManager(), circle);
-    bf->getManager()->registerController(hum);
+    BFCHuman *ctrl = new BFCHuman(bf->getManager(), circle->getID());
+    //BFCRandomShootDodge *ctrl = new BFCRandomShootDodge(bf->getManager(), circle);
+    //BFCAIRandom *ctrl = new BFCAIRandom(bf->getManager(), circle);
+    bf->getManager()->registerController(ctrl);
 /*
     circle = new BFOColoredCircle;//(bf->getManager());
     //bullet->setProperty("shooter", (unsigned long long)circle);
@@ -342,10 +346,10 @@ void Server::prepareInitialState(){
     circle->setProperty("cooldowncount", 0.0);
     circle->setProperty("health", 1.0);
     bf->getManager()->insertObject(circle);
-*/
+
     hum = new BFCHuman(bf->getManager(), circle);
     bf->getManager()->registerController(hum);
-
+*/
     QBuffer *buf = new QBuffer;
     BFFactory *fac = bf->getManager()->getFactory();
     circle = (BFOColoredCircle *)bf->getManager()->getFactory()->newObject(typehash(BFOColoredCircle));//(bf->getManager());
@@ -356,6 +360,8 @@ void Server::prepareInitialState(){
     circle->maxa = 5;
     circle->setProperty("shoot", "");
     circle->setProperty("health", 1.0);
+    //(*circle)["fraction"] = 2;
+    circle->setProperty("fraction", 2);
     buf->open(QBuffer::WriteOnly);
     fac->encodeObject(circle, buf);
     buf->close();
@@ -370,7 +376,7 @@ void Server::prepareInitialState(){
         circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
         circle->p = Vector2d(i / 8.0 - 0.8, 0.9);
         bf->getManager()->insertObject(circle);
-        controller = new BFCAIRandom(bf->getManager(), circle);
+        controller = new BFCAIRandom(bf->getManager(), circle->getID());
         bf->getManager()->registerController(controller);
         //circles[i] = circle;
     }
@@ -380,7 +386,7 @@ void Server::prepareInitialState(){
         circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
         circle->p = Vector2d(-(i / 8.0 - 0.9), 0.9);
         bf->getManager()->insertObject(circle);
-        controller = new BFCAIRandom(bf->getManager(), circle);
+        controller = new BFCAIRandom(bf->getManager(), circle->getID());
         bf->getManager()->registerController(controller);
         //circles[i] = circle;
     }

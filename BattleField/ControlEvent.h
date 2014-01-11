@@ -17,13 +17,13 @@ public:
 
     void addPropertyChange(const std::string &prop, const QVariant &val);
 
+    static void encodeControlEventList(std::vector<ControlEvent> &list, QIODevice *device);
+    static void decodeAppendControlEventList(std::vector<ControlEvent> &list, QIODevice *device);
+
     BFObjectID objid;
     Vector2d acc;
     std::vector<std::pair<std::string, QVariant>> difference;
 
 };
-
-void encodeControlEventList(std::vector<ControlEvent> &list, QIODevice *device);
-void decodeAppendControlEventList(std::vector<ControlEvent> &list, QIODevice *device);
 
 #endif // CONTROLEVENT_H

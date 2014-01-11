@@ -44,7 +44,7 @@ void ControlEvent::addPropertyChange(const std::string &prop, const QVariant &va
     difference.push_back(std::pair<std::string, QVariant>(prop, val));
 }
 
-void encodeControlEventList(std::vector<ControlEvent> &list, QIODevice *device)
+void ControlEvent::encodeControlEventList(std::vector<ControlEvent> &list, QIODevice *device)
 {
     auto size = list.size();
     device->write((const char *)&size, sizeof(size));
@@ -52,7 +52,7 @@ void encodeControlEventList(std::vector<ControlEvent> &list, QIODevice *device)
         (*iter).encode(device);
 }
 
-void decodeAppendControlEventList(std::vector<ControlEvent> &list, QIODevice *device)
+void ControlEvent::decodeAppendControlEventList(std::vector<ControlEvent> &list, QIODevice *device)
 {
     size_t i;
     std::vector<ControlEvent>::size_type size;

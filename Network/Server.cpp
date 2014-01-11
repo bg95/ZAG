@@ -17,7 +17,7 @@
 //#include "main.h"
 
 Server::Server(QWidget *parent):
-    QDialog(parent), tcpServer(0), networkSession(0), gameOn(false){
+    QDialog(parent), tcpServer(0), networkSession(0), gameOn(false), counter(0){
 
     // This part is for test
     debuggerLabel = new QLabel;
@@ -419,11 +419,14 @@ void Server::updateClient(QByteArray message){
     //qDebug("Size of message SENT: %d", message.size());
 
     foreach(QTcpSocket *client, connectionList){
-        client->readAll();
-        client->write(message);
+        //client->readAll();
+        //client->write(message);
 
 //Temporary just for test
-        //QByteArray block = writeString("This is a test message");
-        //client->write(block);
+        QByteArray block;
+        QDataStream out(&block, QIODevice::WriteOnly);
+        out << counter;
+        client->write(block);
+        counter++;
     }
 }

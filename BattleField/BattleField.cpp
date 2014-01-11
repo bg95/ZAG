@@ -7,7 +7,7 @@
 #include "../main.h"
 #include "BattleField.h"
 
-int BattleField::refresh_interval = 5;
+int BattleField::refresh_interval = 10;
 int BattleField::display_refreshes = 6;
 double BattleField::timescale = 1.0;
 

@@ -294,18 +294,18 @@ void Client::clientGameUpdate(){
     //QDataStream in(tcpSocket);
     //in.setVersion(QDataStream::Qt_4_0);
 
-    qDebug("Client Updating");
-
-    QBuffer *buf = new QBuffer(tcpSocket);
-    buf->open(QIODevice::ReadWrite);
+    //QBuffer *buf = new QBuffer(tcpSocket);
+    //buf->open(QIODevice::ReadWrite);
+    //qDebug("Size of message GOT: %d", buf->data().size());
 
     bf->getManager()->destructObjects();
-    bf->getManager()->decodeReplaceAllObjects(buf);
+    bf->getManager()->decodeReplaceAllObjects(tcpSocket);
+    qDebug("#objects = %d", bf->getManager()->getObjects().size());
 
     bf->update();
 
-    buf->close();
-    delete buf;
+    //buf->close();
+    //delete buf;
 
 }
 

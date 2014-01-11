@@ -325,6 +325,7 @@ void BattleField::refresh()
     display_counter++;
     if (display_counter == display_refreshes)
     {
+/*
         //Send message to clients
         QByteArray message;
         QBuffer buf(&message);
@@ -337,7 +338,7 @@ void BattleField::refresh()
 
         emit sendMessage(message);
         buf.close();
-
+*/
         display_counter = 0;
         update();
     }

@@ -265,11 +265,13 @@ void Server::newMessage(){
 
 void Server::gameBegin(){
     gameOn = true;
+    numberOfConnections = 0;
     gameBeginButton->setEnabled(false);
 
     QByteArray block = writeString("@GameBegin");
     foreach(QTcpSocket *connection, connectionList){
         disconnect(connection, SIGNAL(readyRead()), this, SLOT(newMessage()));
+        connect(connection, SIGNAL(readyRead()), this, SLOT(updateClient()));
         connection->write(block);
     }
 
@@ -277,7 +279,7 @@ void Server::gameBegin(){
     bfRule = new BFRShoot(bf->getManager());
     bf->getManager()->setRule(bfRule);
     connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
-    connect(bf, SIGNAL(sendMessage(QByteArray)), this, SLOT(updateClient(QByteArray)));
+    //connect(bf, SIGNAL(sendMessage(QByteArray)), this, SLOT(updateClient(QByteArray)));
 
     prepareInitialState();
 
@@ -414,19 +416,62 @@ void Server::battleEnd(){
     this->show();
 }
 
-void Server::updateClient(QByteArray message){
+void Server::updateClient(){
     //qDebug("Send message to Client");
     //qDebug("Size of message SENT: %d", message.size());
 
-    foreach(QTcpSocket *client, connectionList){
-        //client->readAll();
-        //client->write(message);
+    qDebug("New message got on server");
+    numberOfConnections++;
+    if(numberOfConnections < connectionList.size())
+        return;
 
-//Temporary just for test
+    qDebug("Message sent");
+    numberOfConnections = 0;
+/*
+    QByteArray message;
+    QBuffer buf(&message);
+    buf.open(QIODevice::WriteOnly);
+
+    quint32 zero = 0;
+    buf.write((const char *)&zero, sizeof(zero));
+
+    //bf->getManager()->encodeAllObjects(&buf);
+    for(int i = 0; i != 100; i++){
+        buf.write((const char *) &i, sizeof(i));
+    }
+
+    buf.seek(0);
+    quint32 size = quint32(buf.size() - sizeof(quint32));
+    buf.write((const char *) &size, sizeof(size));
+*/
+
+    QByteArray message;
+    QDataStream out(&message, QIODevice::WriteOnly);
+    out << quint32(0);
+
+    bf->getManager()->encodeAllObjects(out.device());
+
+    out.device()->seek(0);
+    out << quint32(message.size() - sizeof(quint32));
+
+    qDebug("Block size sent is %d", int(message.size() - sizeof(quint32)));
+
+    //buf.close();
+    foreach(QTcpSocket *client, connectionList){
+        client->readAll();
+        client->write(message);
+
+/*Temporary just for test
         QByteArray block;
         QDataStream out(&block, QIODevice::WriteOnly);
         out << counter;
+        for(int i = 0; i != 1000; i++){
+            out << i;
+        }
+        //qDebug("Size of message is %d", block.size());
         client->write(block);
         counter++;
+*/
     }
+    //buf.close();
 }

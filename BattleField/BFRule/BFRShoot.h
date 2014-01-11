@@ -11,9 +11,9 @@ public:
     explicit BFRShoot(BFManager *_manager);
     virtual ~BFRShoot();
     virtual BFRuleType getType() const;
+    virtual void processInput();
     virtual void filterIntersections();
     virtual void processIntersections();
-    virtual void processInput();
 
 protected:
     virtual void shoot(BFObject *obj, double theta);

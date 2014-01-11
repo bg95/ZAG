@@ -10,8 +10,8 @@ public:
     explicit BFRCollision(BFManager *_manager);
     virtual ~BFRCollision();
     virtual BFRuleType getType() const;
-    virtual void processIntersections();
     virtual void processInput();
+    virtual void processIntersections();
 
 protected:
     void processIntersection(BFOCircle *a, BFOCircle *b, double time);

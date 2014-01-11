@@ -14,9 +14,9 @@ public:
     explicit BFRule(BFManager *_manager);
     virtual ~BFRule();
     virtual BFRuleType getType() const;
+    virtual void processInput();
     virtual void filterIntersections();
     virtual void processIntersections();
-    virtual void processInput();
 
 protected:
     BFManager *manager;

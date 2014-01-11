@@ -18,6 +18,16 @@ BFRuleType BFRCollision::getType() const
     return BFR_Collision;
 }
 
+void BFRCollision::processInput()
+{
+    std::set<BFController*> &controllers = manager->getControllers();
+    std::set<BFController *>::iterator ctrliter;
+    for (ctrliter = controllers.begin(); ctrliter != controllers.end(); ctrliter++)
+    {
+        (*ctrliter)->applyControl();
+    }
+}
+
 void BFRCollision::processIntersections()
 {
     std::vector<IntersectionEvent> &intersections = manager->getIntersections();
@@ -43,16 +53,6 @@ void BFRCollision::processIntersections()
                 processBoundaryIntersection((BFOCircle *)a, (*iter).b, (*iter).time);
             }
         }
-    }
-}
-
-void BFRCollision::processInput()
-{
-    std::set<BFController*> &controllers = manager->getControllers();
-    std::set<BFController *>::iterator ctrliter;
-    for (ctrliter = controllers.begin(); ctrliter != controllers.end(); ctrliter++)
-    {
-        (*ctrliter)->applyControl();
     }
 }
 

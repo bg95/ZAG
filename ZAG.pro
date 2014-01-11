@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     BattleField/BFRule/BFRShoot.cpp \
     BattleField/BFController/BFCAIRandom.cpp \
     BattleField/Geometry.cpp \
-    BattleField/BFController/BFCRandomShootDodge.cpp
+    BattleField/BFController/BFCRandomShootDodge.cpp \
+    BattleField/ControlEvent.cpp
 
 HEADERS  += MainWindow.h \
     BattleField/BFObject/BFObject.h \
@@ -56,7 +57,8 @@ HEADERS  += MainWindow.h \
     BattleField/BFRule/BFRShoot.h \
     BattleField/BFController/BFCAIRandom.h \
     BattleField/Geometry.h \
-    BattleField/BFController/BFCRandomShootDodge.h
+    BattleField/BFController/BFCRandomShootDodge.h \
+    BattleField/ControlEvent.h
 
 FORMS    += MainWindow.ui
 

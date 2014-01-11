@@ -74,6 +74,10 @@ Vector2d BFOCircle::getVelocity() const
 {
     return v;
 }
+void BFOCircle::setAcceleration(Vector2d acc)
+{
+    a = acc;
+}
 
 void BFOCircle::move(double time)
 {

@@ -29,6 +29,108 @@ BFRuleType BFRShoot::getType() const
     return BFR_Collision; //...
 }
 
+void BFRShoot::processInput()
+{
+    //testing encode/decode
+
+    QBuffer buffer;
+    buffer.open(QIODevice::ReadWrite);
+    buffer.seek(0);
+    manager->encodeAllObjects(&buffer);
+    buffer.seek(0);
+    manager->destructObjects();
+    manager->decodeReplaceAllObjects(&buffer);
+
+    std::set<BFObject *>::iterator iter;
+    for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
+    {
+        BFOCircle *cir = (BFOCircle *)(*iter);
+        cir->a = Vector2d(0, 0);
+    }
+    BFRule::processInput();
+    for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
+        if ((*iter)->getProperty("isBullet") != "Yes")
+    {
+        BFOCircle *cir = (BFOCircle *)(*iter);
+        cir->a = cir->a + -6.0 * PI * eta * cir->r * cir->v / cir->m;
+    }
+    for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
+    {
+        //qDebug("object %lX", (unsigned long long)(*iter));
+        BFObject *const &obj = (*iter);
+        if (obj->getProperty("cooldowncount").isValid())
+        {
+            double cooldowncount = obj->getProperty("cooldowncount").toDouble();
+            //qDebug("cooldown = %lf/%lf dt=%lf", cooldowncount, cooldown, manager->getDT());
+            cooldowncount -= manager->getDT();
+            if (cooldowncount < 0)
+                cooldowncount = 0;
+            obj->setProperty("cooldowncount", cooldowncount);
+        }
+        QVariant vartheta = (*iter)->getProperty("shoot");
+        if (vartheta.isValid())
+        {
+            bool ok;
+            double theta = vartheta.toDouble(&ok);
+            if (!ok)
+                continue;
+            /*theta += dtheta;*/
+            shoot(*iter, theta);
+        }
+        (*iter)->setProperty("shoot", "");
+    }
+    static bool pspace = false;
+    if (!pspace && (manager->getKeysPressed().find(Qt::Key_Space) != manager->getKeysPressed().end()))
+    {
+        BFOColoredCircle *circle;
+        //BFCAIRandom *controller;
+        BFController *controller;
+        //circle = new BFOColoredCircle;//(bf->getManager());
+        circle = (BFOColoredCircle *)manager->getFactory()->newObject(typehash(BFOColoredCircle));
+        circle->p = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
+        circle->r = 0.05;
+        circle->v = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
+        circle->m = 0.25;
+        circle->maxa = 5;
+        circle->setProperty("shoot", "");
+        circle->setProperty("health", 1.0);
+        circle->setProperty("fraction", 10);
+        if (manager->getKeysPressed().find(Qt::Key_1) != manager->getKeysPressed().end())
+        {
+            circle->setProperty("fraction", 11);
+        }
+        if (manager->getKeysPressed().find(Qt::Key_2) != manager->getKeysPressed().end())
+        {
+            circle->setProperty("fraction", 12);
+        }
+        circle->setProperty("cooldown", 1.0);
+        circle->setProperty("cooldowncount", 0.0);
+
+        BFOColoredCircle *bullet = (BFOColoredCircle *)manager->getFactory()->newObject(typehash(BFOColoredCircle));
+        bullet->setColor(1.0, 0, 0, 1.0);
+        bullet->r = 0.01;
+        bullet->v = Vector2d(0, 3);
+        bullet->m = 0.01;
+        bullet->setProperty("isBullet", "Yes");
+        bullet->setProperty("damage", 0.1);
+        QBuffer bulletbuf;
+        bulletbuf.open(QIODevice::ReadWrite);
+        manager->getFactory()->encodeObject(bullet, &bulletbuf);
+        bulletbuf.seek(0);
+        manager->getFactory()->deleteObject(bullet);
+
+        //(*circle)["bullet prototype"] = bulletbuf.data();
+        circle->setProperty("bullet prototype", bulletbuf.data());
+        manager->insertObject(circle);
+
+        //controller = new BFCAIRandom(manager, circle);
+        controller = new BFCRandomShootDodge(manager, circle->getID());
+        manager->registerController(controller);
+        //circles[i] = circle;
+    }
+    pspace = manager->getKeysPressed().find(Qt::Key_Space) != manager->getKeysPressed().end();
+}
+
 void BFRShoot::filterIntersections()
 {
     std::vector<IntersectionEvent> &intersections = manager->getIntersections();
@@ -121,107 +223,6 @@ void BFRShoot::processIntersections()
             }
         }
     }
-}
-
-void BFRShoot::processInput()
-{
-    //testing encode/decode
-
-    QBuffer buffer;
-    buffer.open(QIODevice::ReadWrite);
-    buffer.seek(0);
-    manager->encodeAllObjects(&buffer);
-    buffer.seek(0);
-    manager->decodeReplaceAllObjects(&buffer);
-
-    std::set<BFObject *>::iterator iter;
-    for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
-    {
-        BFOCircle *cir = (BFOCircle *)(*iter);
-        cir->a = Vector2d(0, 0);
-    }
-    BFRule::processInput();
-    for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
-        if ((*iter)->getProperty("isBullet") != "Yes")
-    {
-        BFOCircle *cir = (BFOCircle *)(*iter);
-        cir->a = cir->a + -6.0 * PI * eta * cir->r * cir->v / cir->m;
-    }
-    for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
-    {
-        //qDebug("object %lX", (unsigned long long)(*iter));
-        BFObject *const &obj = (*iter);
-        if (obj->getProperty("cooldowncount").isValid())
-        {
-            double cooldowncount = obj->getProperty("cooldowncount").toDouble();
-            //qDebug("cooldown = %lf/%lf dt=%lf", cooldowncount, cooldown, manager->getDT());
-            cooldowncount -= manager->getDT();
-            if (cooldowncount < 0)
-                cooldowncount = 0;
-            obj->setProperty("cooldowncount", cooldowncount);
-        }
-        QVariant vartheta = (*iter)->getProperty("shoot");
-        if (vartheta.isValid())
-        {
-            bool ok;
-            double theta = vartheta.toDouble(&ok);
-            if (!ok)
-                continue;
-            /*theta += dtheta;*/
-            shoot(*iter, theta);
-        }
-        (*iter)->setProperty("shoot", "");
-    }
-    static bool pspace = false;
-    if (!pspace && (manager->getKeysPressed().find(Qt::Key_Space) != manager->getKeysPressed().end()))
-    {
-        BFOColoredCircle *circle;
-        //BFCAIRandom *controller;
-        BFController *controller;
-        //circle = new BFOColoredCircle;//(bf->getManager());
-        circle = (BFOColoredCircle *)manager->getFactory()->newObject(typehash(BFOColoredCircle));
-        circle->p = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
-        circle->r = 0.05;
-        circle->v = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
-        circle->m = 0.25;
-        circle->maxa = 5;
-        circle->setProperty("shoot", "");
-        circle->setProperty("health", 1.0);
-        circle->setProperty("fraction", 10);
-        if (manager->getKeysPressed().find(Qt::Key_1) != manager->getKeysPressed().end())
-        {
-            circle->setProperty("fraction", 11);
-        }
-        if (manager->getKeysPressed().find(Qt::Key_2) != manager->getKeysPressed().end())
-        {
-            circle->setProperty("fraction", 12);
-        }
-        circle->setProperty("cooldown", 1.0);
-        circle->setProperty("cooldowncount", 0.0);
-
-        BFOColoredCircle *bullet = (BFOColoredCircle *)manager->getFactory()->newObject(typehash(BFOColoredCircle));
-        bullet->setColor(1.0, 0, 0, 1.0);
-        bullet->r = 0.01;
-        bullet->v = Vector2d(0, 3);
-        bullet->m = 0.01;
-        bullet->setProperty("isBullet", "Yes");
-        bullet->setProperty("damage", 0.1);
-        QBuffer bulletbuf;
-        bulletbuf.open(QIODevice::ReadWrite);
-        manager->getFactory()->encodeObject(bullet, &bulletbuf);
-        bulletbuf.seek(0);
-        manager->getFactory()->deleteObject(bullet);
-
-        //(*circle)["bullet prototype"] = bulletbuf.data();
-        circle->setProperty("bullet prototype", bulletbuf.data());
-        manager->insertObject(circle);
-
-        //controller = new BFCAIRandom(manager, circle);
-        controller = new BFCRandomShootDodge(manager, circle->getID());
-        manager->registerController(controller);
-        //circles[i] = circle;
-    }
-    pspace = manager->getKeysPressed().find(Qt::Key_Space) != manager->getKeysPressed().end();
 }
 
 void BFRShoot::shoot(BFObject *obj, double theta)

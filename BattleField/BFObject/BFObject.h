@@ -52,6 +52,7 @@ public:
     virtual double getRoughRadius() const = 0; //The radius of a circle centered at the object's center, large enough to cover the whole object, used for Quadtree
     virtual Vector2d getPosition() const = 0;
     virtual Vector2d getVelocity() const = 0;
+    virtual void setAcceleration(Vector2d acc) = 0;
 
     virtual void move(double time) = 0;
 

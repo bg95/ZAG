@@ -14,14 +14,6 @@ BFRuleType BFRule::getType() const
     return BFR_Null;
 }
 
-void BFRule::filterIntersections()
-{
-}
-
-void BFRule::processIntersections()
-{
-}
-
 void BFRule::processInput()
 {
     std::set<BFController*> &controllers = manager->getControllers();
@@ -30,4 +22,12 @@ void BFRule::processInput()
     {
         (*ctrliter)->applyControl();
     }
+}
+
+void BFRule::filterIntersections()
+{
+}
+
+void BFRule::processIntersections()
+{
 }

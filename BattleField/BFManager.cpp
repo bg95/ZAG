@@ -168,13 +168,6 @@ void BFManager::nextFrame(double deltatime)
         findAllIntersections();
     }
     processAllIntersections();
-
-/*Network Part
-    QByteArray messageToSend;
-    QBuffer buf(&messageToSend);
-    encodeAllObjects(&buf);
-    emit sendMessage(&messageToSend);
-*/
 }
 
 void BFManager::paintAll(QGLWidget *glwidget)

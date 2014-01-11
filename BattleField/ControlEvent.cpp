@@ -1,7 +1,7 @@
 #include "ControlEvent.h"
 
-ControlEvent::ControlEvent() :
-    acc(0, 0)
+ControlEvent::ControlEvent(BFObjectID _objid) :
+    objid(_objid), acc(0, 0)
 {
 }
 
@@ -35,6 +35,11 @@ void ControlEvent::decode(QIODevice *device)
         BFObject::readStdString(device, (*iter).first);
         BFObject::readQVariant(device, (*iter).second);
     }
+}
+
+void ControlEvent::addPropertyChange(const std::string &prop, const QVariant &val)
+{
+    difference.push_back(std::pair<std::string, QVariant>(prop, val));
 }
 
 void encodeControlEventList(std::vector<ControlEvent> &list, QIODevice *device)

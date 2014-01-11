@@ -10,10 +10,12 @@
 class ControlEvent
 {
 public:
-    ControlEvent();
+    ControlEvent(BFObjectID _objid);
     ControlEvent(QIODevice *device);
     void encode(QIODevice *device);
     void decode(QIODevice *device);
+
+    void addPropertyChange(const std::string &prop, const QVariant &val);
 
     BFObjectID objid;
     Vector2d acc;

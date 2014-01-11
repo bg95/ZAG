@@ -3,14 +3,21 @@
 BFController::BFController(BFManager *_manager, BFObjectID _obj) :
     manager(_manager), objid(_obj)
 {
+    /*
     BFObject *obj = getObjectPointer();
     if (!obj)
         return;
+        */
     //obj->controller = this;
 }
 
 BFController::~BFController()
 {
+}
+
+std::vector<ControlEvent> &BFController::getControl()
+{
+    return controlevents;
 }
 
 void BFController::setKeysAndMouse(std::set<Qt::Key> keyspressed, Vector2d mouseposition, Qt::MouseButtons mousebuttons)

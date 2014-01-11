@@ -24,6 +24,7 @@ public:
     double getRoughRadius() const;
     Vector2d getPosition() const;
     Vector2d getVelocity() const;
+    double getMaxAcceleration() const;
     void setAcceleration(Vector2d acc);
 
     void move(double time);

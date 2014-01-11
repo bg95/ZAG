@@ -98,12 +98,12 @@ void BFManager::destructControllers()
     clearControllers();
 }
 
-void BFManager::applyControlEvents(std::vector<ControlEvent> events)
+void BFManager::applyControlEvents(std::vector<ControlEvent> &events)
 {
     BFObject *obj;
     for (auto iter = events.begin(); iter != events.end(); iter++)
     {
-        obj = factory.objectByID((*iter).id);
+        obj = factory.objectByID((*iter).objid);
         obj->applyControlEvent(*iter);
     }
 }

@@ -20,12 +20,15 @@ BFRuleType BFRCollision::getType() const
 
 void BFRCollision::processInput()
 {
+    /*
     std::set<BFController*> &controllers = manager->getControllers();
     std::set<BFController *>::iterator ctrliter;
     for (ctrliter = controllers.begin(); ctrliter != controllers.end(); ctrliter++)
     {
         (*ctrliter)->applyControl();
     }
+    */
+    BFRule::processInput();
 }
 
 void BFRCollision::processIntersections()

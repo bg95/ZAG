@@ -33,6 +33,7 @@ class BFObject
 {
 public:
     static const std::string empty_string;
+    static const QVariant QVariant_Invalid;
     static BFObjectID count;
     static void readStdString(QIODevice *device, std::string &str); //read a string from device
     static void writeStdString(QIODevice *device, const std::string &str); //write a string to device
@@ -53,6 +54,7 @@ public:
     virtual double getRoughRadius() const = 0; //The radius of a circle centered at the object's center, large enough to cover the whole object, used for Quadtree
     virtual Vector2d getPosition() const = 0;
     virtual Vector2d getVelocity() const = 0;
+    virtual double getMaxAcceleration() const = 0;
     virtual void setAcceleration(Vector2d acc) = 0;
 
     virtual void move(double time) = 0;

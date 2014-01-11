@@ -1,20 +1,16 @@
 #ifndef BFCAIRANDOM_H
 #define BFCAIRANDOM_H
 
-#include "BFController.h"
+#include "BFCRandomShootDodge.h"
 
-class BFCAIRandom : public BFController
+class BFCAIRandom : public BFCRandomShootDodge
 {
 public:
     BFCAIRandom(BFManager *_manager, BFObjectID _obj);
     virtual ~BFCAIRandom();
     //virtual BFControllerType getType() const;
-    virtual void applyControl(); //apply control to the object
-
-private:
-    BFObject *obj;
-    int count;
-    double theta, a;
+    virtual std::vector<ControlEvent> &getControl();
+    //virtual void applyControl(); //apply control to the object
 
 };
 

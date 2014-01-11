@@ -74,6 +74,11 @@ Vector2d BFOCircle::getVelocity() const
 {
     return v;
 }
+double BFOCircle::getMaxAcceleration() const
+{
+    return maxa;
+}
+
 void BFOCircle::setAcceleration(Vector2d acc)
 {
     a = acc;

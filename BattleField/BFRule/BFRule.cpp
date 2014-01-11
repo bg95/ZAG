@@ -20,7 +20,8 @@ void BFRule::processInput()
     std::set<BFController *>::iterator ctrliter;
     for (ctrliter = controllers.begin(); ctrliter != controllers.end(); ctrliter++)
     {
-        (*ctrliter)->applyControl();
+        //(*ctrliter)->applyControl();
+        manager->applyControlEvents((*ctrliter)->getControl());
     }
 }
 

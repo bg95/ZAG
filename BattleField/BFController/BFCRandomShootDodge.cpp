@@ -23,11 +23,19 @@ BFCRandomShootDodge::~BFCRandomShootDodge()
 {
 }
 
+std::vector<ControlEvent> &BFCRandomShootDodge::getControl()
+{
+    applyControl();
+    return controlevents;
+}
+
 void BFCRandomShootDodge::applyControl()
 {
+    controlevents.clear();
     obj = getObjectPointer();
     if (!obj)
         return;
+    ControlEvent event(obj->getID());
     BFObject *aim;
     double dist = 1.0 / 0.0;
     for (auto iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
@@ -43,19 +51,21 @@ void BFCRandomShootDodge::applyControl()
         }
     }
     if (dist != 1.0 / 0.0)
-        shoot(aim);
+        shoot(event, aim);
 
-    randomWalk();
+    randomWalk(event);
+
+    controlevents.push_back(event);
 }
 
-void BFCRandomShootDodge::shoot(BFObject *aim)
+void BFCRandomShootDodge::shoot(ControlEvent &event, BFObject *aim)
 {
     double t = (aim->getPosition() - obj->getPosition()).abs() / bulletv;
     double theta = (aim->getPosition() + aim->getVelocity() * t - obj->getPosition()).arg();
-    shoot(theta);
+    shoot(event, theta);
 }
 
-void BFCRandomShootDodge::shoot(double theta)
+void BFCRandomShootDodge::shoot(ControlEvent &event, double theta)
 {
     Vector2d r(cos(theta), sin(theta));
     Vector2d v0 = obj->getVelocity();
@@ -66,25 +76,23 @@ void BFCRandomShootDodge::shoot(double theta)
         theta = (k * r - v0).arg();
     }
 
-    obj->setProperty("shoot", theta);
+    //obj->setProperty("shoot", theta);
+    event.addPropertyChange("shoot", theta);
 }
 
-void BFCRandomShootDodge::dodge(BFObject *bullet)
+void BFCRandomShootDodge::dodge(ControlEvent &event, BFObject *bullet)
 {
 }
 
-void BFCRandomShootDodge::randomWalk()
+void BFCRandomShootDodge::randomWalk(ControlEvent &event)
 {
-    if (obj->getShape() == BFO_CIRCULAR)
+    //obj = getObjectPointer();
+    if (count <= 0)
     {
-        BFOCircle *cir = (BFOCircle *)obj;
-        if (count <= 0)
-        {
-            theta = rand() * 2 * PI / (double)RAND_MAX;
-            a = rand() * cir->maxa / (double)RAND_MAX;
-            count = rand() & 255;
-        }
-        count--;
-        cir->a = a * Vector2d(cos(theta), sin(theta));
+        theta = rand() * 2 * PI / (double)RAND_MAX;
+        a = rand() * obj->getMaxAcceleration() / (double)RAND_MAX;
+        count = rand() & 255;
     }
+    count--;
+    event.acc = a * Vector2d(cos(theta), sin(theta));
 }

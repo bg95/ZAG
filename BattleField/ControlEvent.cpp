@@ -1,0 +1,57 @@
+#include "ControlEvent.h"
+
+ControlEvent::ControlEvent() :
+    acc(0, 0)
+{
+}
+
+ControlEvent::ControlEvent(QIODevice *device)
+{
+    decode(device);
+}
+
+void ControlEvent::encode(QIODevice *device)
+{
+    device->write((const char *)objid, sizeof(objid));
+    BFObject::writeVector2d(device, acc);
+    auto size = difference.size();
+    device->write((const char *)&size, sizeof(size));
+    for (auto iter = difference.begin(); iter != difference.end(); iter++)
+    {
+        BFObject::writeStdString(device, (*iter).first);
+        BFObject::writeQVariant(device, (*iter).second);
+    }
+}
+
+void ControlEvent::decode(QIODevice *device)
+{
+    device->read((char *)objid, sizeof(objid));
+    BFObject::readVector2d(device, acc);
+    difference.clear();
+    auto size = difference.size();
+    device->read((char *)&size, sizeof(size));
+    for (auto iter = difference.begin(); iter != difference.end(); iter++)
+    {
+        BFObject::readStdString(device, (*iter).first);
+        BFObject::readQVariant(device, (*iter).second);
+    }
+}
+
+void encodeControlEventList(std::vector<ControlEvent> &list, QIODevice *device)
+{
+    auto size = list.size();
+    device->write((const char *)size, sizeof(size));
+    for (auto iter = list.begin(); iter != list.end(); iter++)
+        (*iter).encode(device);
+}
+
+void decodeAppendControlEventList(std::vector<ControlEvent> &list, QIODevice *device)
+{
+    size_t i;
+    std::vector<ControlEvent>::size_type size;
+    device->read((char *)&size, sizeof(size));
+    for (i = 0; i < size; i++)
+    {
+        list.push_back(ControlEvent(device));
+    }
+}

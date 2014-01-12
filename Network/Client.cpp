@@ -318,13 +318,11 @@ void Client::prepareGame(){
     bf->getManager()->decodeReplaceAllObjects(tcpSocket);
     std::set<BFObject *> objList = bf->getManager()->getObjects();
     std::vector<BFObjectID> fracObj;
-    for(std::set<BFObject *> ite = objList.begin(); ite != objList.end(); ite++){
+    for(std::set<BFObject*>::iterator ite = objList.begin(); ite != objList.end(); ite++){
         if((**ite)["fraction"].toInt() == frac){
             fracObj.push_back((*ite)->getID());
         }
     }
-
-
 
     bf->update();
     //write("Know");

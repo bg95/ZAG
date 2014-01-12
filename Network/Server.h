@@ -36,7 +36,7 @@ private slots:
     void gameBegin();
     //void updateNetwork();
     void battleEnd();
-    void updateClient(QByteArray);
+    void updateClient();
     void newMessage();
     void sendMessage();
     //void encodeMessage();
@@ -50,16 +50,19 @@ private:
     QList<QString> nickNameList;
     QTimer *networkTimer;
 
-    quint16 blockSize;
-    QString currentMessageGot;
+    quint32 blockSize;
+    //QString currentMessageGot;
 
     bool gameOn;
     BattleField *bf;
     BFRule *bfRule;
+    int numberOfConnections;
 
     QByteArray *getMessage();
     //void sendMessage(QTcpSocket *connection);
     void prepareInitialState();
+    void updateClientControl(QTcpSocket *);
+    bool checkConnectionNumber();
     QByteArray writeString(QString str);
 
     int counter; //Counter used for test network complecity

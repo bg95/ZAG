@@ -34,6 +34,7 @@ private slots:
     void battleEnd();
 
     void clientGameUpdate();
+    void sendAck();
 
     //This is for test
     void setHostAndPort();
@@ -65,7 +66,7 @@ private:
     QTcpSocket *tcpSocket;
     //QByteArray *message;
     //QString currentMessage;
-    quint16 blockSize;
+    quint32 blockSize;
 
     QNetworkSession *networkSession;
 
@@ -73,6 +74,8 @@ private:
     BFRule *rule;
 
     void writeString(QString);
+    void sendReturnMessage();
+    std::vector<ControlEvent> getAllControls();
 
     int counter; //counter used for test network complecity
 };

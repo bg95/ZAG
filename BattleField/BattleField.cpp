@@ -332,7 +332,7 @@ void BattleField::refresh()
 
     if (display_counter == display_refreshes) //this if clase is no longer needed
     {
-        display_counter = 0;
+/*
         //Send message to clients
         QByteArray message;
         QBuffer buf(&message);
@@ -345,12 +345,8 @@ void BattleField::refresh()
 
         emit sendMessage(message);
         buf.close();
-
-        manager.setDT(framedt * display_refreshes);
-        manager.processInput();
-        manager.setDT(framedt);
-        manager.nextFrame(); //shall wail until receiving messages from clients
-
+*/
+        display_counter = 0;
         update();
     }
 }

@@ -12,7 +12,7 @@
 
 #include "BattleField/BFFactory.h"
 
-Client::Client(QWidget *parent): QDialog(parent), networkSession(0), counter(0){
+Client::Client(QWidget *parent): QDialog(parent), networkSession(0), counter(0), blockSize(0){
     //This is for test
     hostLabel = new QLabel(tr("Server IP:"));
     portLabel = new QLabel(tr("Server port:"));
@@ -216,9 +216,13 @@ void Client::readMessage(){
             bf->getManager()->setRule(rule);
             connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
             connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(clientGameUpdate()));
+            //write("Know");
+            QTimer::singleShot(1000, this, SLOT(sendAck()));
 
             bf->show();
             this->hide();
+
+            blockSize = 0;
         }
         else{
             QStringList nameList = nextMessage.split('@', QString::SkipEmptyParts);
@@ -298,13 +302,34 @@ void Client::clientGameUpdate(){
     //buf->open(QIODevice::ReadWrite);
     //qDebug("Size of message GOT: %d", buf->data().size());
 
-/*
+    //qDebug("Got message");
+    QDataStream in(tcpSocket);
+
+    if(blockSize == 0){
+        if(tcpSocket->bytesAvailable() < (int)sizeof(quint32)){
+            //qDebug("Head broken");
+            return;
+        }
+        in >> blockSize;
+        //qDebug("Got message of size: %d", blockSize);
+    }
+    if(tcpSocket->bytesAvailable() < blockSize)
+        return;
+
+    //qDebug("Complete info");
     bf->getManager()->destructObjects();
     bf->getManager()->decodeReplaceAllObjects(tcpSocket);
-    qDebug("#objects = %d", bf->getManager()->getObjects().size());
-
     bf->update();
-*/
+    //qDebug("#objects = %d", bf->getManager()->getObjects().size());
+
+    sendReturnMessage();
+
+    blockSize = 0;
+
+
+    /*
+    qDebug("Size received is: %d", tcpSocket->size());
+    tcpSocket->readAll();
 
     //QDataStream in(tcpSocket);
     qDebug("The size received is: %d", tcpSocket->size());
@@ -318,7 +343,12 @@ void Client::clientGameUpdate(){
     else if(counter != temNumber - 1){
         qDebug("Missing happened when: %d", counter);
     }
+    if(counter % 100 == 0){
+        qDebug("Process %d", counter);
+    }
     counter = temNumber;
+    tcpSocket->readAll();
+
     */
 }
 
@@ -329,4 +359,44 @@ void Client::battleEnd(){
     delete rule;
 
     this->show();
+}
+
+void Client::sendReturnMessage(){
+    qDebug("Sending Control Info on Client");
+    QByteArray message;
+    QDataStream out(&message, QIODevice::WriteOnly);
+    out << quint32(0);
+
+    std::vector<ControlEvent> controlList = getAllControls();
+    ControlEvent::encodeControlEventList(controlList, out.device());
+
+    out.device()->seek(0);
+    out << quint32(message.size() - sizeof(quint32));
+
+    tcpSocket->write(message);
+}
+
+void Client::sendAck(){
+    QByteArray message;
+    QDataStream out(&message, QIODevice::WriteOnly);
+    out << quint32(-1);
+
+    tcpSocket->write(message);
+}
+
+
+std::vector<ControlEvent> Client::getAllControls(){
+    std::vector<ControlEvent> events;
+    std::set<BFController *> &controllers = bf->getManager()->getControllers();
+    std::set<BFController *>::iterator ctrliter;
+    for (ctrliter = controllers.begin(); ctrliter != controllers.end(); ctrliter++)
+    {
+        //(*ctrliter)->applyControl();
+        std::vector<ControlEvent> temVec = (*ctrliter)->getControl();
+        std::vector<ControlEvent>::iterator ite = temVec.begin();
+        for(; ite != temVec.end(); ite++){
+            events.push_back(*ite);
+        }
+    }
+    return events;
 }

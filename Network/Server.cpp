@@ -17,7 +17,7 @@
 //#include "main.h"
 
 Server::Server(QWidget *parent):
-    QDialog(parent), tcpServer(0), networkSession(0), gameOn(false), counter(0){
+    QDialog(parent), tcpServer(0), networkSession(0), gameOn(false), counter(0), blockSize(0){
 
     // This part is for test
     debuggerLabel = new QLabel;
@@ -265,11 +265,13 @@ void Server::newMessage(){
 
 void Server::gameBegin(){
     gameOn = true;
+    numberOfConnections = 0;
     gameBeginButton->setEnabled(false);
 
     QByteArray block = writeString("@GameBegin");
     foreach(QTcpSocket *connection, connectionList){
         disconnect(connection, SIGNAL(readyRead()), this, SLOT(newMessage()));
+        connect(connection, SIGNAL(readyRead()), this, SLOT(updateClient()));
         connection->write(block);
     }
 
@@ -277,7 +279,7 @@ void Server::gameBegin(){
     bfRule = new BFRShoot(bf->getManager());
     bf->getManager()->setRule(bfRule);
     connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
-    connect(bf, SIGNAL(sendMessage(QByteArray)), this, SLOT(updateClient(QByteArray)));
+    //connect(bf, SIGNAL(sendMessage(QByteArray)), this, SLOT(updateClient(QByteArray)));
 
     prepareInitialState();
 
@@ -414,22 +416,59 @@ void Server::battleEnd(){
     this->show();
 }
 
-void Server::updateClient(QByteArray message){
+void Server::updateClient(){
     //qDebug("Send message to Client");
     //qDebug("Size of message SENT: %d", message.size());
+    //qDebug("New message got on server");
+    if(!checkConnectionNumber())
+        return;
+
+    QByteArray message;
+    QDataStream out(&message, QIODevice::WriteOnly);
+    out << quint32(0);
+
+    bf->getManager()->encodeAllObjects(out.device());
+
+    out.device()->seek(0);
+    out << quint32(message.size() - sizeof(quint32));
+
+    //qDebug("Block size sent is %d", int(message.size() - sizeof(quint32)));
 
     foreach(QTcpSocket *client, connectionList){
-        //client->readAll();
-        //client->write(message);
-
-//Temporary just for test
-        QByteArray block;
-        QDataStream out(&block, QIODevice::WriteOnly);
-        out << counter;
-        for(int i = 0; i != 1000; i++){
-            out << i;
-        }
-        client->write(block);
-        counter++;
+        updateClientControl(client);
+        client->write(message);
     }
+}
+
+void Server::updateClientControl(QTcpSocket *client){
+    QDataStream in(client);
+
+    if(blockSize == 0){
+        if(client->bytesAvailable() < (int)sizeof(quint32)){
+            return;
+        }
+        in >> blockSize;
+    }
+    if(blockSize == -1)
+        return;
+    if(client->bytesAvailable() < blockSize)
+        return;
+
+    blockSize = 0;
+    //client->readAll();
+
+    qDebug("Decoding control");
+    std::vector<ControlEvent> eventList;
+    ControlEvent::decodeAppendControlEventList(eventList, client);
+    bf->getManager()->applyControlEvents(eventList);
+}
+
+
+bool Server::checkConnectionNumber(){
+    numberOfConnections++;
+    if(numberOfConnections < connectionList.size())
+        return false;
+
+    numberOfConnections = 0;
+    return true;
 }

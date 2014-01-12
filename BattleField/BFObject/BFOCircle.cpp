@@ -62,6 +62,10 @@ BFObjectShape BFOCircle::getShape() const
     return BFO_CIRCULAR;
 }
 
+double BFOCircle::getMass() const
+{
+    return m;
+}
 double BFOCircle::getRoughRadius() const
 {
     return r;
@@ -73,6 +77,10 @@ Vector2d BFOCircle::getPosition() const
 Vector2d BFOCircle::getVelocity() const
 {
     return v;
+}
+void BFOCircle::setVelocity(Vector2d vel)
+{
+    v = vel;
 }
 double BFOCircle::getMaxAcceleration() const
 {

@@ -174,7 +174,7 @@ void BFManager::nextFrame()
 
 void BFManager::paintAll(QGLWidget *glwidget)
 {
-    qDebug("paintAll, #objects = %d", (int)objects.size());
+    //qDebug("paintAll, #objects = %d", (int)objects.size());
     std::set<BFObject *>::iterator iter;
     for (iter = objects.begin(); iter != objects.end(); iter++)
         (*iter)->draw(glwidget);
@@ -257,7 +257,7 @@ void BFManager::decodeReplaceAllObjects(QIODevice *device)
             insertObject(tobj);
         else
         {
-            qDebug("Cannot decode object, %d left", device->bytesAvailable());
+            //qDebug("Cannot decode object, %d left", device->bytesAvailable());
             device->readAll();
             return;
         }
@@ -386,7 +386,7 @@ void BFManager::nextOneFrame()
     std::set<BFObject *>::iterator iter;/*
     for (iter = objects.begin(); iter != objects.end(); iter++)
     {
-        qDebug("object %lX (manager)", (unsigned long long)(*iter));
+        //qDebug("object %lX (manager)", (unsigned long long)(*iter));
     }*/
 
     BFOCircle *cir;

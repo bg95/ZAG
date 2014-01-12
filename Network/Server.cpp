@@ -201,7 +201,7 @@ QByteArray *Server::getMessage(){
 }
 */
 void Server::auth(){
-    qDebug("Verifying");
+    //qDebug("Verifying");
     debuggerLabel->setText(tr("Verifiring"));
     if(clientConnection->bytesAvailable() > 0){
         QDataStream in(clientConnection);
@@ -457,7 +457,7 @@ void Server::updateClientControl(QTcpSocket *client){
     blockSize = 0;
     //client->readAll();
 
-    qDebug("Decoding control");
+    //qDebug("Decoding control");
     std::vector<ControlEvent> eventList;
     ControlEvent::decodeAppendControlEventList(eventList, client);
     bf->getManager()->applyControlEvents(eventList);

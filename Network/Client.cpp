@@ -188,7 +188,7 @@ void Client::sendMessage(){
 }
 
 void Client::readMessage(){
-    qDebug("Old version of receive");
+    //qDebug("Old version of receive");
     //statusLabel -> setText(tr("Message got!"));
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_0);

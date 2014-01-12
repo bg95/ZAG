@@ -51,7 +51,8 @@ void BFCRandomShootDodge::applyControl()
     if (dist != 1.0 / 0.0)
         shoot(event, aim);
 
-    randomWalk(event);
+    //randomWalk(event);
+    dodge(event);
 
     controlevents.push_back(event);
 }
@@ -78,8 +79,55 @@ void BFCRandomShootDodge::shoot(ControlEvent &event, double theta)
     event.addPropertyChange("shoot", theta);
 }
 
-void BFCRandomShootDodge::dodge(ControlEvent &event, BFObject *bullet)
-{
+Vector2d BFCRandomShootDodge::intersectionPosition(Vector2d p1, Vector2d p2, Vector2d v1, Vector2d v2) {
+    double k1 = v1.y / v1.x, k2 = v2.y / v2.x;
+    double x = ( (k1 * p1.x - p1.y) - (k2 * p2.x - p2.y) ) / (k1 - k2);
+    double y = k1 * (x - p1.x) + p1.y;
+    return Vector2d(x, y);
+}
+
+void BFCRandomShootDodge::dodge(ControlEvent &event) {
+    std::vector<Vector2d> pIntersections;
+    BFObject* self = getPrincipalObjectPointer();
+    Vector2d pOwn = self->getPosition();
+    Vector2d vOwn = self->getVelocity();
+    //qDebug("***********************\n");
+    //qDebug("Own position %f, %f\n", pOwn.x, pOwn.y);
+    //qDebug("Own velocity %f, %f\n", vOwn.x, vOwn.y);
+    for(auto iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter ++) {
+        if((**iter)["isBullet"] == "Yes" && (**iter)["fraction"] != (*obj)["fraction"]) {
+            Vector2d pBullet = (*iter)->getPosition();
+            Vector2d vBullet = (*iter)->getVelocity();
+
+            Vector2d pIntersection = intersectionPosition(pBullet, pOwn, vBullet, vOwn);
+            //qDebug("Intersection position %f, %f\n", pIntersection.x, pIntersection.y);
+            double t1 = (pBullet.x - pIntersection.x) / vBullet.x;
+            double t2 = (pOwn.x - pIntersection.x) / vOwn.x;
+            double R = (*iter)->getRoughRadius() + self->getRoughRadius();
+            double tBullet1 = t1 - R / vBullet.abs();
+            double tBullet2 = t1 + R / vBullet.abs();
+            double tOwn1 = t2 - R / vOwn.abs();
+            double tOwn2 = t2 + R / vOwn.abs();
+            //qDebug("(tBullet1, tBullet2) = (%f, %f), (tOwn1, tOwn2) = (%f, %f)", tBullet1, tBullet2, tOwn1, tOwn2);
+            if( (tOwn2 >= tBullet1 && tOwn2 <= tBullet2)
+             || (tBullet2 >= tOwn1) && (tBullet2 <= tOwn2) )
+            pIntersections.push_back(pIntersection);
+        }
+    }
+    if(pIntersections.size() != 0)
+        qDebug("#intersections = %d", pIntersections.size());
+    Vector2d delta_a(0.0, 0.0);
+    for(auto iter = pIntersections.begin(); iter != pIntersections.end(); iter ++) {
+        delta_a = delta_a + (pOwn - (*iter)).unit();
+    }
+    if(delta_a.abs() != 0)
+        qDebug("delta_a = %lf,%lf", delta_a.x, delta_a.y);
+    delta_a = delta_a.unit();
+    if(delta_a.abs() != 0)
+        qDebug("delta_a.unit = %lf,%lf", delta_a.x, delta_a.y);
+
+    delta_a = (self->getMaxAcceleration()) * delta_a;
+    event.acc = event.acc + delta_a;
 }
 
 void BFCRandomShootDodge::randomWalk(ControlEvent &event)

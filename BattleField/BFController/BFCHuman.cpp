@@ -27,6 +27,7 @@ BFControllerType BFCHuman::getType() const
 std::vector<ControlEvent> &BFCHuman::getControl()
 {
     applyControl();
+    qDebug("getHumanControl %lf,%lf", controlevents[0].acc.x, controlevents[0].acc.y);
     return controlevents;
 }
 

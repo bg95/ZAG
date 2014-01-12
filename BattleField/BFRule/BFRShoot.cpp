@@ -45,6 +45,10 @@ void BFRShoot::processInput()
     std::set<BFObject *>::iterator iter;
     for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
     {
+        (*iter)->setColor(colorlist[(**iter)["fraction"].toInt() % colorlistsize]);
+    }
+    for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
+    {
         BFOCircle *cir = (BFOCircle *)(*iter);
         cir->a = Vector2d(0, 0);
     }
@@ -207,7 +211,8 @@ void BFRShoot::processIntersections()
                     //b->setProperty("health", newhealth);
                     (*b)["health"] = newhealth;
                     b->setAlpha(newhealth);
-                    ((BFOCircle *)b)->v = (((BFOCircle *)b)->v * ((BFOCircle *)b)->m + ((BFOCircle *)a)->v * ((BFOCircle *)a)->m) / (((BFOCircle *)b)->m + ((BFOCircle *)a)->m);
+                    //((BFOCircle *)b)->v = (((BFOCircle *)b)->v * ((BFOCircle *)b)->m + ((BFOCircle *)a)->v * ((BFOCircle *)a)->m) / (((BFOCircle *)b)->m + ((BFOCircle *)a)->m);
+                    b->setVelocity((b->getVelocity() * b->getMass() + a->getVelocity() * a->getMass()) / (b->getMass() + a->getMass()));
                 }
                 manager->destructObject(a);
                 continue;
@@ -236,6 +241,8 @@ void BFRShoot::processIntersections()
 
 void BFRShoot::shoot(BFObject *obj, double theta)
 {
+    if (!obj->getProperty("bullet prototype").isValid())
+        return;
     QByteArray bulletba = obj->getProperty("bullet prototype").toByteArray();
     QBuffer bulletbuf(&bulletba);
     bulletbuf.open(QIODevice::ReadOnly);

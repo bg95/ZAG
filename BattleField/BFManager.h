@@ -98,6 +98,7 @@ public:
     bool intersectingBoundary(const BFObject *a, IntersectionEvent::Boundary b);
     bool intersectingBoundary(BFOCircle *a, IntersectionEvent::Boundary b);
 
+    //get the pointer to special object controlled by human
     BFObject* getObjectControlled();
 
 private:
@@ -110,7 +111,7 @@ private:
 
     //pointer to the controlled object
     BFObject* objectControlled;
-    //find the object controlled by human
+    //find the pointer
     BFObject*  findObjectControlled();
 
     std::set<BFController *> controllers;

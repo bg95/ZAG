@@ -32,6 +32,7 @@ void Scene::draw()
     drawMap(mapSize);
 }
 
+//this small map will always hang on the right-upper corner, independent of the player's view port
 void Scene::drawMap(double mapSize)
 {
     glBegin(GL_QUADS);
@@ -45,7 +46,7 @@ void Scene::drawMap(double mapSize)
 
     double unit = mapSize / 2.0;
     glScalef(unit, unit, unit);
-
+    //hightlight the object controlled by human in the map
     for(auto iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter ++) {
         if((*iter) != manager->getObjectControlled())
         //if( (*iter) != manager->findObjectControlled() )

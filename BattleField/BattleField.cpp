@@ -75,6 +75,7 @@ void BattleField::initializeGL()
 
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
+    //set the lightings
     glEnable(GL_LIGHTING);
     GLfloat lightAmbient[4][4] = {{ 0.0, 0.0, 0.0, 1.0 },
                                   { 0.0, 0.0, 0.0, 1.0 },
@@ -130,13 +131,14 @@ void BattleField::paintGL()
                 delta_y = -p.y;
             }
         }
-
+        //draw the map and blood volume
         scene.draw();
     }
     glPopMatrix();
 
     glPushMatrix();
     {
+        //change the position for objects based on delta_x, delta_y, angle
         glTranslatef(delta_x, delta_y, 0.0);
         glRotatef(angle, 0.0, 0.0, 1.0);
         glScalef(unit, unit, unit);
@@ -148,8 +150,8 @@ void BattleField::paintGL()
 }
 
 void BattleField::drawGrid() {
-    int numBar = 35;
-    double step = 2.0 / (double)numBar;
+    int numBar = 35;//numBar * numBar grids
+    double step = 2.0 / (double)numBar;//distance between two adjacent bars
     double radius = step / 20;
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glPushMatrix();
@@ -157,8 +159,10 @@ void BattleField::drawGrid() {
         glPushMatrix();
             glRotatef(-90.0, 1.0, 0.0, 0.0);
             glTranslatef(-1.0, 0.0, -1.0);
+            //draw the horizontal bars
             for(double x = 0; x <= 2.0 + step; x += step) {
                 for(double z = 0; z < 2.0; z += step) {
+                    //each bar of this grid is in fact a cylinder
                     glutSolidCylinder(radius, step, 6, 10);
                     glTranslated(0.0, 0.0, step);
                 }
@@ -169,6 +173,7 @@ void BattleField::drawGrid() {
         glPushMatrix();
             glRotatef(90.0, 0.0, 1.0, 0.0);
             glTranslatef(0.0, -1.0, -1.0);
+            //draw the vertical bars
             for(double y = 0; y <= 2.0 + step; y += step) {
                 glutSolidCylinder(radius, 2.0, 6, 10);
                 glTranslated(0.0, step, 0.0);

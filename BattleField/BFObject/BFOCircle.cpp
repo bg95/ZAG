@@ -34,6 +34,8 @@ BFObject *BFOCircle::duplicate()
     return ptr;
 }
 
+//according to its position and size information
+//draw this object at the proper position
 void BFOCircle::draw(QGLWidget *glwidget)
 {
     //QRectF region(p.x - r, p.y - r, p.x + r, p.y + r);

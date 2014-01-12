@@ -79,6 +79,7 @@ void BFCRandomShootDodge::shoot(ControlEvent &event, double theta)
     event.addPropertyChange("shoot", theta);
 }
 
+//calculate the intersection position of two 2D lines
 Vector2d BFCRandomShootDodge::intersectionPosition(Vector2d p1, Vector2d p2, Vector2d v1, Vector2d v2) {
     double k1 = v1.y / v1.x, k2 = v2.y / v2.x;
     double x = ( (k1 * p1.x - p1.y) - (k2 * p2.x - p2.y) ) / (k1 - k2);
@@ -86,6 +87,7 @@ Vector2d BFCRandomShootDodge::intersectionPosition(Vector2d p1, Vector2d p2, Vec
     return Vector2d(x, y);
 }
 
+//dodge the bullets which go towards it and change the acc accordinglly
 void BFCRandomShootDodge::dodge(ControlEvent &event) {
     std::vector<Vector2d> pIntersections;
     BFObject* self = getPrincipalObjectPointer();
@@ -109,19 +111,26 @@ void BFCRandomShootDodge::dodge(ControlEvent &event) {
             double tOwn1 = t2 - R / vOwn.abs();
             double tOwn2 = t2 + R / vOwn.abs();
             //qDebug("(tBullet1, tBullet2) = (%f, %f), (tOwn1, tOwn2) = (%f, %f)", tBullet1, tBullet2, tOwn1, tOwn2);
+            //the following is the necessary condition for collision between objects
             if( (tOwn2 >= tBullet1 && tOwn2 <= tBullet2)
              || (tBullet2 >= tOwn1) && (tBullet2 <= tOwn2) ) {
+                //in case the detected collision could only happen previously
                 if(tOwn1 < 0  && tOwn2 < 0 && tBullet1 < 0 && tBullet2 < 0) {
+                    //if the dectected bullet is very near to me (certainly towards me),
+                    //then shoot a bullet towards it
                     if(dist >= (pBullet - pOwn).abs()) {
                         dist = (pBullet - pOwn).abs();
                         shoot(event, (*iter));
                     }
+                    //record this dectected collosion and try to avoid them
                     pIntersections.push_back(pIntersection);
                 }
             }
         }
     }
     Vector2d delta_a(0.0, 0.0);
+    //accelerate in the opposed direction of possible collsions
+    //this is a natural thought
     for(auto iter = pIntersections.begin(); iter != pIntersections.end(); iter ++) {
         delta_a = delta_a + (pOwn - (*iter)).rotate(PI / 2.0).unit();
     }
@@ -130,6 +139,7 @@ void BFCRandomShootDodge::dodge(ControlEvent &event) {
     event.acc = event.acc + delta_a;
 }
 
+//ignore the environment and bahave randomly
 void BFCRandomShootDodge::randomWalk(ControlEvent &event)
 {
     //obj = getObjectPointer();

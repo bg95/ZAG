@@ -36,6 +36,7 @@ public:
 
 
 signals:
+    void timerTimeout();
     void battleEnd();
     void sendMessage(QByteArray);
     

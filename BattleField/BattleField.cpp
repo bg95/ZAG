@@ -25,6 +25,7 @@ BattleField::BattleField(QWidget *parent, bool fs) :
 {
     refreshtimer.setInterval(refresh_interval);
     connect(&refreshtimer, SIGNAL(timeout()), this, SLOT(refresh()));
+    connect(&refreshtimer, SIGNAL(timeout()), this, SIGNAL(timerTimeout()));
     //connect(&refreshtimer, SIGNAL(timeout()), &overlay, SLOT(update()));
     //refreshtimer.start();
     fullscreen = fs;

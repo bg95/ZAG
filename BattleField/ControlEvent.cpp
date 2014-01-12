@@ -10,6 +10,13 @@ ControlEvent::ControlEvent(QIODevice *device)
     decode(device);
 }
 
+ControlEvent::ControlEvent(const ControlEvent &another)
+{
+    objid = another.objid;
+    acc = another.acc;
+    difference = another.difference;
+}
+
 void ControlEvent::encode(QIODevice *device)
 {
     device->write((const char *)&objid, sizeof(objid));

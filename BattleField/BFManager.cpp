@@ -12,7 +12,7 @@ int BFManager::frame_group_size = 5;
 double BFManager::epsi = 0.01;
 
 BFManager::BFManager(BattleField *bf) :
-    battlefield(bf), qtree(this)
+    battlefield(bf), qtree(this), rule(0)
 {
     /*
     left = -1.0;
@@ -160,7 +160,8 @@ void BFManager::processInput()
     {
         (*ctrliter)->setKeysAndMouse(keyspressed, mouseposition, mousebuttons);
     }
-    rule->processInput();
+    if (rule)
+        rule->processInput();
 }
 
 void BFManager::nextFrame()

@@ -322,18 +322,8 @@ void BattleField::mouseReleaseEvent(QMouseEvent *event)
 void BattleField::refresh()
 {
     double framedt = refresh_interval / 1000.0 * timescale;
-    manager.setDT(framedt);
-    manager.processInput();
-
-    display_counter++;
-    if (display_counter != display_refreshes)
-    {
-        manager.nextFrame();
-        return;
-    }
-    if (display_counter == display_refreshes)
-    {
         //Send message to clients
+/*
         QByteArray message;
         QBuffer buf(&message);
         buf.open(QIODevice::ReadWrite);
@@ -345,14 +335,11 @@ void BattleField::refresh()
 
         emit sendMessage(message);
         buf.close();
-
-        display_counter = 0;
-        manager.setDT(framedt * display_refreshes);
-        manager.processInput();
-        manager.setDT(framedt);
-        manager.nextFrame(); //shall wail until receiving messages from clients
-        update();
-    }
+*/
+    manager.setDT(framedt);
+    manager.processInput();
+    manager.nextFrame(); //shall wail until receiving messages from clients
+    update();
 }
 
 void BattleField::mouseEvent(QMouseEvent *mouseevent)

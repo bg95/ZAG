@@ -8,6 +8,7 @@
 #include "main.h"  //only for debug
 
 int BFManager::process_independent_intersections = 10;
+int BFManager::frame_group_size = 5;
 double BFManager::epsi = 0.01;
 
 BFManager::BFManager(BattleField *bf) :
@@ -164,43 +165,11 @@ void BFManager::processInput()
 
 void BFManager::nextFrame()
 {
-    std::set<BFObject *>::iterator iter;/*
-    for (iter = objects.begin(); iter != objects.end(); iter++)
-    {
-        qDebug("object %lX (manager)", (unsigned long long)(*iter));
-    }*/
-
-    BFOCircle *cir;
-    /*
-    qDebug("circle0 (%lf,%lf)", circles[0]->p.x, circles[0]->p.y);
-    qDebug("circle1 (%lf,%lf)", circles[1]->p.x, circles[1]->p.y);
-    /**/
-    for (iter = objects.begin(); iter != objects.end(); iter++)
-    {
-        switch ((*iter)->getShape())
-        {
-        case BFO_CIRCULAR:
-            cir = (BFOCircle *)(*iter);/*
-            cir->p = cir->p + cir->v * dt + 0.5 * cir->a * dt * dt;
-            cir->v = cir->v + cir->a * dt;*/
-            //qDebug("nextframe< p=(%lf,%lf) v=(%lf,%lf) a=(%lf,%lf)", ((BFOCircle *)cir)->p.x, ((BFOCircle *)cir)->p.y, cir->v.x, cir->v.y, cir->a.x, cir->a.y);
-            cir->move(dt);
-            //qDebug("nextframe> p=(%lf,%lf) v=(%lf,%lf) a=(%lf,%lf)", ((BFOCircle *)cir)->p.x, ((BFOCircle *)cir)->p.y, cir->v.x, cir->v.y, cir->a.x, cir->a.y);
-            break;
-        }
-    }
-    /*
-    qDebug("circle0 (%lf,%lf)", circles[0]->p.x, circles[0]->p.y);
-    qDebug("circle1 (%lf,%lf)", circles[1]->p.x, circles[1]->p.y);
-    /**/
-    findAllIntersections();
-    for (int i = 0; i != process_independent_intersections && intersections.size(); i++)
-    {
-        //qDebug("proc ind");
-        processIndependentIntersections();
-        findAllIntersections();
-    }
-    processAllIntersections();
+    dt /= frame_group_size;
+    int i;
+    for (i = 0; i < frame_group_size; i++)
+        nextOneFrame();
+    dt *= frame_group_size;
 }
 
 void BFManager::paintAll(QGLWidget *glwidget)
@@ -410,6 +379,47 @@ bool BFManager::intersectingBoundary(BFOCircle *a, IntersectionEvent::Boundary b
         break;
     }
     return false;
+}
+
+void BFManager::nextOneFrame()
+{
+    std::set<BFObject *>::iterator iter;/*
+    for (iter = objects.begin(); iter != objects.end(); iter++)
+    {
+        qDebug("object %lX (manager)", (unsigned long long)(*iter));
+    }*/
+
+    BFOCircle *cir;
+    /*
+    qDebug("circle0 (%lf,%lf)", circles[0]->p.x, circles[0]->p.y);
+    qDebug("circle1 (%lf,%lf)", circles[1]->p.x, circles[1]->p.y);
+    /**/
+    for (iter = objects.begin(); iter != objects.end(); iter++)
+    {
+        switch ((*iter)->getShape())
+        {
+        case BFO_CIRCULAR:
+            cir = (BFOCircle *)(*iter);/*
+            cir->p = cir->p + cir->v * dt + 0.5 * cir->a * dt * dt;
+            cir->v = cir->v + cir->a * dt;*/
+            //qDebug("nextframe< p=(%lf,%lf) v=(%lf,%lf) a=(%lf,%lf)", ((BFOCircle *)cir)->p.x, ((BFOCircle *)cir)->p.y, cir->v.x, cir->v.y, cir->a.x, cir->a.y);
+            cir->move(dt);
+            //qDebug("nextframe> p=(%lf,%lf) v=(%lf,%lf) a=(%lf,%lf)", ((BFOCircle *)cir)->p.x, ((BFOCircle *)cir)->p.y, cir->v.x, cir->v.y, cir->a.x, cir->a.y);
+            break;
+        }
+    }
+    /*
+    qDebug("circle0 (%lf,%lf)", circles[0]->p.x, circles[0]->p.y);
+    qDebug("circle1 (%lf,%lf)", circles[1]->p.x, circles[1]->p.y);
+    /**/
+    findAllIntersections();
+    for (int i = 0; i != process_independent_intersections && intersections.size(); i++)
+    {
+        //qDebug("proc ind");
+        processIndependentIntersections();
+        findAllIntersections();
+    }
+    processAllIntersections();
 }
 
 void BFManager::findAllIntersections()

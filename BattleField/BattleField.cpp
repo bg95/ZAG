@@ -20,7 +20,8 @@ BattleField::BattleField(QWidget *parent, bool fs) :
     QGLWidget(parent),
     refreshtimer(this),
     display_counter(0),
-    manager(this)//,
+    manager(this),
+    setfocus(false)//,
     //overlay(this)
 {
     refreshtimer.setInterval(refresh_interval);
@@ -116,11 +117,22 @@ void BattleField::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glPushMatrix();
+    {
+        if (setfocus)
+        {
+            qDebug("setfocus unit = %lf", unit);
+            BFObject *obj = manager.getFactory()->objectByID(focusobj);
+            Vector2d p = obj->getPosition().rotate(angle / 180.0 * PI) / 2.017353 * unit;
+            delta_x = -p.x;
+            delta_y = -p.y;
+        }
+
         glTranslatef(delta_x, delta_y, 0.0);
         glRotatef(angle, 0.0, 0.0, 1.0);
         glScalef(unit, unit, unit);
         drawGrid();
         manager.paintAll(this);
+    }
     glPopMatrix();
     //qDebug("painting");
 }
@@ -293,12 +305,48 @@ double BattleField::getRotation() const
     return angle / 180.0 * PI;
 }
 
+void BattleField::setFocusObject(BFObjectID objid)
+{
+    setfocus = true;
+    focusobj = objid;
+}
+
+void BattleField::resetFocus()
+{
+    setfocus = false;
+}
+
 void BattleField::wheelEvent(QWheelEvent *event)
 {
     double delta = event->delta() / ( 8.0 * 15.0) / 10.0;
     scale(exp(delta));
     event->ignore();
     manager.wheelEvent(event);
+}
+
+void BattleField::refreshMousePosition()
+{
+     double w = (double)width();
+     double h = (double)height();
+     double size = w < h ? w : h;
+     double x_prime = ( (double)mouse_x - w / 2 ) / (w / 2.0) * (w / size * 0.65);
+     double y_prime = - ( (double)mouse_y - h / 2 ) / (h / 2.0) * ( h / size * 0.65);
+     double tan15 = tan(15.0 * PI / 180.0), cos15 = cos(15.0 * PI / 180.0);
+     double z = 2 / (y_prime * tan15 - 1);
+     //x and y are the coordinates in the battlefield
+     double y = - z * y_prime / cos15;//-1.0 ~ 1.0
+     double x = - z * x_prime;//-1.0 ~ 1.0
+     //qDebug("x = %f, y = %f", x, y);
+     double alpha = - ( angle * PI / 180.0 - atan2(y - delta_y, x - delta_x) );//in radian
+     double r = sqrt(pow(x - delta_x, 2.0) + pow(y - delta_y, 2.0)) / unit;
+     double X = r * cos(alpha), Y = r * sin(alpha);//-1.0 ~ 1.0
+     //qDebug("alpha = %f, X = %f, Y = %f", alpha * 180.0 / PI, X, Y);
+     double px = (X + 1.0) / 2.0;
+     double py = (Y + 1.0) / 2.0;
+     //qDebug("px = %f, py = %f\n", px, py);
+     manager.mouseEvent(Vector2d(px * manager.getRight() + (1.0 - px) * manager.getLeft(),
+                                 (1.0 - py) * manager.getBottom() + py * manager.getTop()),
+                        mouse_buttons);
 }
 
 void BattleField::keyReleaseEvent(QKeyEvent *event)
@@ -338,6 +386,7 @@ void BattleField::refresh()
         emit sendMessage(message);
         buf.close();
 */
+    refreshMousePosition();
     manager.setDT(framedt);
     manager.processInput();
     manager.nextFrame(); //shall wail until receiving messages from clients
@@ -352,25 +401,9 @@ void BattleField::mouseEvent(QMouseEvent *mouseevent)
     manager.mouseEvent(Vector2d(px * manager.getRight() + (1.0 - px) * manager.getLeft(),
                                 py * manager.getBottom() + (1.0 - py) * manager.getTop()),
                        mouseevent->buttons());*/
-    double w = (double)width();
-    double h = (double)height();
-    double size = w < h ? w : h;
-    double x_prime = ( (double)mouseevent->x() - w / 2 ) / (w / 2.0) * (w / size * 0.65);
-    double y_prime = - ( (double)mouseevent->y() - h / 2 ) / (h / 2.0) * ( h / size * 0.65);
-    double tan15 = tan(15.0 * PI / 180.0), cos15 = cos(15.0 * PI / 180.0);
-    double z = 2 / (y_prime * tan15 - 1);
-    //x and y are the coordinates in the battlefield
-    double y = - z * y_prime / cos15;//-1.0 ~ 1.0
-    double x = - z * x_prime;//-1.0 ~ 1.0
-    //qDebug("x = %f, y = %f", x, y);
-    double alpha = - ( angle * PI / 180.0 - atan2(y - delta_y, x - delta_x) );//in radian
-    double r = sqrt(pow(x - delta_x, 2.0) + pow(y - delta_y, 2.0)) / unit;
-    double X = r * cos(alpha), Y = r * sin(alpha);//-1.0 ~ 1.0
-    //qDebug("alpha = %f, X = %f, Y = %f", alpha * 180.0 / PI, X, Y);
-    double px = (X + 1.0) / 2.0;
-    double py = (Y + 1.0) / 2.0;
-    //qDebug("px = %f, py = %f\n", px, py);
-    manager.mouseEvent(Vector2d(px * manager.getRight() + (1.0 - px) * manager.getLeft(),
-                                (1.0 - py) * manager.getBottom() + py * manager.getTop()),
-                       mouseevent->buttons());
+    mouse_x = mouseevent->x();
+    mouse_y = mouseevent->y();
+    mouse_buttons = mouseevent->buttons();
+
+    refreshMousePosition();
 }

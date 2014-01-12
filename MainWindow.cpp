@@ -109,6 +109,8 @@ void MainWindow::singlePlayer(){
     bf->getManager()->insertObject(circle);
     objid.push_back(circle->getID());
 
+    bf->setFocusObject(circle->getID());
+
     QBuffer *buf = new QBuffer;
     BFFactory *fac = bf->getManager()->getFactory();
     circle = (BFOColoredCircle *)bf->getManager()->getFactory()->newObject(typehash(BFOColoredCircle));//(bf->getManager());

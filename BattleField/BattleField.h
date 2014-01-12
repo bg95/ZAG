@@ -33,6 +33,8 @@ public:
     void rotate(double dangle); //in degree, rotate stands for positive degree
     double getRotation() const;
 
+    void setFocusObject(BFObjectID objid);
+    void resetFocus();
 
 
 signals:
@@ -59,6 +61,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent *);
     void wheelEvent(QWheelEvent *);
 
+    void refreshMousePosition();
+
 private slots:
     void refresh();
 
@@ -73,6 +77,12 @@ private:
     float unit;
     float angle;
     float delta_x, delta_y;
+
+    int mouse_x, mouse_y;
+    Qt::MouseButtons mouse_buttons;
+
+    BFObjectID focusobj;
+    bool setfocus;
 
     //BattleFieldOverlay overlay;
 

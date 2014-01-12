@@ -17,10 +17,14 @@
 
 //#include "main.h"
 
+/*
+ *This is used for initialize the UI for the server and prepare some network essentials
+ *
+ */
 Server::Server(QWidget *parent):
     QDialog(parent), tcpServer(0), networkSession(0), gameOn(false), counter(0), blockSize(0), flag(true){
 
-    // This part is for test
+    // This part is for UI
     debuggerLabel = new QLabel;
     statusLabel = new QLabel;
     sentMessage = new QLineEdit;
@@ -62,7 +66,7 @@ Server::Server(QWidget *parent):
     setLayout(mainLayout);
 
     setWindowTitle(tr("Server Test"));
-    //Test part end */
+    //Test UI end */
 
     QNetworkConfigurationManager manager;
     if(manager.capabilities() & QNetworkConfigurationManager::NetworkSessionRequired){
@@ -106,6 +110,11 @@ Server::~Server(){
     }*/
 }
 
+/*
+ *This is called when a new client is asking to connection to the server
+ *A authentification will be sent back before the server accepts it
+ *The authentification is used for getting nick name of the client as well as prevent from misconnection
+ */
 void Server::acceptConnection(){
     debuggerLabel->setText(tr("Authentification"));
 
@@ -119,6 +128,7 @@ void Server::acceptConnection(){
     QTimer::singleShot(1 * 1000, this, SLOT(auth()));
 }
 
+//Network basics
 void Server::sessionOpened(){
 
     //tihs part is for test
@@ -166,6 +176,7 @@ void Server::sessionOpened(){
     statusLabel -> setText(tr("The server is running on \n\n IP: %1\nport: %2\n\n").arg(ipAddress).arg(tcpServer -> serverPort()));
 }
 
+//This will be called after 1s when a client is asking to connect to the server
 void Server::auth(){
     //qDebug("Verifying");
     debuggerLabel->setText(tr("Verifiring"));
@@ -207,6 +218,7 @@ void Server::auth(){
     }
 }
 
+//This is called when sendMessage button is pressed
 void Server::sendMessage(){
     //This part is for test
     debuggerLabel->setText(tr("Messages sent!"));
@@ -222,6 +234,7 @@ void Server::sendMessage(){
     messageList->addItem("Host:: " + sentMessage->text());
 }
 
+//This is called when a new message is sent to the server
 void Server::newMessage(){
     QString mesList;
     foreach(Connection *c, connectionList){
@@ -247,7 +260,7 @@ void Server::newMessage(){
     }
 }
 
-
+//This is designed for writing a string
 QByteArray Server::writeString(QString str, const quint16 mode){
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
@@ -260,6 +273,7 @@ QByteArray Server::writeString(QString str, const quint16 mode){
     return block;
 }
 
+//This is used becaused of specially designed protocal
 bool Server::readCheck(QTcpSocket *cli){
     QDataStream in(cli);
     in.setVersion(QDataStream::Qt_4_0);
@@ -279,6 +293,7 @@ bool Server::readCheck(QTcpSocket *cli){
     return true;
 }
 
+//This is called when a new connection is received
 void Server::sendGreetingMessage(QTcpSocket *cli){
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
@@ -294,6 +309,11 @@ void Server::sendGreetingMessage(QTcpSocket *cli){
 //****************************************
 //The following part is used for the game
 
+/*
+ *This is called when startGame button is pressed
+ *This function will initialize a game, which will then send to all clients
+ *
+ */
 void Server::gameBegin(){
     gameOn = true;
     numberOfConnections = 0;
@@ -328,6 +348,7 @@ void Server::gameBegin(){
     bf->show();
 }
 
+//This will set the basic info for the game
 void Server::prepareInitialState(){
     BFOColoredCircle *circle;
     BFCAIRandom *controller;
@@ -429,6 +450,7 @@ void Server::prepareInitialState(){
     delete buf;
 }
 
+//This is what will be sent to clients initially, only called once when the game begins
 QByteArray Server::sendInitialMessage(){
     QByteArray message;
     QDataStream out(&message, QIODevice::WriteOnly);
@@ -444,12 +466,14 @@ QByteArray Server::sendInitialMessage(){
     return message;
 }
 
+//This is called when the game ends
 void Server::battleEnd(){
     bf->pause();
     foreach(Connection *c, connectionList){
         connect(c->getConnection(), SIGNAL(readyRead()), this, SLOT(newMessage()));
     }
     gameBeginButton->setEnabled(true);
+    gameOn = false;
 
     delete bf;
     delete bfRule;
@@ -457,6 +481,13 @@ void Server::battleEnd(){
     this->show();
 }
 
+/*
+ *This is called when a message will be sent to all users
+ *Message is sent to clients when all clients have already sent their messages to the server
+ *and only one message will be sent in a single interation of the game timer to prevent unnecessary
+ *calculation.
+ *
+ */
 void Server::updateClient(){
     //qDebug("Server gets message");
     if(!checkConnectionNumber())
@@ -471,10 +502,12 @@ void Server::updateClient(){
     }
 }
 
+//This is synchronized with the timer of the game
 void Server::newInterval(){
     flag = true;
 }
 
+//This will read clients' control info and set the state accordingly
 void Server::updateClientControl(QTcpSocket *client){
     if(!readCheck(client))
         return;
@@ -489,10 +522,9 @@ void Server::updateClientControl(QTcpSocket *client){
     */
     qDebug("Apply a eventList of size; %d", eventList.size());
     bf->getManager()->applyControlEvents(eventList);
-
 }
 
-
+//Some helper function
 bool Server::checkConnectionNumber(){
     numberOfConnections++;
     if(numberOfConnections < connectionList.size())
@@ -502,6 +534,7 @@ bool Server::checkConnectionNumber(){
     return true;
 }
 
+//Prepare the return message
 QByteArray Server::prepareSendMessage(){
     QByteArray message;
     QDataStream out(&message, QIODevice::WriteOnly);

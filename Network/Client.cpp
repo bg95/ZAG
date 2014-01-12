@@ -13,8 +13,14 @@
 
 #include "BattleField/BFFactory.h"
 
+/*
+ *Client will prepare the UI to show and prepare the essentials for network
+ *Client is inherited from QDialog, which will allow widgets of QT.
+ *A list of local IP address is listed for the user, but the user should type himself if he want a internet game
+ *
+ */
 Client::Client(QWidget *parent): QDialog(parent), networkSession(0), counter(0), blockSize(0){
-    //This is for test
+    //This is UI part
     hostLabel = new QLabel(tr("Server IP:"));
     portLabel = new QLabel(tr("Server port:"));
     nickLabel = new QLabel(tr("Input your name:"));
@@ -94,7 +100,7 @@ Client::Client(QWidget *parent): QDialog(parent), networkSession(0), counter(0),
 
     setWindowTitle(tr("ZAG client"));
 
-    //End test part */
+    //End UI part */
 
     tcpSocket = new QTcpSocket(this);
 
@@ -160,16 +166,9 @@ void Client::setHostAndPort(){
     port = (portEdit -> text()).toInt();
 }
 
-/*
-void Client::requestNewMessage(){
-    //This is for test
-    statusLabel -> setText(tr("Resquest new Message!"));
-    //end test part
 
-    tcpSocket->write(*setMessage());
-}
-*/
-
+//This is for sending a new message to other players
+//Called when sendMessage button is pressed
 void Client::sendMessage(){
     QString str;
     str += nickLabel->text();
@@ -179,6 +178,11 @@ void Client::sendMessage(){
     writeString(str);
 }
 
+/*
+ *This is called when a new message is sent to client before the game begins
+ *It will specify different kinds of messages and work accordingly
+ *Note that this will not be called once the game starts
+ */
 void Client::readMessage(){
     //qDebug("Old version of receive");
     //statusLabel -> setText(tr("Message got!"));
@@ -191,6 +195,7 @@ void Client::readMessage(){
     quint16 mode;
     in >> mode;
 
+    //These constants is defined in BattleField.h and shared with server
     switch(mode){
     case GREETING:
         sendNickName();
@@ -208,6 +213,7 @@ void Client::readMessage(){
 
 }
 
+//Show the error message when connection to the server
 void Client::displayError(QAbstractSocket::SocketError socketError){
     switch(socketError){
     case QAbstractSocket::RemoteHostClosedError:
@@ -223,6 +229,7 @@ void Client::displayError(QAbstractSocket::SocketError socketError){
     }
 }
 
+//Used for network session, which is the basics for network in Qt.
 void Client::sessionOpened(){
     QNetworkConfiguration config = networkSession -> configuration();
     QString id;
@@ -239,6 +246,8 @@ void Client::sessionOpened(){
     settings.endGroup();
 }
 
+//This will write a message contains a string to server
+//Information attached is used for completeness
 void Client::writeString(QString str){
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
@@ -250,6 +259,11 @@ void Client::writeString(QString str){
     tcpSocket->write(block);
 }
 
+/*
+ *This function is called whenever client want to read from socket
+ *Based on protocal designed, this system will promise the completeness of the information transformed
+ *
+ */
 bool Client::readCheck(){
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_0);
@@ -268,6 +282,7 @@ bool Client::readCheck(){
     return true;
 }
 
+//Called after the connection application is received by the server.
 void Client::sendNickName(){
     QString name = messageEdit->text();
     writeString(name);
@@ -277,6 +292,7 @@ void Client::sendNickName(){
     connectToHostButton->setEnabled(false);
 }
 
+//Called when a message is received
 void Client::displayMessage(){
     //tcpSocket->write(*setMessage());
     //statusLabel->setText(nextMessage);
@@ -290,6 +306,7 @@ void Client::displayMessage(){
     }
 }
 
+//Called when a list of temporary playes is received, which will be sent everytime a new play joins
 void Client::displayPlayers(){
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_0);
@@ -305,6 +322,12 @@ void Client::displayPlayers(){
 //***************************************
 //Following is the game part
 
+/*
+ *When a game begin signal is sent, this function will be called
+ *This function prepare the client for the game and start the communication to server after 500 ms
+ *The interval is aimed at promising the communication will be started
+ *
+ */
 void Client::prepareGame(){
     //tcpSocket->readAll();
     disconnect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMessage()));
@@ -340,6 +363,7 @@ void Client::prepareGame(){
     blockSize = 0;
 }
 
+//This will be called whenever a message is received
 void Client::clientGameUpdate(){
     if(!readCheck())
         return;
@@ -352,6 +376,7 @@ void Client::clientGameUpdate(){
     sendReturnMessage();
 }
 
+//This is called when the player exit the game
 void Client::battleEnd(){
     disconnect(tcpSocket, SIGNAL(readyRead()), this, SLOT(clientGameUpdate()));
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMessage()));
@@ -361,6 +386,7 @@ void Client::battleEnd(){
     this->show();
 }
 
+//This will send the control information back to user
 void Client::sendReturnMessage(){
     //qDebug("Sending Control Info on Client");
     QByteArray message;
@@ -377,12 +403,13 @@ void Client::sendReturnMessage(){
     tcpSocket->write(message);
 }
 
+//This will start the communication
 void Client::sendAck(){
     //qDebug("ACK sent");
     sendReturnMessage();
 }
 
-
+//This is used to get the user's input info
 std::vector<ControlEvent> Client::getAllControls(){
     std::vector<ControlEvent> events;
     std::set<BFController *> &controllers = bf->getManager()->getControllers();
@@ -416,7 +443,7 @@ std::vector<ControlEvent> Client::getAllControls(){
     return events;
 }
 
-
+//This is used to get what fraction the user belongs to, which is a game info.
 int Client::getFraction(){
     quint16 frac;
     QDataStream in(tcpSocket);

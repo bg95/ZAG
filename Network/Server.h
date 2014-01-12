@@ -1,12 +1,18 @@
+/*Brief description of the SERVER part
+ *
+ *This file, along with Server.cpp, defines the server part of the network.
+ *When start a network version, a server must be started. Server will manage the connections offerred by clients.
+ *Besides, most calculation when game is started is done by server and server is also responsible for
+ *synchronizing all clients.
+ *
+ */
+
 #ifndef SERVER_H
 #define SERVER_H
 
 #include <QDialog>
 #include <QList>
 #include <QTimer>
-//#include <QString>
-//#include <QTcpServer>
-//#include <QNetworkSession>
 
 #include "BattleField/BattleField.h"
 #include "BattleField/BFRule/BFRCollision.h"
@@ -53,13 +59,12 @@ private:
 
     QList<Connection*> connectionList;
     //QList<QString> nickNameList;
-    QTimer *networkTimer;
-    bool flag;
-
+    //QTimer *networkTimer;
+    bool flag;          //flag used to limit the rake of tranmission
     quint32 blockSize;
     //QString currentMessageGot;
 
-    bool gameOn;
+    bool gameOn;        //Used to hold new connection when the game is started
     BattleField *bf;
     BFRule *bfRule;
     int numberOfConnections;
@@ -75,9 +80,9 @@ private:
     void sendGreetingMessage(QTcpSocket *cli);
     QByteArray sendInitialMessage();
 
-    int counter; //Counter used for test network complecity
+    int counter;            //Counter used for test network complecity
 
-    //This part is for test
+    //This is the UI part
     QLabel *debuggerLabel;
     QLabel *statusLabel;
     QLineEdit *sentMessage;

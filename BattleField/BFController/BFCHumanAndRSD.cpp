@@ -30,10 +30,10 @@ std::vector<ControlEvent> &BFCHumanAndRSD::getControl()
         appendControlEvents((*iter)->getControl());
     }
 
-    qDebug("Control %d", (int)controlevents.size());
+    //qDebug("Control %d", (int)controlevents.size());
     for (auto iter = controlevents.begin(); iter != controlevents.end(); iter++)
     {
-        qDebug("  %lf,%lf", (*iter).acc.x, (*iter).acc.y);
+        //qDebug("  %lf,%lf", (*iter).acc.x, (*iter).acc.y);
     }
     return controlevents;
 }

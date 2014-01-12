@@ -397,6 +397,7 @@ void BattleField::refresh()
         buf.close();
 */
     refreshMousePosition();
+    emit newInterval();
     manager.setDT(framedt);
     manager.processInput();
     manager.nextFrame(); //shall wail until receiving messages from clients

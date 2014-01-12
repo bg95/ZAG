@@ -14,6 +14,11 @@ class Scene;
 #include "Scene.h"
 //#include "BattleFieldOverlay.h"
 
+const quint16 GREETING(1);
+const quint16 MESSAGE(2);
+const quint16 PLAYERS(3);
+const quint16 GAME_BEGIN(4);
+
 //The widget to show the battle field
 class BattleField : public QGLWidget
 {
@@ -44,7 +49,7 @@ public:
 signals:
     void timerTimeout();
     void battleEnd();
-    void sendMessage(QByteArray);
+    void newInterval();
     
 public slots:
     void start();

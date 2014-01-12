@@ -12,7 +12,7 @@ int BFManager::frame_group_size = 5;
 double BFManager::epsi = 0.01;
 
 BFManager::BFManager(BattleField *bf) :
-    battlefield(bf), qtree(this)
+    battlefield(bf), qtree(this), rule(0)
 {
     /*
     left = -1.0;
@@ -117,12 +117,15 @@ void BFManager::applyControlEvents(std::vector<ControlEvent> &events)
     events = events0;
     delete buf;*/
 
+    qDebug("Apply begin");
     BFObject *obj;
     for (auto iter = events.begin(); iter != events.end(); iter++)
     {
+        qDebug("Decoding an object of: %lf, %lf", (*iter).acc.x, (*iter).acc.y);
         obj = factory.objectByID((*iter).objid);
         obj->applyControlEvent(*iter);
     }
+    qDebug("Apply end");
 }
 
 void BFManager::keyPressEvent(QKeyEvent *keyevent)
@@ -161,7 +164,8 @@ void BFManager::processInput()
     {
         (*ctrliter)->setKeysAndMouse(keyspressed, mouseposition, mousebuttons);
     }
-    rule->processInput();
+    if (rule)
+        rule->processInput();
 }
 
 void BFManager::nextFrame()

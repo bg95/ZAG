@@ -10,6 +10,13 @@ ControlEvent::ControlEvent(QIODevice *device)
     decode(device);
 }
 
+ControlEvent::ControlEvent(const ControlEvent &another)
+{
+    objid = another.objid;
+    acc = another.acc;
+    difference = another.difference;
+}
+
 void ControlEvent::encode(QIODevice *device)
 {
     device->write((const char *)&objid, sizeof(objid));
@@ -57,6 +64,7 @@ void ControlEvent::decodeAppendControlEventList(std::vector<ControlEvent> &list,
     size_t i;
     std::vector<ControlEvent>::size_type size;
     device->read((char *)&size, sizeof(size));
+    //qDebug("Decode control size = %d", size);
     for (i = 0; i < size; i++)
     {
         list.push_back(ControlEvent(device));

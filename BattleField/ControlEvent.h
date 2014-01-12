@@ -13,6 +13,7 @@ class ControlEvent
 public:
     ControlEvent(BFObjectID _objid);
     ControlEvent(QIODevice *device);
+    ControlEvent(const ControlEvent &another);
     void encode(QIODevice *device);
     void decode(QIODevice *device);
 

@@ -20,7 +20,8 @@ BattleField::BattleField(QWidget *parent, bool fs) :
     QGLWidget(parent),
     refreshtimer(this),
     display_counter(0),
-    manager(this)//,
+    manager(this),
+    scene(this, &manager)//,
     //overlay(this)
 {
     refreshtimer.setInterval(refresh_interval);
@@ -114,6 +115,10 @@ void BattleField::paintGL()
 {
     //clear the screen and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glPushMatrix();
+        scene.draw();
+    glPopMatrix();
 
     glPushMatrix();
         glTranslatef(delta_x, delta_y, 0.0);

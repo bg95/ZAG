@@ -98,6 +98,8 @@ public:
     bool intersectingBoundary(const BFObject *a, IntersectionEvent::Boundary b);
     bool intersectingBoundary(BFOCircle *a, IntersectionEvent::Boundary b);
 
+    BFObject* getObjectControlled();
+
 private:
     BattleField *battlefield;
     double left, right, bottom, top;
@@ -105,6 +107,11 @@ private:
     std::vector<IntersectionEvent> intersections;
     std::set<BFObject *> isintersected;
     double dt;
+
+    //pointer to the controlled object
+    BFObject* objectControlled;
+    //find the object controlled by human
+    BFObject*  findObjectControlled();
 
     std::set<BFController *> controllers;
     std::set<Qt::Key> keyspressed;

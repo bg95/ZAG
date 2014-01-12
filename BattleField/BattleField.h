@@ -3,6 +3,7 @@
 
 class MainWindow;
 class BFManager;
+class Scene;
 
 #include <QKeyEvent>
 #include <QMouseEvent>
@@ -10,6 +11,7 @@ class BFManager;
 #include <QTimer>
 #include "MainWindow.h"
 #include "BFManager.h"
+#include "Scene.h"
 //#include "BattleFieldOverlay.h"
 
 class BattleField : public QGLWidget
@@ -65,6 +67,7 @@ private slots:
 private:
     QWidget* main_window;
     BFManager manager;
+    Scene scene;
     QTimer refreshtimer;
     void mouseEvent(QMouseEvent *mouseevent);
     int display_counter;
@@ -75,7 +78,6 @@ private:
     float delta_x, delta_y;
 
     //BattleFieldOverlay overlay;
-
 };
 
 #endif // BATTLEFIELD_H

@@ -76,6 +76,10 @@ private:
     void writeString(QString);
     bool readCheck();
     void sendReturnMessage();
+    void sendNickName();
+    void displayMessage();
+    void displayPlayers();
+    void prepareGame();
     std::vector<ControlEvent> getAllControls();
 
     int counter; //counter used for test network complecity

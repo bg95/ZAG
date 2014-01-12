@@ -69,8 +69,10 @@ private:
     void updateClientControl(QTcpSocket *);
     bool checkConnectionNumber();
     QByteArray prepareSendMessage();
-    QByteArray writeString(QString str);
+    QByteArray writeString(QString str, const quint16 mode);
     bool readCheck(QTcpSocket *cli);
+    void sendGreetingMessage(QTcpSocket *cli);
+    QByteArray sendInitialMessage();
 
     int counter; //Counter used for test network complecity
 

@@ -187,19 +187,29 @@ void Client::readMessage(){
 
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_0);
-    QString nextMessage;
-    in >> nextMessage;
+    quint16 mode;
+    in >> mode;
 
+    switch(mode){
+    case GREETING:
+        sendNickName();
+        break;
+    case MESSAGE:
+        displayMessage();
+        break;
+    case PLAYERS:
+        displayPlayers();
+        break;
+    case GAME_BEGIN:
+        prepareGame();
+        break;
+    }
+
+/*
     if(nextMessage[0] == '@'){
         //QString mode;
         //in >> mode;
         if(nextMessage == "@Greeting"){
-            QString name = messageEdit->text();
-            writeString(name);
-
-            nickLabel->setText(name + ":");
-            sendMessageButton->setEnabled(true);
-            connectToHostButton->setEnabled(false);
         }
         else if(nextMessage == "@GameBegin"){
             tcpSocket->readAll();
@@ -237,7 +247,7 @@ void Client::readMessage(){
     else{
         statusLabel->setText(nextMessage);
     }
-
+*/
     //Test part
     //statusLabel -> setText(nextMessage);
     //End test part
@@ -303,9 +313,62 @@ bool Client::readCheck(){
     return true;
 }
 
+void Client::sendNickName(){
+    QString name = messageEdit->text();
+    writeString(name);
+
+    nickLabel->setText(name + ":");
+    sendMessageButton->setEnabled(true);
+    connectToHostButton->setEnabled(false);
+}
+
+void Client::displayMessage(){
+    //tcpSocket->write(*setMessage());
+    //statusLabel->setText(nextMessage);
+    QDataStream in(tcpSocket);
+    in.setVersion(QDataStream::Qt_4_0);
+    QString nextMessage;
+    in >> nextMessage;
+    QStringList mesList = nextMessage.split("#", QString::SkipEmptyParts);
+    foreach(QString mes, mesList){
+        messageList->addItem(mes);
+    }
+}
+
+void Client::displayPlayers(){
+    QDataStream in(tcpSocket);
+    in.setVersion(QDataStream::Qt_4_0);
+    QString nextMessage;
+    in >> nextMessage;
+    QStringList nameList = nextMessage.split('@', QString::SkipEmptyParts);
+    playerList->clear();
+    foreach(QString name, nameList){
+        playerList->addItem(name);
+    }
+}
 
 //***************************************
 //Following is the game part
+
+void Client::prepareGame(){
+    tcpSocket->readAll();
+    disconnect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMessage()));
+
+    bf = new BattleField;
+    rule = new BFRShoot(bf->getManager());
+    bf->getManager()->setRule(rule);
+    connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
+    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(clientGameUpdate()));
+    bf->getManager()->decodeReplaceAllObjects(tcpSocket);
+    bf->update();
+    //write("Know");
+    QTimer::singleShot(500, this, SLOT(sendAck()));
+
+    bf->show();
+    this->hide();
+
+    blockSize = 0;
+}
 
 void Client::clientGameUpdate(){
     if(!readCheck())

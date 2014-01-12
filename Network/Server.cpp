@@ -114,11 +114,7 @@ void Server::acceptConnection(){
     }
 
     QTcpSocket *newConnection = tcpServer->nextPendingConnection();
-    QByteArray block = writeString("@Greeting");
-    //QDataStream out(&block, QIODevice::WriteOnly);
-    //out.setVersion(QDataStream::Qt_4_0);
-    //out << tr("@Greeting");
-    newConnection->write(block);
+    sendGreetingMessage(newConnection);
     clientConnection = newConnection;
     QTimer::singleShot(1 * 1000, this, SLOT(auth()));
 }
@@ -215,7 +211,7 @@ void Server::auth(){
             mes += ("@" + connection->getNickName());
         }
 
-        QByteArray block = writeString(mes);
+        QByteArray block = writeString(mes, PLAYERS);
         foreach(Connection *connection, connectionList){
             connection->getConnection()->readAll();
             connection->getConnection()->write(block);
@@ -237,7 +233,7 @@ void Server::sendMessage(){
     mes += sentMessage->text();
     foreach(Connection *connection, connectionList){
         connection->getConnection()->readAll();
-        connection->getConnection()->write(writeString(mes));
+        connection->getConnection()->write(writeString(mes, MESSAGE));
     }
     messageList->addItem("Host:: " + sentMessage->text());
 }
@@ -263,16 +259,17 @@ void Server::newMessage(){
     }
 
     foreach(Connection *connection, connectionList){
-        connection->getConnection()->write(writeString(mesList));
+        connection->getConnection()->write(writeString(mesList, MESSAGE));
     }
 }
 
 
-QByteArray Server::writeString(QString str){
+QByteArray Server::writeString(QString str, const quint16 mode){
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
     out << quint32(0);
+    out << mode;
     out << str;
     out.device()->seek(0);
     out << quint32(block.size() - sizeof(quint32));
@@ -298,6 +295,18 @@ bool Server::readCheck(QTcpSocket *cli){
     return true;
 }
 
+void Server::sendGreetingMessage(QTcpSocket *cli){
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << quint32(0);
+    out << GREETING;
+    out.device()->seek(0);
+    out << quint32(block.size() - sizeof(quint32));
+    cli->write(block);
+    return;
+}
+
 //****************************************
 //The following part is used for the game
 
@@ -306,14 +315,13 @@ void Server::gameBegin(){
     numberOfConnections = 0;
     gameBeginButton->setEnabled(false);
 
-    QByteArray block = writeString("@GameBegin");
     foreach(Connection *c, connectionList){
         c->open();
 
         QTcpSocket *connection = c->getConnection();
         disconnect(connection, SIGNAL(readyRead()), this, SLOT(newMessage()));
         connect(connection, SIGNAL(readyRead()), this, SLOT(updateClient()));
-        connection->write(block);
+        //connection->write(block);
     }
 
     bf = new BattleField(0);
@@ -325,14 +333,12 @@ void Server::gameBegin(){
     //connect(bf, SIGNAL(sendMessage(QByteArray)), this, SLOT(updateClient(QByteArray)));
 
     prepareInitialState();
-/*
-    QByteArray message = prepareSendMessage();
+
+    QByteArray message = sendInitialMessage();
     //qDebug("Block size sent is %d", int(message.size() - sizeof(quint32)));
-    lastMessage = message;
     foreach(Connection *c, connectionList){
         c->getConnection()->write(message);
     }
-*/
     bf->start();
     this->hide();
     bf->show();
@@ -443,6 +449,20 @@ void Server::prepareInitialState(){
     }
     buf->close();
     delete buf;
+}
+
+QByteArray Server::sendInitialMessage(){
+    QByteArray message;
+    QDataStream out(&message, QIODevice::WriteOnly);
+    out << quint32(0);
+    out << GAME_BEGIN;
+
+    bf->getManager()->encodeAllObjects(out.device());
+
+    out.device()->seek(0);
+    out << quint32(message.size() - sizeof(quint32));
+
+    return message;
 }
 
 void Server::battleEnd(){

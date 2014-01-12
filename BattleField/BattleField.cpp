@@ -105,6 +105,7 @@ void BattleField::initializeGL()
     //glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     //glBlendFunc(GL_ONE, GL_ONE);
     //glDepthMask(GL_FALSE);
+    glEnable(GL_COLOR_MATERIAL);
 }
 
 void BattleField::paintGL()
@@ -320,11 +321,18 @@ void BattleField::mouseReleaseEvent(QMouseEvent *event)
 
 void BattleField::refresh()
 {
-    manager.nextFrame(refresh_interval / 1000.0 * timescale);
-
+    double framedt = refresh_interval / 1000.0 * timescale;
+    manager.setDT(framedt);
     display_counter++;
-    if (display_counter == display_refreshes)
+    if (display_counter != display_refreshes)
     {
+        manager.nextFrame();
+        return;
+    }
+
+    if (display_counter == display_refreshes) //this if clase is no longer needed
+    {
+        display_counter = 0;
         //Send message to clients
         QByteArray message;
         QBuffer buf(&message);
@@ -338,7 +346,11 @@ void BattleField::refresh()
         emit sendMessage(message);
         buf.close();
 
-        display_counter = 0;
+        manager.setDT(framedt * display_refreshes);
+        manager.processInput();
+        manager.setDT(framedt);
+        manager.nextFrame(); //shall wail until receiving messages from clients
+
         update();
     }
 }

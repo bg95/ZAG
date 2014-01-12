@@ -147,20 +147,28 @@ void BFManager::wheelEvent(QWheelEvent *wheelevent)
 
 }
 
-void BFManager::nextFrame(double deltatime)
+void BFManager::setDT(double deltatime)
 {
     dt = deltatime;
+}
+
+void BFManager::processInput()
+{
     std::set<BFController *>::iterator ctrliter;
     for (ctrliter = controllers.begin(); ctrliter != controllers.end(); ctrliter++)
     {
         (*ctrliter)->setKeysAndMouse(keyspressed, mouseposition, mousebuttons);
     }
+    rule->processInput();
+}
+
+void BFManager::nextFrame()
+{
     std::set<BFObject *>::iterator iter;/*
     for (iter = objects.begin(); iter != objects.end(); iter++)
     {
         qDebug("object %lX (manager)", (unsigned long long)(*iter));
     }*/
-    rule->processInput();
 
     BFOCircle *cir;
     /*
@@ -285,6 +293,15 @@ void BFManager::decodeReplaceAllObjects(QIODevice *device)
             return;
         }
     }
+}
+
+//For randomly placing objects
+bool BFManager::intersectingWithAnyObject(const BFObject *a)
+{
+    for (auto iter = objects.begin(); iter != objects.end(); iter++)
+        if (intersecting(a, *iter))
+            return true;
+    return false;
 }
 
 ///intersection between objects

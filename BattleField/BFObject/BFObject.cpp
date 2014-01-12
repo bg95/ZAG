@@ -76,8 +76,8 @@ void BFObject::setProperty(const std::string &prop, const QVariant &val)
 
 const QVariant &BFObject::getProperty(const std::string &prop)
 {
-    std::map<std::string, QVariant>::iterator iter;
-    iter = properties.find(prop);
+    //std::map<std::string, QVariant>::iterator iter;
+    auto iter = properties.find(prop);
     if (iter == properties.end())
         return QVariant_Invalid;
     //qDebug("property %s found: %s", prop.c_str(), (*iter).second.c_str());

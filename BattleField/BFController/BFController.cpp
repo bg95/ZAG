@@ -1,14 +1,14 @@
 #include "BFController.h"
 
 BFController::BFController(BFManager *_manager, BFObjectID _obj) :
+    manager(_manager), objid()
+{
+    objid.push_back(_obj);
+}
+
+BFController::BFController(BFManager *_manager, std::vector<BFObjectID> _obj) :
     manager(_manager), objid(_obj)
 {
-    /*
-    BFObject *obj = getObjectPointer();
-    if (!obj)
-        return;
-        */
-    //obj->controller = this;
 }
 
 BFController::~BFController()
@@ -27,9 +27,14 @@ void BFController::setKeysAndMouse(std::set<Qt::Key> keyspressed, Vector2d mouse
     mousebut = mousebuttons;
 }
 
-bool BFController::lostObject()
+bool BFController::lostAllObjects()
 {
-    return getObjectPointer() == 0;
+    if (objid.size() == 0)
+        return true;
+    for (auto iter = objid.begin(); iter != objid.end(); iter++)
+        if (getObjectPointer(*iter))
+            return false;
+    return true;
 }
 
 bool BFController::keyPressed(Qt::Key key)
@@ -42,7 +47,14 @@ bool BFController::keyPressed(Qt::Key key)
     return false;
 }
 
-BFObject *BFController::getObjectPointer()
+BFObject *BFController::getObjectPointer(BFObjectID id)
 {
-    return manager->getFactory()->objectByID(objid);
+    return manager->getFactory()->objectByID(id);
+}
+
+BFObject *BFController::getPrincipalObjectPointer()
+{
+    if (objid.size() == 0)
+        return 0;
+    return getObjectPointer(objid[0]);
 }

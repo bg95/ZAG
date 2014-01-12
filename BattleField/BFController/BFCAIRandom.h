@@ -7,6 +7,7 @@ class BFCAIRandom : public BFCRandomShootDodge
 {
 public:
     BFCAIRandom(BFManager *_manager, BFObjectID _obj);
+    BFCAIRandom(BFManager *_manager, std::vector<BFObjectID> _obj);
     virtual ~BFCAIRandom();
     //virtual BFControllerType getType() const;
     virtual std::vector<ControlEvent> &getControl();

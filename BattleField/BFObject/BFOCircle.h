@@ -19,11 +19,13 @@ public:
     virtual void draw(QGLWidget *glwidget);
     virtual BFObjectType getType() const;
     BFObjectShape getShape() const;
+    double getMass() const;
     //virtual void onIntersection(BFObject *b, Vector2d impulse) //should be modified later
     //{}
     double getRoughRadius() const;
     Vector2d getPosition() const;
     Vector2d getVelocity() const;
+    void setVelocity(Vector2d vel);
     double getMaxAcceleration() const;
     void setAcceleration(Vector2d acc);
 

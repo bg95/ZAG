@@ -38,6 +38,10 @@ void BFObject::setColor(double r, double g, double b, double a)
 {
 }
 
+void BFObject::setAlpha(double a)
+{
+}
+
 void BFObject::encode(QIODevice *device)
 {
     std::map<std::string, QVariant>::iterator iter;

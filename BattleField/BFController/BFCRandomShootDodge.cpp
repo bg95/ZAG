@@ -3,20 +3,18 @@
 BFCRandomShootDodge::BFCRandomShootDodge(BFManager *_manager, BFObjectID _obj) :
     BFController(_manager, _obj), count(0), dist(1.0 / 0.0)
 {
-    obj = getObjectPointer();
-    if (!obj)
-        return;
-    if (!(*obj)["bullet prototype"].isValid())
-        bulletv = -1.0;
-    else
+    init(_obj);
+}
+
+BFCRandomShootDodge::BFCRandomShootDodge(BFManager *_manager, std::vector<BFObjectID> _obj) :
+    BFController(_manager, _obj), count(0)
+{
+    if (_obj.size() == 0)
     {
-        QByteArray ba = (*obj)["bullet prototype"].toByteArray();
-        BFObject *bullet = manager->getFactory()->decodeNewObject(ba);
-        bulletv = bullet->getVelocity().abs();
-        bulletv = 6.0;
-        manager->getFactory()->deleteObject(bullet);
-        //qDebug("bulletv = %lf", bulletv);
+        bulletv = -1.0;
+        return;
     }
+    init(_obj[0]);
 }
 
 BFCRandomShootDodge::~BFCRandomShootDodge()
@@ -32,7 +30,7 @@ std::vector<ControlEvent> &BFCRandomShootDodge::getControl()
 void BFCRandomShootDodge::applyControl()
 {
     controlevents.clear();
-    obj = getObjectPointer();
+    obj = getPrincipalObjectPointer();
     if (!obj)
         return;
     ControlEvent event(obj->getID());
@@ -90,7 +88,7 @@ Vector2d BFCRandomShootDodge::intersectionPosition(Vector2d p1, Vector2d p2, Vec
 
 void BFCRandomShootDodge::dodge(ControlEvent &event) {
     std::vector<Vector2d> pIntersections;
-    BFObject* self = getObjectPointer();
+    BFObject* self = getPrincipalObjectPointer();
     Vector2d pOwn = self->getPosition();
     Vector2d vOwn = self->getVelocity();
     //qDebug("***********************\n");
@@ -143,4 +141,22 @@ void BFCRandomShootDodge::randomWalk(ControlEvent &event)
     }
     count--;
     event.acc = a * Vector2d(cos(theta), sin(theta));
+}
+
+void BFCRandomShootDodge::init(BFObjectID _obj)
+{
+     obj = getObjectPointer(_obj);
+     if (!obj)
+         return;
+     if (!(*obj)["bullet prototype"].isValid())
+         bulletv = -1.0;
+     else
+     {
+         QByteArray ba = (*obj)["bullet prototype"].toByteArray();
+         BFObject *bullet = manager->getFactory()->decodeNewObject(ba);
+         bulletv = bullet->getVelocity().abs();
+         bulletv = 6.0;
+         manager->getFactory()->deleteObject(bullet);
+         //qDebug("bulletv = %lf", bulletv);
+     }
 }

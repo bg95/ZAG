@@ -7,6 +7,7 @@ class BFCRandomShootDodge : public BFController
 {
 public:
     BFCRandomShootDodge(BFManager *_manager, BFObjectID _obj);
+    BFCRandomShootDodge(BFManager *_manager, std::vector<BFObjectID> _obj);
     virtual ~BFCRandomShootDodge();
     //virtual BFControllerType getType() const = 0;
     virtual std::vector<ControlEvent> &getControl(); //get control events
@@ -24,6 +25,7 @@ protected:
     BFObject *obj;
 
 private:
+    void init(BFObjectID _obj);
     Vector2d intersectionPosition(Vector2d p1, Vector2d p2, Vector2d v1, Vector2d v2);
 };
 

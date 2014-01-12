@@ -74,6 +74,7 @@ private:
     BFRule *rule;
 
     void writeString(QString);
+    bool readCheck();
     void sendReturnMessage();
     std::vector<ControlEvent> getAllControls();
 

@@ -187,9 +187,14 @@ QByteArray *Server::getMessage(){
 }
 */
 void Server::auth(){
-    qDebug("Verifying");
+    //qDebug("Verifying");
     debuggerLabel->setText(tr("Verifiring"));
     if(clientConnection->bytesAvailable() > 0){
+        if(!readCheck(clientConnection)){
+            debuggerLabel->setText(tr("Rejected"));
+            clientConnection->disconnectFromHost();
+        }
+
         QDataStream in(clientConnection);
         in.setVersion(QDataStream::Qt_4_0);
         QString nickName;
@@ -239,12 +244,17 @@ void Server::sendMessage(){
 
 void Server::newMessage(){
     QString mesList;
-    foreach(Connection *connection, connectionList){
-        if(connection->getConnection()->bytesAvailable() > 0){
-            QString mes;
-            QDataStream in(connection->getConnection());
+    foreach(Connection *c, connectionList){
+        QTcpSocket *connection = c->getConnection();
+        if(connection->bytesAvailable() > 0){
+            if(!readCheck(connection))
+                return;
+
+            QDataStream in(connection);
             in.setVersion(QDataStream::Qt_4_0);
+            QString mes;
             in >> mes;
+
             messageList->addItem(mes);
 
             mesList += "#";
@@ -262,8 +272,30 @@ QByteArray Server::writeString(QString str){
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
+    out << quint32(0);
     out << str;
+    out.device()->seek(0);
+    out << quint32(block.size() - sizeof(quint32));
     return block;
+}
+
+bool Server::readCheck(QTcpSocket *cli){
+    QDataStream in(cli);
+    in.setVersion(QDataStream::Qt_4_0);
+
+    if(blockSize == 0){
+        if(cli->bytesAvailable() < (int) sizeof(quint32))
+            return false;
+
+        in >> blockSize;
+    }
+
+    if(cli->bytesAvailable() < blockSize)
+        return false;
+
+    blockSize = 0;
+
+    return true;
 }
 
 //****************************************
@@ -293,7 +325,14 @@ void Server::gameBegin(){
     //connect(bf, SIGNAL(sendMessage(QByteArray)), this, SLOT(updateClient(QByteArray)));
 
     prepareInitialState();
-
+/*
+    QByteArray message = prepareSendMessage();
+    //qDebug("Block size sent is %d", int(message.size() - sizeof(quint32)));
+    lastMessage = message;
+    foreach(Connection *c, connectionList){
+        c->getConnection()->write(message);
+    }
+*/
     bf->start();
     this->hide();
     bf->show();
@@ -340,6 +379,7 @@ void Server::prepareInitialState(){
     bf->getManager()->insertObject(circle);
 
     BFCHuman *ctrl = new BFCHuman(bf->getManager(), circle->getID());
+
     //BFCRandomShootDodge *ctrl = new BFCRandomShootDodge(bf->getManager(), circle);
     //BFCAIRandom *ctrl = new BFCAIRandom(bf->getManager(), circle);
     bf->getManager()->registerController(ctrl);
@@ -419,36 +459,15 @@ void Server::battleEnd(){
 }
 
 void Server::updateClient(){
-    //qDebug("Send message to Client");
-    //qDebug("Size of message SENT: %d", message.size());
-    //qDebug("New message got on server");
     if(!checkConnectionNumber())
         return;
 
-    if(!flag){
-        foreach(Connection *c, connectionList){
-            updateClientControl(c->getConnection());
-            c->getConnection()->write(lastMessage);
-        }
-        return;
+    if(flag){
+        lastMessage = prepareSendMessage();
     }
-
-    QByteArray message;
-    QDataStream out(&message, QIODevice::WriteOnly);
-    out << quint32(0);
-
-    //double time = bf->getManager()->getDT();
-
-    bf->getManager()->encodeAllObjects(out.device());
-
-    out.device()->seek(0);
-    out << quint32(message.size() - sizeof(quint32));
-
-    //qDebug("Block size sent is %d", int(message.size() - sizeof(quint32)));
-    lastMessage = message;
     foreach(Connection *c, connectionList){
         updateClientControl(c->getConnection());
-        c->getConnection()->write(message);
+        c->getConnection()->write(lastMessage);
     }
 }
 
@@ -457,26 +476,15 @@ void Server::newInterval(){
 }
 
 void Server::updateClientControl(QTcpSocket *client){
-    QDataStream in(client);
-
-    if(blockSize == 0){
-        if(client->bytesAvailable() < (int)sizeof(quint32)){
-            return;
-        }
-        in >> blockSize;
-    }
-    if(blockSize == -1)
+    if(!readCheck(client))
         return;
-    if(client->bytesAvailable() < blockSize)
-        return;
-
-    blockSize = 0;
-    //client->readAll();
-
+    client->readAll();
+/*
     qDebug("Decoding control");
     std::vector<ControlEvent> eventList;
     ControlEvent::decodeAppendControlEventList(eventList, client);
     bf->getManager()->applyControlEvents(eventList);
+*/
 }
 
 
@@ -489,3 +497,15 @@ bool Server::checkConnectionNumber(){
     return true;
 }
 
+QByteArray Server::prepareSendMessage(){
+    QByteArray message;
+    QDataStream out(&message, QIODevice::WriteOnly);
+    out << quint32(0);
+
+    bf->getManager()->encodeAllObjects(out.device());
+
+    out.device()->seek(0);
+    out << quint32(message.size() - sizeof(quint32));
+
+    return message;
+}

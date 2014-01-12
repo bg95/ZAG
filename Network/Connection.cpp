@@ -28,3 +28,7 @@ QString Connection::getNickName(){
 void Connection::setNickName(QString nick){
     nickName = nick;
 }
+
+void Connection::setCircleID(int id){
+    circleID = id;
+}

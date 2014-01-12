@@ -20,6 +20,7 @@ class QLineEdit;
 class QTcpServer;
 class QNetworkSession;
 class QListWidget;
+class QComboBox;
 QT_END_NAMESPACE
 
 class Server: public QDialog
@@ -67,7 +68,9 @@ private:
     void prepareInitialState();
     void updateClientControl(QTcpSocket *);
     bool checkConnectionNumber();
+    QByteArray prepareSendMessage();
     QByteArray writeString(QString str);
+    bool readCheck(QTcpSocket *cli);
 
     int counter; //Counter used for test network complecity
 
@@ -80,6 +83,7 @@ private:
     QPushButton *sendMessageButton;
     QListWidget *participantList;
     QListWidget *messageList;
+    //QComboBox *sideChoiceList;
 };
 
 #endif // SERVER_H

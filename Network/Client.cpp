@@ -150,15 +150,6 @@ Client::~Client(){
     delete messageList;
 }
 
-void Client::writeString(QString str){
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
-    out << str;
-    tcpSocket->readAll();
-    tcpSocket->write(block);
-}
-
 void Client::connectToHost(){
     tcpSocket -> connectToHost(hostEdit -> currentText(), port);
 }
@@ -188,11 +179,14 @@ void Client::sendMessage(){
 }
 
 void Client::readMessage(){
-    qDebug("Old version of receive");
+    //qDebug("Old version of receive");
     //statusLabel -> setText(tr("Message got!"));
+
+    if(!readCheck())
+        return;
+
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_0);
-
     QString nextMessage;
     in >> nextMessage;
 
@@ -280,76 +274,49 @@ void Client::sessionOpened(){
     settings.endGroup();
 }
 
-/*
-QByteArray *Client::setMessage(){
-    QByteArray *message = new QByteArray;
-    QDataStream out(message, QIODevice::WriteOnly);
+void Client::writeString(QString str){
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
-    out << messageEdit->text();
-    return message;
+    out << quint32(0);
+    out << str;
+    out.device()->seek(0);
+    out << quint32(block.size() - sizeof(quint32));
+    tcpSocket->write(block);
 }
-*/
+
+bool Client::readCheck(){
+    QDataStream in(tcpSocket);
+    in.setVersion(QDataStream::Qt_4_0);
+
+    if(blockSize == 0){
+        if(tcpSocket->bytesAvailable() < (int) sizeof(quint32))
+            return false;
+
+        in >> blockSize;
+    }
+
+    if(tcpSocket->bytesAvailable() < blockSize)
+        return false;
+
+    blockSize = 0;
+    return true;
+}
 
 
 //***************************************
 //Following is the game part
 
 void Client::clientGameUpdate(){
-    //QDataStream in(tcpSocket);
-    //in.setVersion(QDataStream::Qt_4_0);
-
-    //QBuffer *buf = new QBuffer(tcpSocket);
-    //buf->open(QIODevice::ReadWrite);
-    //qDebug("Size of message GOT: %d", buf->data().size());
-
-    //qDebug("Got message");
-    QDataStream in(tcpSocket);
-
-    if(blockSize == 0){
-        if(tcpSocket->bytesAvailable() < (int)sizeof(quint32)){
-            //qDebug("Head broken");
-            return;
-        }
-        in >> blockSize;
-        //qDebug("Got message of size: %d", blockSize);
-    }
-    if(tcpSocket->bytesAvailable() < blockSize)
+    if(!readCheck())
         return;
 
-    //qDebug("Complete info");
     bf->getManager()->destructObjects();
     bf->getManager()->decodeReplaceAllObjects(tcpSocket);
     bf->update();
     //qDebug("#objects = %d", bf->getManager()->getObjects().size());
 
     sendReturnMessage();
-
-    blockSize = 0;
-
-
-    /*
-    qDebug("Size received is: %d", tcpSocket->size());
-    tcpSocket->readAll();
-
-    //QDataStream in(tcpSocket);
-    qDebug("The size received is: %d", tcpSocket->size());
-    tcpSocket->readAll();
-    /*
-    int temNumber;
-    in >> temNumber;
-    if(temNumber < 10 && temNumber >= 0){
-        counter == temNumber;
-    }
-    else if(counter != temNumber - 1){
-        qDebug("Missing happened when: %d", counter);
-    }
-    if(counter % 100 == 0){
-        qDebug("Process %d", counter);
-    }
-    counter = temNumber;
-    tcpSocket->readAll();
-
-    */
 }
 
 void Client::battleEnd(){
@@ -379,7 +346,7 @@ void Client::sendReturnMessage(){
 void Client::sendAck(){
     QByteArray message;
     QDataStream out(&message, QIODevice::WriteOnly);
-    out << quint32(-1);
+    out << quint32(0);
 
     tcpSocket->write(message);
 }

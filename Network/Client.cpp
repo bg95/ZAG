@@ -329,7 +329,7 @@ void Client::prepareGame(){
     BFCHuman *ctr = new BFCHuman(bf->getManager(), fracObj);
     bf->getManager()->registerController(ctr);
 
-    qDebug("Prepare finished");
+    //qDebug("Prepare finished");
     bf->update();
     //write("Know");
     QTimer::singleShot(500, this, SLOT(sendAck()));
@@ -356,13 +356,13 @@ void Client::battleEnd(){
     disconnect(tcpSocket, SIGNAL(readyRead()), this, SLOT(clientGameUpdate()));
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMessage()));
     delete bf;
-    delete rule;
+    //delete rule;
 
     this->show();
 }
 
 void Client::sendReturnMessage(){
-    qDebug("Sending Control Info on Client");
+    //qDebug("Sending Control Info on Client");
     QByteArray message;
     QDataStream out(&message, QIODevice::WriteOnly);
     out << quint32(0);
@@ -378,7 +378,7 @@ void Client::sendReturnMessage(){
 }
 
 void Client::sendAck(){
-    qDebug("ACK sent");
+    //qDebug("ACK sent");
     sendReturnMessage();
 }
 
@@ -396,10 +396,23 @@ std::vector<ControlEvent> Client::getAllControls(){
             events.push_back(*ite);
         }
     }
+
     qDebug("Objects = %d", (int)bf->getManager()->getObjects().size());
     for(std::vector<ControlEvent>::iterator ite = events.begin(); ite != events.end(); ite++){
         qDebug("The acc is: %lf, %lf", (*ite).acc.x, (*ite).acc.y);
     }
+/*
+    std::vector<ControlEvent> decodeVec;
+    QByteArray tem;
+    QBuffer buf(&tem);
+    buf.open(QIODevice::ReadWrite);
+    ControlEvent::encodeControlEventList(events, &buf);
+    buf.seek(0);
+    ControlEvent::decodeAppendControlEventList(decodeVec, &buf);
+    for(std::vector<ControlEvent>::iterator ite = decodeVec.begin(); ite != decodeVec.end(); ite++){
+        qDebug("The decode version of acc is: %lf, %lf", (*ite).acc.x, (*ite).acc.y);
+    }
+*/
     return events;
 }
 

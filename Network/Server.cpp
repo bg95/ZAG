@@ -400,7 +400,7 @@ void Server::prepareInitialState(){
     buf->open(QBuffer::WriteOnly);
     fac->encodeObject(circle, buf);
     buf->close();
-    qDebug("prototype id = %ld", circle->getID());
+    //qDebug("prototype id = %ld", circle->getID());
     //delete circle;
     bf->getManager()->getFactory()->deleteObject(circle);
 
@@ -458,7 +458,7 @@ void Server::battleEnd(){
 }
 
 void Server::updateClient(){
-    qDebug("Server gets message");
+    //qDebug("Server gets message");
     if(!checkConnectionNumber())
         return;
 
@@ -480,12 +480,14 @@ void Server::updateClientControl(QTcpSocket *client){
         return;
     //client->readAll();
 
-    qDebug("Decoding control");
     std::vector<ControlEvent> eventList;
     ControlEvent::decodeAppendControlEventList(eventList, client);
+    /*
     for (auto iter = eventList.begin(); iter != eventList.end(); iter++)
         qDebug("control acc = %lf,%lf", (*iter).acc.x, (*iter).acc.y);
-    qDebug("Decoding finished");
+
+    */
+    qDebug("Apply a eventList of size; %d", eventList.size());
     bf->getManager()->applyControlEvents(eventList);
 
 }

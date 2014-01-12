@@ -176,6 +176,7 @@ void BFObject::writeVector2d(QIODevice *device, const Vector2d &vec)
 
 void BFObject::applyControlEvent(ControlEvent &ce)
 {
+    qDebug("Apply for a single obj is called");
     setAcceleration(ce.acc);
     for (auto iter = ce.difference.begin(); iter != ce.difference.end(); iter++)
         setProperty((*iter).first, (*iter).second);

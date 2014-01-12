@@ -123,10 +123,10 @@ void BFCRandomShootDodge::dodge(ControlEvent &event) {
         delta_a = delta_a + (pOwn - (*iter)).unit();
     }
     if(delta_a.abs() != 0)
-        qDebug("delta_a = %lf,%lf", delta_a.x, delta_a.y);
+        //qDebug("delta_a = %lf,%lf", delta_a.x, delta_a.y);
     delta_a = delta_a.unit();
     if(delta_a.abs() != 0)
-        qDebug("delta_a.unit = %lf,%lf", delta_a.x, delta_a.y);
+        //qDebug("delta_a.unit = %lf,%lf", delta_a.x, delta_a.y);
 
     delta_a = (self->getMaxAcceleration()) * delta_a;
     event.acc = event.acc + delta_a;

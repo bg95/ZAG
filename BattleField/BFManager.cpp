@@ -116,12 +116,15 @@ void BFManager::applyControlEvents(std::vector<ControlEvent> &events)
     events = events0;
     delete buf;*/
 
+    qDebug("Apply begin");
     BFObject *obj;
     for (auto iter = events.begin(); iter != events.end(); iter++)
     {
+        qDebug("Decoding an object of: %lf, %lf", (*iter).acc.x, (*iter).acc.y);
         obj = factory.objectByID((*iter).objid);
         obj->applyControlEvent(*iter);
     }
+    qDebug("Apply end");
 }
 
 void BFManager::keyPressEvent(QKeyEvent *keyevent)

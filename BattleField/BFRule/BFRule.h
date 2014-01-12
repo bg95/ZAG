@@ -13,7 +13,7 @@ class BFRule //This class controls what to do when intersections / user inputs o
 public:
     explicit BFRule(BFManager *_manager);
     virtual ~BFRule();
-    virtual BFRuleType getType() const;
+    virtual BFRuleType getType() const; //deprecated
     virtual void processInput();
     virtual void filterIntersections();
     virtual void processIntersections();

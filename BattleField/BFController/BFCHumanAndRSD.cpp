@@ -46,7 +46,7 @@ void BFCHumanAndRSD::init()
     for (iter = objid.begin(); iter != objid.end(); iter++)
     {
         BFObject *pobj = getObjectPointer(*iter);
-        if ((*pobj)["isHumanControl"].toBool())
+        if ((*pobj)["isHumanControlled"].toBool())
         {
             break;
         }

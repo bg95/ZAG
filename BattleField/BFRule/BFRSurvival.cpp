@@ -9,6 +9,7 @@
 BFRSurvival::BFRSurvival(BFManager *_manager):
     BFRShoot(_manager)
 {
+    counter = 0;
     difficulty = 0;
     strength = 0;
 }
@@ -25,12 +26,28 @@ int BFRSurvival::getNumberFractions() const
 void BFRSurvival::processInput()
 {
     BFRShoot::processInput();
+    counter++;
+    if (counter % 100 == 0)
+    {
+        generateObjectByStrength(difficulty);
+        difficulty++;
+    }
 }
 
 void BFRSurvival::generateObjectByStrength(int str)
 {
-    double r, m, maxa, health;
-    double bulletr, bulletv, bulletm, damage, cooldown;
+    str++;
+
+    double r = sqrt((double)str) / 30.0;
+    double m = 10.0 * r * r;
+    double maxa = 0.05 / r;
+    double health = m * 2;
+
+    double bulletr = r / 10.0;
+    double bulletm = 1.0 * bulletr * bulletr;
+    double bulletv = 0.05 / bulletr;
+    double damage = bulletm * 20.0;
+    double cooldown = 0.5;
 
     BFOColoredCircle *circle;
     BFController *controller;

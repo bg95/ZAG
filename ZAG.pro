@@ -37,7 +37,8 @@ SOURCES += main.cpp\
     BattleField/BFController/BFCRandomShootDodge.cpp \
     BattleField/ControlEvent.cpp \
     BattleField/BFRule/BFRSurvival.cpp \
-    BattleField/BFController/BFCHumanAndRSD.cpp
+    BattleField/BFController/BFCHumanAndRSD.cpp \
+    global.cpp
 
 HEADERS  += MainWindow.h \
     BattleField/BFObject/BFObject.h \

@@ -19,6 +19,7 @@ protected:
     void generateObjectByStrength(int str);
     int difficulty;
     int strength;
+    int counter;
 
 };
 

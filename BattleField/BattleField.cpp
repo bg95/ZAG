@@ -122,9 +122,12 @@ void BattleField::paintGL()
         {
             qDebug("setfocus unit = %lf", unit);
             BFObject *obj = manager.getFactory()->objectByID(focusobj);
-            Vector2d p = obj->getPosition().rotate(angle / 180.0 * PI) / 2.017353 * unit;
-            delta_x = -p.x;
-            delta_y = -p.y;
+            if (obj)
+            {
+                Vector2d p = obj->getPosition().rotate(angle / 180.0 * PI) / 2.017353 * unit;
+                delta_x = -p.x;
+                delta_y = -p.y;
+            }
         }
 
         glTranslatef(delta_x, delta_y, 0.0);

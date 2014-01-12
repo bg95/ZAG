@@ -10,6 +10,7 @@
 #include "Network/Client.h"
 #include "Network/Server.h"
 #include "BattleField/BFRule/BFRShoot.h"
+#include "BattleField/BFRule/BFRSurvival.h"
 
 #include "BattleField/BFFactory.h"
 
@@ -69,7 +70,7 @@ void MainWindow::singlePlayer(){
     //bf->setGeometry(0, 0, width(), height());
 
     //rule = new BFRCollision(bf->getManager());
-    rule = new BFRShoot(bf->getManager());
+    rule = new BFRSurvival(bf->getManager());
     bf->getManager()->setRule(rule);
     connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
 

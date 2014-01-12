@@ -16,6 +16,7 @@ public:
 
 protected:
     const int FRACTION_ENEMY = 16;
+    void generateInitialObjects();
     void generateObjectByStrength(int str);
     int difficulty;
     int strength;

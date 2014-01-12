@@ -78,17 +78,20 @@ private slots:
 private:
     QWidget* main_window;
     BFManager manager;
-    Scene scene;
+    Scene scene;//all other graphics apart from the main battlefield
     QTimer refreshtimer;
     void mouseEvent(QMouseEvent *mouseevent);
     int display_counter;
-    bool fullscreen;
+
     //information on the view port
+    bool fullscreen;
     float unit;
     float angle;
     float delta_x, delta_y;
 
+    //position of the mouse
     int mouse_x, mouse_y;
+
     Qt::MouseButtons mouse_buttons;
 
     BFObjectID focusobj;

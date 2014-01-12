@@ -6,6 +6,7 @@
 class BattleField;
 class BFManager;
 
+//draw all things (including map, blood volume...), apart from the main battlefield
 class Scene
 {
 public:

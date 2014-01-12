@@ -279,6 +279,7 @@ void Server::gameBegin(){
     bfRule = new BFRShoot(bf->getManager());
     bf->getManager()->setRule(bfRule);
     connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
+    //connect()
     //connect(bf, SIGNAL(sendMessage(QByteArray)), this, SLOT(updateClient(QByteArray)));
 
     prepareInitialState();
@@ -426,6 +427,8 @@ void Server::updateClient(){
     QByteArray message;
     QDataStream out(&message, QIODevice::WriteOnly);
     out << quint32(0);
+
+    //double time = bf->getManager()->getDT();
 
     bf->getManager()->encodeAllObjects(out.device());
 

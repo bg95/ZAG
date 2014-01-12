@@ -334,6 +334,7 @@ void BattleField::refresh()
     if (display_counter == display_refreshes)
     {
         //Send message to clients
+/*
         QByteArray message;
         QBuffer buf(&message);
         buf.open(QIODevice::ReadWrite);
@@ -345,7 +346,7 @@ void BattleField::refresh()
 
         emit sendMessage(message);
         buf.close();
-
+*/
         display_counter = 0;
         manager.setDT(framedt * display_refreshes);
         manager.processInput();

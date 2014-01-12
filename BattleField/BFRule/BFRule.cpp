@@ -14,6 +14,11 @@ BFRuleType BFRule::getType() const
     return BFR_Null;
 }
 
+int BFRule::getNumberFractions() const
+{
+    return -1;
+}
+
 void BFRule::processInput()
 {
     std::set<BFController*> &controllers = manager->getControllers();

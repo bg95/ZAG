@@ -11,6 +11,7 @@
 #include <QByteArray>
 #include <QBuffer>
 
+#include "global.h"
 #include "BFRShoot.h"
 
 const double BFRShoot::eta = 1;
@@ -110,6 +111,7 @@ void BFRShoot::processInput()
         {
             circle->setProperty("fraction", 12);
         }
+        circle->BFObject::setColor(colorlist[(*circle)["fraction"].toInt() % colorlistsize]);
         circle->setProperty("cooldown", 1.0);
         circle->setProperty("cooldowncount", 0.0);
 
@@ -204,7 +206,7 @@ void BFRShoot::processIntersections()
                 {
                     //b->setProperty("health", newhealth);
                     (*b)["health"] = newhealth;
-                    ((BFOColoredCircle *)b)->setColor(1.0, newhealth, newhealth, 1.0);
+                    b->setAlpha(newhealth);
                     ((BFOCircle *)b)->v = (((BFOCircle *)b)->v * ((BFOCircle *)b)->m + ((BFOCircle *)a)->v * ((BFOCircle *)a)->m) / (((BFOCircle *)b)->m + ((BFOCircle *)a)->m);
                 }
                 manager->destructObject(a);

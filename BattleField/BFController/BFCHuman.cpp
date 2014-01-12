@@ -10,6 +10,11 @@ BFCHuman::BFCHuman(BFManager *_manager, BFObjectID _obj) :
 {
 }
 
+BFCHuman::BFCHuman(BFManager *_manager, std::vector<BFObjectID> _obj) :
+    BFCRandomShootDodge(_manager, _obj)
+{
+}
+
 BFCHuman::~BFCHuman()
 {
 }
@@ -28,7 +33,7 @@ std::vector<ControlEvent> &BFCHuman::getControl()
 void BFCHuman::applyControl()
 {
     controlevents.clear();
-    obj = getObjectPointer();
+    obj = getPrincipalObjectPointer();
     if (!obj)
         return;
     ControlEvent event(obj->getID());

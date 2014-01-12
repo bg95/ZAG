@@ -7,6 +7,7 @@ class BFCRandomShootDodge : public BFController
 {
 public:
     BFCRandomShootDodge(BFManager *_manager, BFObjectID _obj);
+    BFCRandomShootDodge(BFManager *_manager, std::vector<BFObjectID> _obj);
     virtual ~BFCRandomShootDodge();
     //virtual BFControllerType getType() const = 0;
     virtual std::vector<ControlEvent> &getControl(); //get control events
@@ -21,6 +22,9 @@ protected:
     int count;
     double theta, a;
     BFObject *obj;
+
+private:
+    void init(BFObjectID _obj);
 
 };
 

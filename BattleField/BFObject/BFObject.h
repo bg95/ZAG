@@ -49,8 +49,9 @@ public:
     virtual BFObject *duplicate();
 
     virtual void draw(QGLWidget *) = 0;
-    virtual void setColor(unsigned color);
+    void setColor(unsigned color);
     virtual void setColor(double r, double g, double b, double a);
+    virtual void setAlpha(double a);
 
     virtual BFObjectType getType() const = 0;
     virtual BFObjectShape getShape() const = 0;

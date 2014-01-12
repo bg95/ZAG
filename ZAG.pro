@@ -38,7 +38,8 @@ SOURCES += main.cpp\
     BattleField/ControlEvent.cpp \
     BattleField/BFRule/BFRSurvival.cpp \
     BattleField/BFController/BFCHumanAndRSD.cpp \
-    global.cpp
+    global.cpp \
+    BattleField/Scene.cpp
 
 HEADERS  += MainWindow.h \
     BattleField/BFObject/BFObject.h \
@@ -64,7 +65,8 @@ HEADERS  += MainWindow.h \
     BattleField/ControlEvent.h \
     BattleField/BFRule/BFRSurvival.h \
     global.h \
-    BattleField/BFController/BFCHumanAndRSD.h
+    BattleField/BFController/BFCHumanAndRSD.h \
+    BattleField/Scene.h
 
 FORMS    += MainWindow.ui
 

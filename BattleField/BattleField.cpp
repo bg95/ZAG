@@ -21,7 +21,8 @@ BattleField::BattleField(QWidget *parent, bool fs) :
     refreshtimer(this),
     display_counter(0),
     manager(this),
-    setfocus(false)//,
+    setfocus(false),
+    scene(this, &manager)//,
     //overlay(this)
 {
     refreshtimer.setInterval(refresh_interval);
@@ -130,6 +131,12 @@ void BattleField::paintGL()
             }
         }
 
+        scene.draw();
+    }
+    glPopMatrix();
+
+    glPushMatrix();
+    {
         glTranslatef(delta_x, delta_y, 0.0);
         glRotatef(angle, 0.0, 0.0, 1.0);
         glScalef(unit, unit, unit);

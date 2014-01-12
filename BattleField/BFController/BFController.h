@@ -29,7 +29,7 @@ public:
     void setKeysAndMouse(std::set<Qt::Key> keyspressed, Vector2d mouseposition, Qt::MouseButtons mousebuttons);
 
     bool lostAllObjects();
-
+    BFObject *getObjectControlledByHuman();
 protected:
     BFManager *manager;
     std::vector<BFObjectID> objid;

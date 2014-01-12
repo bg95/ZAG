@@ -72,6 +72,7 @@ void BFManager::destructObjects()
 
 bool BFManager::registerController(BFController *c)
 {
+    objectControlled = findObjectControlled();
     return controllers.insert(c).second;
 }
 
@@ -542,4 +543,28 @@ void BFManager::processIndependentIntersections()
     isintersected.clear();
     intersections.resize(n);
     processAllIntersections();
+}
+
+BFObject* BFManager::findObjectControlled()
+{
+    BFObject* answer;
+/*    for(auto iter = objects.begin(); iter != objects.end(); iter ++)
+    {
+        if( (*(*iter))["isHumanControlled"].toBool() )
+            return (*iter);
+    }*/
+    for(auto iter = controllers.begin(); iter != controllers.end(); iter ++)
+    {
+        answer = (*iter)->getObjectControlledByHuman();
+        if(answer != NULL)
+        {
+            return answer;
+        }
+    }
+    return NULL;
+}
+
+BFObject* BFManager::getObjectControlled()
+{
+    return objectControlled;
 }

@@ -326,7 +326,6 @@ void Server::gameBegin(){
     bf->start();
     this->hide();
     bf->show();
-
 }
 
 void Server::prepareInitialState(){
@@ -435,6 +434,7 @@ QByteArray Server::sendInitialMessage(){
     QDataStream out(&message, QIODevice::WriteOnly);
     out << quint32(0);
     out << GAME_BEGIN;
+    out << quint16(2);
 
     bf->getManager()->encodeAllObjects(out.device());
 
@@ -458,6 +458,7 @@ void Server::battleEnd(){
 }
 
 void Server::updateClient(){
+    qDebug("Server gets message");
     if(!checkConnectionNumber())
         return;
 
@@ -479,9 +480,10 @@ void Server::updateClientControl(QTcpSocket *client){
         return;
     //client->readAll();
 
-    //qDebug("Decoding control");
+    qDebug("Decoding control");
     std::vector<ControlEvent> eventList;
     ControlEvent::decodeAppendControlEventList(eventList, client);
+    qDebug("Decoding finished");
     //bf->getManager()->applyControlEvents(eventList);
 
 }

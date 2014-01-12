@@ -5,6 +5,7 @@
 #include <QTcpSocket>
 #include "BattleField/BattleField.h"
 #include "BattleField/BFRule/BFRCollision.h"
+//#include "global.h"
 
 QT_BEGIN_NAMESPACE
 class QTcpSocket;

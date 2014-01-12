@@ -57,6 +57,7 @@ void ControlEvent::decodeAppendControlEventList(std::vector<ControlEvent> &list,
     size_t i;
     std::vector<ControlEvent>::size_type size;
     device->read((char *)&size, sizeof(size));
+    qDebug("Decode control size = %d", size);
     for (i = 0; i < size; i++)
     {
         list.push_back(ControlEvent(device));

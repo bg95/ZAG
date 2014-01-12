@@ -8,6 +8,7 @@
 
 #include "BattleField/BFRule/BFRCollision.h"
 #include "BattleField/BFRule/BFRShoot.h"
+#include "BattleField/BFController/BFCHumanAndRSD.h"
 #include "Network/Client.h"
 
 #include "BattleField/BFFactory.h"
@@ -305,7 +306,7 @@ void Client::displayPlayers(){
 //Following is the game part
 
 void Client::prepareGame(){
-    tcpSocket->readAll();
+    //tcpSocket->readAll();
     disconnect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMessage()));
 
     bf = new BattleField;
@@ -324,6 +325,10 @@ void Client::prepareGame(){
         }
     }
 
+    BFCHumanAndRSD *ctr = new BFCHumanAndRSD(bf->getManager(), fracObj);
+    bf->getManager()->registerController(ctr);
+
+    qDebug("Prepare finished");
     bf->update();
     //write("Know");
     QTimer::singleShot(500, this, SLOT(sendAck()));
@@ -371,11 +376,8 @@ void Client::sendReturnMessage(){
 }
 
 void Client::sendAck(){
-    QByteArray message;
-    QDataStream out(&message, QIODevice::WriteOnly);
-    out << quint32(0);
-
-    tcpSocket->write(message);
+    qDebug("ACK sent");
+    sendReturnMessage();
 }
 
 

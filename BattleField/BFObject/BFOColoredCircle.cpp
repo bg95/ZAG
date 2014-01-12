@@ -59,12 +59,12 @@ void BFOColoredCircle::setColor(double r, double g, double b, double a)
     blue = b;
     alpha = a;
 }
-
+/*
 const double *BFOColoredCircle::getColor() const
 {
     return c;
 }
-
+*/
 void BFOColoredCircle::encode(QIODevice *device)
 {
     BFOCircle::encode(device);

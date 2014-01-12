@@ -25,6 +25,19 @@ BFObject *BFObject::duplicate()
     return p;
 }
 
+void BFObject::setColor(unsigned color)
+{
+    double r = (double)((color >> 16) & 0xFF) / 255.0;
+    double g = (double)((color >> 8) & 0xFF) / 255.0;
+    double b = (double)((color >> 0) & 0xFF) / 255.0;
+    double a = (double)((color >> 24) & 0xFF) / 255.0;
+    setColor(r, g, b, a);
+}
+
+void BFObject::setColor(double r, double g, double b, double a)
+{
+}
+
 void BFObject::encode(QIODevice *device)
 {
     std::map<std::string, QVariant>::iterator iter;
@@ -76,8 +89,8 @@ void BFObject::setProperty(const std::string &prop, const QVariant &val)
 
 const QVariant &BFObject::getProperty(const std::string &prop)
 {
-    std::map<std::string, QVariant>::iterator iter;
-    iter = properties.find(prop);
+    //std::map<std::string, QVariant>::iterator iter;
+    auto iter = properties.find(prop);
     if (iter == properties.end())
         return QVariant_Invalid;
     //qDebug("property %s found: %s", prop.c_str(), (*iter).second.c_str());

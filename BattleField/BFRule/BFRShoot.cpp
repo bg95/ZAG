@@ -32,7 +32,7 @@ BFRuleType BFRShoot::getType() const
 void BFRShoot::processInput()
 {
     //testing encode/decode
-
+/*
     QBuffer buffer;
     buffer.open(QIODevice::ReadWrite);
     buffer.seek(0);
@@ -40,7 +40,7 @@ void BFRShoot::processInput()
     buffer.seek(0);
     manager->destructObjects();
     manager->decodeReplaceAllObjects(&buffer);
-
+*/
     std::set<BFObject *>::iterator iter;
     for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
     {
@@ -87,8 +87,15 @@ void BFRShoot::processInput()
         BFController *controller;
         //circle = new BFOColoredCircle;//(bf->getManager());
         circle = (BFOColoredCircle *)manager->getFactory()->newObject(typehash(BFOColoredCircle));
-        circle->p = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
         circle->r = 0.05;
+        int i;
+        for (i = 0; i < 10 && manager->intersectingWithAnyObject(circle); i++)
+            circle->p = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
+        if (i >= 10)
+        {
+            manager->getFactory()->deleteObject(circle);
+            return;
+        }
         circle->v = Vector2d(2.0 * (double)rand() / RAND_MAX - 1.0, 2.0 * (double)rand() / RAND_MAX - 1.0);
         circle->m = 0.25;
         circle->maxa = 5;

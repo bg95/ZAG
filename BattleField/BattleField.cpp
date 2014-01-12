@@ -322,12 +322,9 @@ void BattleField::mouseReleaseEvent(QMouseEvent *event)
 
 void BattleField::refresh()
 {
-    manager.nextFrame(refresh_interval / 1000.0 * timescale);
-
-    display_counter++;
-    if (display_counter == display_refreshes)
-    {
+    double framedt = refresh_interval / 1000.0 * timescale;
         //Send message to clients
+/*
         QByteArray message;
         QBuffer buf(&message);
         buf.open(QIODevice::ReadWrite);
@@ -339,10 +336,11 @@ void BattleField::refresh()
 
         emit sendMessage(message);
         buf.close();
-
-        display_counter = 0;
-        update();
-    }
+*/
+    manager.setDT(framedt);
+    manager.processInput();
+    manager.nextFrame(); //shall wail until receiving messages from clients
+    update();
 }
 
 void BattleField::mouseEvent(QMouseEvent *mouseevent)
@@ -363,14 +361,14 @@ void BattleField::mouseEvent(QMouseEvent *mouseevent)
     //x and y are the coordinates in the battlefield
     double y = - z * y_prime / cos15;//-1.0 ~ 1.0
     double x = - z * x_prime;//-1.0 ~ 1.0
-    qDebug("x = %f, y = %f", x, y);
+    //qDebug("x = %f, y = %f", x, y);
     double alpha = - ( angle * PI / 180.0 - atan2(y - delta_y, x - delta_x) );//in radian
     double r = sqrt(pow(x - delta_x, 2.0) + pow(y - delta_y, 2.0)) / unit;
     double X = r * cos(alpha), Y = r * sin(alpha);//-1.0 ~ 1.0
-    qDebug("alpha = %f, X = %f, Y = %f", alpha * 180.0 / PI, X, Y);
+    //qDebug("alpha = %f, X = %f, Y = %f", alpha * 180.0 / PI, X, Y);
     double px = (X + 1.0) / 2.0;
     double py = (Y + 1.0) / 2.0;
-    qDebug("px = %f, py = %f\n", px, py);
+    //qDebug("px = %f, py = %f\n", px, py);
     manager.mouseEvent(Vector2d(px * manager.getRight() + (1.0 - px) * manager.getLeft(),
                                 (1.0 - py) * manager.getBottom() + py * manager.getTop()),
                        mouseevent->buttons());

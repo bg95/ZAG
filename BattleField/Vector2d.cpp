@@ -29,9 +29,11 @@ double Vector2d::arg()
     return atan2(y, x);
 }
 
-Vector2d Vector2d::unit() {
+Vector2d Vector2d::unit()
+{
     double length = this->abs();
-    return Vector2d(x / length, y / length);
+    if (length == 0)    return Vector2d(0.0, 0.0);
+    else return Vector2d(x / length, y / length);
 }
 
 Vector2d Vector2d::rotate(double theta)

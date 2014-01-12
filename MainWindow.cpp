@@ -149,7 +149,7 @@ void MainWindow::singlePlayer(){
     bf->getManager()->getFactory()->deleteObject(circle);
 
     buf->open(QBuffer::ReadOnly);
-    for (int i = 0; i < 5; i++)
+    /*for (int i = 0; i < 5; i++)
     {
         buf->seek(0);
         circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
@@ -168,7 +168,7 @@ void MainWindow::singlePlayer(){
         controller = new BFCAIRandom(bf->getManager(), circle->getID());
         bf->getManager()->registerController(controller);
         //circles[i] = circle;
-    }
+    }*/
     buf->close();
     delete buf;
 /*

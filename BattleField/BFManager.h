@@ -24,6 +24,7 @@ class BFManager
 {
 public:
     static int process_independent_intersections;
+    static int frame_group_size;
     static double epsi;
 
     BFManager(BattleField *bf);
@@ -60,7 +61,9 @@ public:
     void wheelEvent(QWheelEvent* wheelevent);
 
     //Process user inputs, calculate positions of objects in the next frame, apply the rule
-    void nextFrame(double deltatime);
+    void setDT(double deltatime);
+    void processInput();
+    void nextFrame();
 
     //Paint the background and all objects
     void paintAll(QGLWidget *glwidget);//(QPainter *painter);
@@ -80,6 +83,9 @@ public:
     void encodeAllObjects(QIODevice *device);
     void decodeNewAllObjects(QIODevice *device);
     void decodeReplaceAllObjects(QIODevice *device);
+
+    //For randomly placing objects
+    bool intersectingWithAnyObject(const BFObject *a);
 
     //Calculate intersections
     double intersectingTime(const BFObject *a, const BFObject *b);
@@ -110,6 +116,7 @@ private:
 
     BFFactory factory;
 
+    void nextOneFrame();
     void findAllIntersections();
     void processAllIntersections();
     void processIndependentIntersections();

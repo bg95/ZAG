@@ -53,6 +53,8 @@ void BFCRandomShootDodge::applyControl()
 
     //randomWalk(event);
     dodge(event);
+    if (event.acc.x == 0.0 && event.acc.y == 0.0)
+        randomWalk(event);
 
     controlevents.push_back(event);
 }

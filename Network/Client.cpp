@@ -310,8 +310,8 @@ void Client::prepareGame(){
     disconnect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMessage()));
 
     bf = new BattleField;
-    rule = new BFRShoot(bf->getManager());
-    bf->getManager()->setRule(rule);
+    //rule = new BFRShoot(bf->getManager());
+    //bf->getManager()->setRule(rule);
     connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(clientGameUpdate()));
 
@@ -325,7 +325,8 @@ void Client::prepareGame(){
         }
     }
 
-    BFCHumanAndRSD *ctr = new BFCHumanAndRSD(bf->getManager(), fracObj);
+    //BFCHumanAndRSD *ctr = new BFCHumanAndRSD(bf->getManager(), fracObj);
+    BFCHuman *ctr = new BFCHuman(bf->getManager(), fracObj);
     bf->getManager()->registerController(ctr);
 
     qDebug("Prepare finished");
@@ -366,6 +367,7 @@ void Client::sendReturnMessage(){
     QDataStream out(&message, QIODevice::WriteOnly);
     out << quint32(0);
 
+    bf->getManager()->processInput();
     std::vector<ControlEvent> controlList = getAllControls();
     ControlEvent::encodeControlEventList(controlList, out.device());
 
@@ -393,6 +395,10 @@ std::vector<ControlEvent> Client::getAllControls(){
         for(; ite != temVec.end(); ite++){
             events.push_back(*ite);
         }
+    }
+    qDebug("Objects = %d", (int)bf->getManager()->getObjects().size());
+    for(std::vector<ControlEvent>::iterator ite = events.begin(); ite != events.end(); ite++){
+        qDebug("The acc is: %lf, %lf", (*ite).acc.x, (*ite).acc.y);
     }
     return events;
 }

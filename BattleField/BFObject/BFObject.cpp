@@ -25,6 +25,19 @@ BFObject *BFObject::duplicate()
     return p;
 }
 
+void BFObject::setColor(unsigned color)
+{
+    double r = (double)((color >> 16) & 0xFF) / 255.0;
+    double g = (double)((color >> 8) & 0xFF) / 255.0;
+    double b = (double)((color >> 0) & 0xFF) / 255.0;
+    double a = (double)((color >> 24) & 0xFF) / 255.0;
+    setColor(r, g, b, a);
+}
+
+void BFObject::setColor(double r, double g, double b, double a)
+{
+}
+
 void BFObject::encode(QIODevice *device)
 {
     std::map<std::string, QVariant>::iterator iter;

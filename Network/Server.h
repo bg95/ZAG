@@ -10,6 +10,7 @@
 
 #include "BattleField/BattleField.h"
 #include "BattleField/BFRule/BFRCollision.h"
+#include "Network/Connection.h"
 
 QT_BEGIN_NAMESPACE
 class QTcpSocket;
@@ -39,16 +40,19 @@ private slots:
     void updateClient();
     void newMessage();
     void sendMessage();
+    void newInterval();
     //void encodeMessage();
 
 private:
     QTcpServer *tcpServer;
-    //QString messages;
+    QByteArray lastMessage;
     QNetworkSession *networkSession;
     QTcpSocket *clientConnection;
-    QList<QTcpSocket*> connectionList;
-    QList<QString> nickNameList;
+
+    QList<Connection*> connectionList;
+    //QList<QString> nickNameList;
     QTimer *networkTimer;
+    bool flag;
 
     quint32 blockSize;
     //QString currentMessageGot;

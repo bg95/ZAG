@@ -37,7 +37,7 @@ public:
 
 signals:
     void battleEnd();
-    void sendMessage(QByteArray);
+    void newInterval();
     
 public slots:
     void start();

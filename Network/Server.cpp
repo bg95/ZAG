@@ -11,13 +11,14 @@
 #include "BattleField/BFRule/BFRCollision.h"
 #include "BattleField/BFRule/BFRShoot.h"
 #include "Network/Server.h"
+#include "Network/Connection.h"
 
 #include "BattleField/BFFactory.h"
 
 //#include "main.h"
 
 Server::Server(QWidget *parent):
-    QDialog(parent), tcpServer(0), networkSession(0), gameOn(false), counter(0), blockSize(0){
+    QDialog(parent), tcpServer(0), networkSession(0), gameOn(false), counter(0), blockSize(0), flag(true){
 
     // This part is for test
     debuggerLabel = new QLabel;
@@ -44,7 +45,7 @@ Server::Server(QWidget *parent):
 
     participantList = new QListWidget;
     participantList->addItem(tr("Host"));
-    nickNameList << QString("Host");
+    //nickNameList << QString("Host");
 
     messageList = new QListWidget;
 
@@ -122,21 +123,6 @@ void Server::acceptConnection(){
     QTimer::singleShot(1 * 1000, this, SLOT(auth()));
 }
 
-void Server::sendMessage(){
-    //This part is for test
-    debuggerLabel->setText(tr("Messages sent!"));
-    //Test part end
-
-    QString mes;
-    mes += "#Host:: ";
-    mes += sentMessage->text();
-    foreach(QTcpSocket *connection, connectionList){
-        connection->readAll();
-        connection->write(writeString(mes));
-    }
-    messageList->addItem("Host:: " + sentMessage->text());
-}
-
 void Server::sessionOpened(){
 
     //tihs part is for test
@@ -211,19 +197,23 @@ void Server::auth(){
 
         connect(clientConnection, SIGNAL(readyRead()), this, SLOT(newMessage()));
         connect(clientConnection, SIGNAL(disconnected()), clientConnection, SLOT(deleteLater()));
-        connectionList << clientConnection;
+
+        Connection *newConnection = new Connection(clientConnection);
+        newConnection->setNickName(nickName);
+
+        connectionList << newConnection;
         participantList->addItem(nickName);
-        nickNameList << nickName;
 
         QString mes;
-        foreach(QString nickName, nickNameList){
-            mes += ("@" + nickName);
+        mes += ("@Host");
+        foreach(Connection *connection, connectionList){
+            mes += ("@" + connection->getNickName());
         }
 
         QByteArray block = writeString(mes);
-        foreach(QTcpSocket *connection, connectionList){
-            connection->readAll();
-            connection->write(block);
+        foreach(Connection *connection, connectionList){
+            connection->getConnection()->readAll();
+            connection->getConnection()->write(block);
         }
     }
     else{
@@ -232,20 +222,27 @@ void Server::auth(){
     }
 }
 
-QByteArray Server::writeString(QString str){
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
-    out << str;
-    return block;
+void Server::sendMessage(){
+    //This part is for test
+    debuggerLabel->setText(tr("Messages sent!"));
+    //Test part end
+
+    QString mes;
+    mes += "#Host:: ";
+    mes += sentMessage->text();
+    foreach(Connection *connection, connectionList){
+        connection->getConnection()->readAll();
+        connection->getConnection()->write(writeString(mes));
+    }
+    messageList->addItem("Host:: " + sentMessage->text());
 }
 
 void Server::newMessage(){
     QString mesList;
-    foreach(QTcpSocket *connection, connectionList){
-        if(connection->bytesAvailable() > 0){
+    foreach(Connection *connection, connectionList){
+        if(connection->getConnection()->bytesAvailable() > 0){
             QString mes;
-            QDataStream in(connection);
+            QDataStream in(connection->getConnection());
             in.setVersion(QDataStream::Qt_4_0);
             in >> mes;
             messageList->addItem(mes);
@@ -255,9 +252,18 @@ void Server::newMessage(){
         }
     }
 
-    foreach(QTcpSocket *connection, connectionList){
-        connection->write(writeString(mesList));
+    foreach(Connection *connection, connectionList){
+        connection->getConnection()->write(writeString(mesList));
     }
+}
+
+
+QByteArray Server::writeString(QString str){
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << str;
+    return block;
 }
 
 //****************************************
@@ -269,7 +275,10 @@ void Server::gameBegin(){
     gameBeginButton->setEnabled(false);
 
     QByteArray block = writeString("@GameBegin");
-    foreach(QTcpSocket *connection, connectionList){
+    foreach(Connection *c, connectionList){
+        c->open();
+
+        QTcpSocket *connection = c->getConnection();
         disconnect(connection, SIGNAL(readyRead()), this, SLOT(newMessage()));
         connect(connection, SIGNAL(readyRead()), this, SLOT(updateClient()));
         connection->write(block);
@@ -279,6 +288,7 @@ void Server::gameBegin(){
     bfRule = new BFRShoot(bf->getManager());
     bf->getManager()->setRule(bfRule);
     connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
+    connect(bf, SIGNAL(newInterval()), this, SLOT(newInterval()));
     //connect()
     //connect(bf, SIGNAL(sendMessage(QByteArray)), this, SLOT(updateClient(QByteArray)));
 
@@ -395,19 +405,10 @@ void Server::prepareInitialState(){
     delete buf;
 }
 
-/*
-void Server::updateNetwork(){
-    foreach(QTcpSocket *connection, connectionList){
-        sendMessage(connection);
-    }
-    //networkTimer->start(1000);
-}
-*/
-
 void Server::battleEnd(){
     bf->pause();
-    foreach(QTcpSocket *cli, connectionList){
-        connect(cli, SIGNAL(readyRead()), this, SLOT(newMessage()));
+    foreach(Connection *c, connectionList){
+        connect(c->getConnection(), SIGNAL(readyRead()), this, SLOT(newMessage()));
     }
     gameBeginButton->setEnabled(true);
 
@@ -424,6 +425,14 @@ void Server::updateClient(){
     if(!checkConnectionNumber())
         return;
 
+    if(!flag){
+        foreach(Connection *c, connectionList){
+            updateClientControl(c->getConnection());
+            c->getConnection()->write(lastMessage);
+        }
+        return;
+    }
+
     QByteArray message;
     QDataStream out(&message, QIODevice::WriteOnly);
     out << quint32(0);
@@ -436,11 +445,15 @@ void Server::updateClient(){
     out << quint32(message.size() - sizeof(quint32));
 
     //qDebug("Block size sent is %d", int(message.size() - sizeof(quint32)));
-
-    foreach(QTcpSocket *client, connectionList){
-        updateClientControl(client);
-        client->write(message);
+    lastMessage = message;
+    foreach(Connection *c, connectionList){
+        updateClientControl(c->getConnection());
+        c->getConnection()->write(message);
     }
+}
+
+void Server::newInterval(){
+    flag = true;
 }
 
 void Server::updateClientControl(QTcpSocket *client){
@@ -475,3 +488,4 @@ bool Server::checkConnectionNumber(){
     numberOfConnections = 0;
     return true;
 }
+

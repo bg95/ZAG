@@ -336,6 +336,7 @@ void BattleField::refresh()
         emit sendMessage(message);
         buf.close();
 */
+    emit newInterval();
     manager.setDT(framedt);
     manager.processInput();
     manager.nextFrame(); //shall wail until receiving messages from clients

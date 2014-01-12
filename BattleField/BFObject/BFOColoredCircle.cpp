@@ -59,6 +59,12 @@ void BFOColoredCircle::setColor(double r, double g, double b, double a)
     blue = b;
     alpha = a;
 }
+
+void BFOColoredCircle::setAlpha(double a)
+{
+    alpha = a;
+}
+
 /*
 const double *BFOColoredCircle::getColor() const
 {

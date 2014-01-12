@@ -4,6 +4,7 @@
 #include "BattleField/BFController/BFCHuman.h"
 #include "BattleField/BFController/BFCAIRandom.h"
 #include "BattleField/BFController/BFCRandomShootDodge.h"
+#include "BattleField/BFController/BFCHumanAndRSD.h"
 
 #include "BattleField/BFRule/BFRCollision.h"
 #include "Network/Client.h"
@@ -73,6 +74,7 @@ void MainWindow::singlePlayer(){
     connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
 
     BFOColoredCircle *circle;
+    std::vector<BFObjectID> objid;
     BFCAIRandom *controller;
 
     BFOColoredCircle *bullet = (BFOColoredCircle *)bf->getManager()->getFactory()->newObject(typehash(BFOColoredCircle));
@@ -105,30 +107,8 @@ void MainWindow::singlePlayer(){
     circle->setProperty("health", 1.0);
     circle->setProperty("fraction", 0);
     bf->getManager()->insertObject(circle);
+    objid.push_back(circle->getID());
 
-    BFCHuman *ctrl = new BFCHuman(bf->getManager(), circle->getID());
-    //BFCRandomShootDodge *ctrl = new BFCRandomShootDodge(bf->getManager(), circle);
-    //BFCAIRandom *ctrl = new BFCAIRandom(bf->getManager(), circle);
-    bf->getManager()->registerController(ctrl);
-/*
-    circle = new BFOColoredCircle;//(bf->getManager());
-    //bullet->setProperty("shooter", (unsigned long long)circle);
-    circle->p = Vector2d(0, 0.8);
-    circle->r = 0.05;
-    circle->v = Vector2d(0, 0.5);
-    circle->m = 0.25;
-    circle->maxa = 5;
-    circle->setColor(0.0, 0.5, 1.0, 1.0);
-    circle->setProperty("shoot", "");
-    circle->setProperty("bullet prototype", bulletbuf.data());
-    circle->setProperty("cooldown", 0.1);
-    circle->setProperty("cooldowncount", 0.0);
-    circle->setProperty("health", 1.0);
-    bf->getManager()->insertObject(circle);
-
-    hum = new BFCHuman(bf->getManager(), circle);
-    bf->getManager()->registerController(hum);
-*/
     QBuffer *buf = new QBuffer;
     BFFactory *fac = bf->getManager()->getFactory();
     circle = (BFOColoredCircle *)bf->getManager()->getFactory()->newObject(typehash(BFOColoredCircle));//(bf->getManager());
@@ -140,7 +120,7 @@ void MainWindow::singlePlayer(){
     circle->setProperty("shoot", "");
     circle->setProperty("health", 1.0);
     //(*circle)["fraction"] = 2;
-    circle->setProperty("fraction", 2);
+    circle->setProperty("fraction", 0);
     buf->open(QBuffer::WriteOnly);
     fac->encodeObject(circle, buf);
     buf->close();
@@ -153,10 +133,11 @@ void MainWindow::singlePlayer(){
     {
         buf->seek(0);
         circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
-        circle->p = Vector2d(i / 8.0 - 0.8, 0.9);
+        circle->p = Vector2d(i / 8.0 - 0.9, 0.9);
         bf->getManager()->insertObject(circle);
-        controller = new BFCAIRandom(bf->getManager(), circle->getID());
-        bf->getManager()->registerController(controller);
+        objid.push_back(circle->getID());
+        //controller = new BFCAIRandom(bf->getManager(), circle->getID());
+        //bf->getManager()->registerController(controller);
         //circles[i] = circle;
     }
     for (int i = 0; i < 5; i++)
@@ -165,12 +146,15 @@ void MainWindow::singlePlayer(){
         circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
         circle->p = Vector2d(-(i / 8.0 - 0.9), 0.9);
         bf->getManager()->insertObject(circle);
-        controller = new BFCAIRandom(bf->getManager(), circle->getID());
-        bf->getManager()->registerController(controller);
+        objid.push_back(circle->getID());
+        //controller = new BFCAIRandom(bf->getManager(), circle->getID());
+        //bf->getManager()->registerController(controller);
         //circles[i] = circle;
     }
     buf->close();
     delete buf;
+    BFController *ctrl = new BFCHumanAndRSD(bf->getManager(), objid);
+    bf->getManager()->registerController(ctrl);
 /*
     for (int i = 0; i < 10; i++)
         for (int j = 0; j < 5; j++)

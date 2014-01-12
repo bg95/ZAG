@@ -479,7 +479,7 @@ void Server::updateClientControl(QTcpSocket *client){
         return;
     //client->readAll();
 
-    qDebug("Decoding control");
+    //qDebug("Decoding control");
     std::vector<ControlEvent> eventList;
     ControlEvent::decodeAppendControlEventList(eventList, client);
     //bf->getManager()->applyControlEvents(eventList);

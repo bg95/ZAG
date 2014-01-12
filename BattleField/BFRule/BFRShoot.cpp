@@ -11,6 +11,7 @@
 #include <QByteArray>
 #include <QBuffer>
 
+#include "global.h"
 #include "BFRShoot.h"
 
 const double BFRShoot::eta = 1;
@@ -42,6 +43,10 @@ void BFRShoot::processInput()
     manager->decodeReplaceAllObjects(&buffer);
 */
     std::set<BFObject *>::iterator iter;
+    for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
+    {
+        (*iter)->setColor(colorlist[(**iter)["fraction"].toInt() % colorlistsize]);
+    }
     for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
     {
         BFOCircle *cir = (BFOCircle *)(*iter);
@@ -110,6 +115,7 @@ void BFRShoot::processInput()
         {
             circle->setProperty("fraction", 12);
         }
+        circle->BFObject::setColor(colorlist[(*circle)["fraction"].toInt() % colorlistsize]);
         circle->setProperty("cooldown", 1.0);
         circle->setProperty("cooldowncount", 0.0);
 
@@ -204,8 +210,9 @@ void BFRShoot::processIntersections()
                 {
                     //b->setProperty("health", newhealth);
                     (*b)["health"] = newhealth;
-                    ((BFOColoredCircle *)b)->setColor(1.0, newhealth, newhealth, 1.0);
-                    ((BFOCircle *)b)->v = (((BFOCircle *)b)->v * ((BFOCircle *)b)->m + ((BFOCircle *)a)->v * ((BFOCircle *)a)->m) / (((BFOCircle *)b)->m + ((BFOCircle *)a)->m);
+                    b->setAlpha(newhealth);
+                    //((BFOCircle *)b)->v = (((BFOCircle *)b)->v * ((BFOCircle *)b)->m + ((BFOCircle *)a)->v * ((BFOCircle *)a)->m) / (((BFOCircle *)b)->m + ((BFOCircle *)a)->m);
+                    b->setVelocity((b->getVelocity() * b->getMass() + a->getVelocity() * a->getMass()) / (b->getMass() + a->getMass()));
                 }
                 manager->destructObject(a);
                 continue;
@@ -234,6 +241,8 @@ void BFRShoot::processIntersections()
 
 void BFRShoot::shoot(BFObject *obj, double theta)
 {
+    if (!obj->getProperty("bullet prototype").isValid())
+        return;
     QByteArray bulletba = obj->getProperty("bullet prototype").toByteArray();
     QBuffer bulletbuf(&bulletba);
     bulletbuf.open(QIODevice::ReadOnly);

@@ -14,6 +14,7 @@ public:
     static Qt::Key XNegKey, XPosKey, YNegKey, YPosKey;
 
     BFCHuman(BFManager *_manager, BFObjectID _obj);
+    BFCHuman(BFManager *_manager, std::vector<BFObjectID> _obj);
     virtual ~BFCHuman();
     //virtual BFControllerType getType() const;
     virtual std::vector<ControlEvent> &getControl();

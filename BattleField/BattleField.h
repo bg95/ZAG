@@ -41,6 +41,7 @@ public:
 
 
 signals:
+    void timerTimeout();
     void battleEnd();
     void newInterval();
     

@@ -8,6 +8,12 @@ BFCAIRandom::BFCAIRandom(BFManager *_manager, BFObjectID _obj) :
     count = 0;
 }
 
+BFCAIRandom::BFCAIRandom(BFManager *_manager, std::vector<BFObjectID> _obj) :
+    BFCRandomShootDodge(_manager, _obj)
+{
+    count = 0;
+}
+
 BFCAIRandom::~BFCAIRandom()
 {
 }
@@ -22,7 +28,7 @@ BFControllerType BFCAIRandom::getType() const
 std::vector<ControlEvent> &BFCAIRandom::getControl()
 {
     controlevents.clear();
-    obj = getObjectPointer();
+    obj = getPrincipalObjectPointer();
     if (!obj)
         return controlevents;
     ControlEvent event(obj->getID());

@@ -49,14 +49,17 @@ public:
     virtual BFObject *duplicate();
 
     virtual void draw(QGLWidget *) = 0;
-    virtual void setColor(unsigned color);
+    void setColor(unsigned color);
     virtual void setColor(double r, double g, double b, double a);
+    virtual void setAlpha(double a);
 
     virtual BFObjectType getType() const = 0;
     virtual BFObjectShape getShape() const = 0;
+    virtual double getMass() const = 0;
     virtual double getRoughRadius() const = 0; //The radius of a circle centered at the object's center, large enough to cover the whole object, used for Quadtree
     virtual Vector2d getPosition() const = 0;
     virtual Vector2d getVelocity() const = 0;
+    virtual void setVelocity(Vector2d vel) = 0;
     virtual double getMaxAcceleration() const = 0;
     virtual void setAcceleration(Vector2d acc) = 0;
 

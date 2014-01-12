@@ -23,12 +23,16 @@ public:
     BFController(BFManager *_manager, BFObjectID _obj);
     virtual ~BFController();
     //virtual BFControllerType getType() const = 0;
-    virtual void applyControl() = 0; //apply control to the object
+    //virtual void applyControl() = 0; //apply control to the object
+    virtual std::vector<ControlEvent> &getControl();
     void setKeysAndMouse(std::set<Qt::Key> keyspressed, Vector2d mouseposition, Qt::MouseButtons mousebuttons);
 
+    bool lostObject();
+
 protected:
-    BFObjectID objid;
     BFManager *manager;
+    BFObjectID objid;
+    std::vector<ControlEvent> controlevents;
 
     std::set<Qt::Key> keys;
     Vector2d mousepos;

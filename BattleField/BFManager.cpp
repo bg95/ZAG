@@ -98,6 +98,31 @@ void BFManager::destructControllers()
     clearControllers();
 }
 
+void BFManager::applyControlEvents(std::vector<ControlEvent> &events)
+{
+    //testing encode/decode of ControlEvent
+    /*
+    std::vector<ControlEvent> events0;
+    QBuffer *buf = new QBuffer();
+    buf->open(QIODevice::ReadWrite);
+    buf->seek(0);
+    int zero = 0;
+    buf->write((const char *)&zero, sizeof(zero));
+    encodeControlEventList(events, buf);
+    buf->seek(0);
+    buf->read((char *)&zero, sizeof(zero));
+    decodeAppendControlEventList(events0, buf);
+    events = events0;
+    delete buf;*/
+
+    BFObject *obj;
+    for (auto iter = events.begin(); iter != events.end(); iter++)
+    {
+        obj = factory.objectByID((*iter).objid);
+        obj->applyControlEvent(*iter);
+    }
+}
+
 void BFManager::keyPressEvent(QKeyEvent *keyevent)
 {
     //qDebug("key %d pressed", keyevent->key());
@@ -172,7 +197,7 @@ void BFManager::nextFrame(double deltatime)
 
 void BFManager::paintAll(QGLWidget *glwidget)
 {
-    //qDebug("paintAll");
+    qDebug("paintAll, #objects = %d", (int)objects.size());
     std::set<BFObject *>::iterator iter;
     for (iter = objects.begin(); iter != objects.end(); iter++)
         (*iter)->draw(glwidget);

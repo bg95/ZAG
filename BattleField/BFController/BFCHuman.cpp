@@ -19,76 +19,81 @@ BFControllerType BFCHuman::getType() const
     return BFC_HUMAN;
 }
 */
+std::vector<ControlEvent> &BFCHuman::getControl()
+{
+    applyControl();
+    return controlevents;
+}
+
 void BFCHuman::applyControl()
 {
+    controlevents.clear();
     obj = getObjectPointer();
     if (!obj)
         return;
-    if (obj->getShape() == BFO_CIRCULAR)
+    ControlEvent event(obj->getID());
+    Vector2d a = Vector2d(0, 0);
+    if (keyPressed(XNegKey))
+        a = a - Vector2d(1, 0);
+    if (keyPressed(XPosKey))
+        a = a + Vector2d(1, 0);
+    if (keyPressed(YNegKey))
+        a = a - Vector2d(0, 1);
+    if (keyPressed(YPosKey))
+        a = a + Vector2d(0, 1);
+    double bfrot = manager->getBattleField()->getRotation();
+    a = a.rotate(-bfrot);
+    if (a.abs() > 0)
+        a = a / a.abs();
+    //cir->a = a * cir->maxa;
+    event.acc = a * obj->getMaxAcceleration();
+    //qDebug("appling to object %lX: %lf,%lf", (long)obj, cir->a.x, cir->a.y);
+
+    if (mousebut & Qt::LeftButton)
     {
-        BFOCircle *cir = (BFOCircle *)obj;
-        Vector2d a = Vector2d(0, 0);
-        if (keyPressed(XNegKey))
-            a = a - Vector2d(1, 0);
-        if (keyPressed(XPosKey))
-            a = a + Vector2d(1, 0);
-        if (keyPressed(YNegKey))
-            a = a - Vector2d(0, 1);
-        if (keyPressed(YPosKey))
-            a = a + Vector2d(0, 1);
-        double bfrot = manager->getBattleField()->getRotation();
-        a = a.rotate(-bfrot);
-        if (a.abs() > 0)
-            a = a / a.abs();
-        cir->a = a * cir->maxa;
-        //qDebug("appling to object %lX: %lf,%lf", (long)obj, cir->a.x, cir->a.y);
-
-        if (mousebut & Qt::LeftButton)
+        BFObject *faim = 0;
+        double theta = (mousepos - obj->getPosition()).arg();
+        if (keyPressed(Qt::Key_Shift))
         {
-            BFObject *faim = 0;
-            double theta = (mousepos - cir->p).arg();
-            if (keyPressed(Qt::Key_Shift))
+            //qDebug("shift pressed");
+            double closestcos = -2;
+            std::set<BFObject *>::iterator iter;
+            for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
             {
-                //qDebug("shift pressed");
-                double closestcos = -2;
-                std::set<BFObject *>::iterator iter;
-                for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
+                //qDebug("object");
+                if ((*iter)->getID() != obj->getID() &&
+                        (*iter)->getProperty("isBullet") != "Yes" &&
+                        (*iter)->getProperty("fraction") != (*obj)["fraction"])
                 {
-                    //qDebug("object");
-                    if ((*iter) != cir &&
-                            (*iter)->getProperty("isBullet") != "Yes" &&
-                            (*iter)->getProperty("fraction") != (*obj)["fraction"])
-                    {
-                        BFObject *aim = (*iter);
-                        double t = (aim->getPosition() - obj->getPosition()).abs() / bulletv;
-                        double ttheta = (aim->getPosition() + aim->getVelocity() * t - obj->getPosition()).arg();
+                    BFObject *aim = (*iter);
+                    double t = (aim->getPosition() - obj->getPosition()).abs() / bulletv;
+                    double ttheta = (aim->getPosition() + aim->getVelocity() * t - obj->getPosition()).arg();
 
-                        //qDebug("ttheta = %lf (%lf deg)", ttheta, ttheta / PI * 180.0);
-                        if (cos(ttheta - theta) > closestcos)
-                        {
-                            closestcos = cos(ttheta - theta);
-                            faim = aim;
-                        }
+                    //qDebug("ttheta = %lf (%lf deg)", ttheta, ttheta / PI * 180.0);
+                    if (cos(ttheta - theta) > closestcos)
+                    {
+                        closestcos = cos(ttheta - theta);
+                        faim = aim;
                     }
                 }
-                if (!faim)
-                {
-                    //closesttheta = theta;
-                    shoot(theta);
-                }
-                else
-                {
-                    //theta = closesttheta;
-                    shoot(faim);
-                }
+            }
+            if (!faim)
+            {
+                //closesttheta = theta;
+                shoot(event, theta);
             }
             else
-                shoot(theta);
-            //qDebug("mouse left button pressed. %lf %s", theta);
+            {
+                //theta = closesttheta;
+                shoot(event, faim);
+            }
         }
+        else
+            shoot(event, theta);
+        //qDebug("mouse left button pressed. %lf %s", theta);
 
     }
-
     //...
     //not completed
+    controlevents.push_back(event);
 }

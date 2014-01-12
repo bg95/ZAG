@@ -445,17 +445,22 @@ void Server::updateClientControl(QTcpSocket *client){
 
     if(blockSize == 0){
         if(client->bytesAvailable() < (int)sizeof(quint32)){
-            //qDebug("Head broken");
             return;
         }
         in >> blockSize;
-        //qDebug("Got message of size: %d", blockSize);
     }
+    if(blockSize == -1)
+        return;
     if(client->bytesAvailable() < blockSize)
         return;
 
     blockSize = 0;
-    client->readAll();
+    //client->readAll();
+
+    qDebug("Decoding control");
+    std::vector<ControlEvent> eventList;
+    ControlEvent::decodeAppendControlEventList(eventList, client);
+    bf->getManager()->applyControlEvents(eventList);
 }
 
 

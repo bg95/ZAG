@@ -75,6 +75,7 @@ private:
 
     void writeString(QString);
     void sendReturnMessage();
+    std::vector<ControlEvent> getAllControls();
 
     int counter; //counter used for test network complecity
 };

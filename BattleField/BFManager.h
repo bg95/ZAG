@@ -50,6 +50,9 @@ public:
     void clearControllers();
     void destructControllers();
 
+    //ControlEvent processing
+    void applyControlEvents(std::vector<ControlEvent> &events);
+
     //User Events
     void keyPressEvent(QKeyEvent *keyevent);
     void keyReleaseEvent(QKeyEvent *keyevent);

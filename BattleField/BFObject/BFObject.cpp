@@ -2,6 +2,7 @@
 
 const std::string BFObject::empty_string("");
 long BFObject::count = 0;
+const QVariant BFObject::QVariant_Invalid = QVariant(QVariant::Invalid);
 
 BFObject::BFObject()//BFManager *_manager)
     :created_from_factory(false), deleting_from_factory(false)
@@ -78,17 +79,20 @@ const QVariant &BFObject::getProperty(const std::string &prop)
     std::map<std::string, QVariant>::iterator iter;
     iter = properties.find(prop);
     if (iter == properties.end())
-        return QVariant(QVariant::Invalid);
+        return QVariant_Invalid;
     //qDebug("property %s found: %s", prop.c_str(), (*iter).second.c_str());
     return (*iter).second;
 }
 
 QVariant &BFObject::operator [](const std::string &prop)
 {
+    /*
     auto iter = properties.find(prop);
     if (iter == properties.end())
-        ;//return QVariant(QVariant::Invalid); //don't know what to do
+        return properties[prop];//return QVariant(QVariant::Invalid); //don't know what to do
     return (*iter).second;
+    */
+    return properties[prop];
 }
 
 /*
@@ -151,4 +155,11 @@ void BFObject::readVector2d(QIODevice *device, Vector2d &vec)
 void BFObject::writeVector2d(QIODevice *device, const Vector2d &vec)
 {
     device->write((const char *)vec.c, sizeof(vec.c));
+}
+
+void BFObject::applyControlEvent(ControlEvent &ce)
+{
+    setAcceleration(ce.acc);
+    for (auto iter = ce.difference.begin(); iter != ce.difference.end(); iter++)
+        setProperty((*iter).first, (*iter).second);
 }

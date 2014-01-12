@@ -16,6 +16,7 @@ public:
     BFCHuman(BFManager *_manager, BFObjectID _obj);
     virtual ~BFCHuman();
     //virtual BFControllerType getType() const;
+    virtual std::vector<ControlEvent> &getControl();
     virtual void applyControl();
 
 };

@@ -302,21 +302,21 @@ void Client::clientGameUpdate(){
     //buf->open(QIODevice::ReadWrite);
     //qDebug("Size of message GOT: %d", buf->data().size());
 
-    qDebug("Got message");
+    //qDebug("Got message");
     QDataStream in(tcpSocket);
 
     if(blockSize == 0){
         if(tcpSocket->bytesAvailable() < (int)sizeof(quint32)){
-            qDebug("Head broken");
+            //qDebug("Head broken");
             return;
         }
         in >> blockSize;
-        qDebug("Got message of size: %d", blockSize);
+        //qDebug("Got message of size: %d", blockSize);
     }
     if(tcpSocket->bytesAvailable() < blockSize)
         return;
 
-    qDebug("Complete info");
+    //qDebug("Complete info");
     bf->getManager()->destructObjects();
     bf->getManager()->decodeReplaceAllObjects(tcpSocket);
     bf->update();
@@ -331,7 +331,10 @@ void Client::clientGameUpdate(){
     qDebug("Size received is: %d", tcpSocket->size());
     tcpSocket->readAll();
 
-    QDataStream in(tcpSocket);
+    //QDataStream in(tcpSocket);
+    qDebug("The size received is: %d", tcpSocket->size());
+    tcpSocket->readAll();
+    /*
     int temNumber;
     in >> temNumber;
     if(temNumber < 10 && temNumber >= 0){
@@ -345,6 +348,7 @@ void Client::clientGameUpdate(){
     }
     counter = temNumber;
     tcpSocket->readAll();
+
     */
 }
 
@@ -358,11 +362,13 @@ void Client::battleEnd(){
 }
 
 void Client::sendReturnMessage(){
+    qDebug("Sending Control Info on Client");
     QByteArray message;
     QDataStream out(&message, QIODevice::WriteOnly);
     out << quint32(0);
 
-    out << "TestInfo";
+    std::vector<ControlEvent> controlList = getAllControls();
+    ControlEvent::encodeControlEventList(controlList, out.device());
 
     out.device()->seek(0);
     out << quint32(message.size() - sizeof(quint32));
@@ -373,8 +379,24 @@ void Client::sendReturnMessage(){
 void Client::sendAck(){
     QByteArray message;
     QDataStream out(&message, QIODevice::WriteOnly);
-    out << quint32(0);
+    out << quint32(-1);
 
     tcpSocket->write(message);
 }
 
+
+std::vector<ControlEvent> Client::getAllControls(){
+    std::vector<ControlEvent> events;
+    std::set<BFController *> &controllers = bf->getManager()->getControllers();
+    std::set<BFController *>::iterator ctrliter;
+    for (ctrliter = controllers.begin(); ctrliter != controllers.end(); ctrliter++)
+    {
+        //(*ctrliter)->applyControl();
+        std::vector<ControlEvent> temVec = (*ctrliter)->getControl();
+        std::vector<ControlEvent>::iterator ite = temVec.begin();
+        for(; ite != temVec.end(); ite++){
+            events.push_back(*ite);
+        }
+    }
+    return events;
+}

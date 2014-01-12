@@ -20,6 +20,7 @@ protected:
     double bulletv;
     int count;
     double theta, a;
+    double dist;
     BFObject *obj;
 
 private:

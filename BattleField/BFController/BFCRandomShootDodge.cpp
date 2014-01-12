@@ -1,7 +1,7 @@
 #include "BFCRandomShootDodge.h"
 
 BFCRandomShootDodge::BFCRandomShootDodge(BFManager *_manager, BFObjectID _obj) :
-    BFController(_manager, _obj), count(0)
+    BFController(_manager, _obj), count(0), dist(1.0 / 0.0)
 {
     obj = getObjectPointer();
     if (!obj)
@@ -37,7 +37,7 @@ void BFCRandomShootDodge::applyControl()
         return;
     ControlEvent event(obj->getID());
     BFObject *aim;
-    double dist = 1.0 / 0.0;
+    dist = 1.0 / 0.0;
     for (auto iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
     {
         if ((**iter)["isBullet"] != "Yes" && (**iter)["fraction"] != (*obj)["fraction"])
@@ -112,22 +112,22 @@ void BFCRandomShootDodge::dodge(ControlEvent &event) {
             double tOwn2 = t2 + R / vOwn.abs();
             //qDebug("(tBullet1, tBullet2) = (%f, %f), (tOwn1, tOwn2) = (%f, %f)", tBullet1, tBullet2, tOwn1, tOwn2);
             if( (tOwn2 >= tBullet1 && tOwn2 <= tBullet2)
-             || (tBullet2 >= tOwn1) && (tBullet2 <= tOwn2) )
-            pIntersections.push_back(pIntersection);
+             || (tBullet2 >= tOwn1) && (tBullet2 <= tOwn2) ) {
+                if(tOwn1 < 0  && tOwn2 < 0 && tBullet1 < 0 && tBullet2 < 0) {
+                    if(dist >= (pBullet - pOwn).abs()) {
+                        dist = (pBullet - pOwn).abs();
+                        shoot(event, (*iter));
+                    }
+                    pIntersections.push_back(pIntersection);
+                }
+            }
         }
     }
-    if(pIntersections.size() != 0)
-        qDebug("#intersections = %d", pIntersections.size());
     Vector2d delta_a(0.0, 0.0);
     for(auto iter = pIntersections.begin(); iter != pIntersections.end(); iter ++) {
-        delta_a = delta_a + (pOwn - (*iter)).unit();
+        delta_a = delta_a + (pOwn - (*iter)).rotate(PI / 2.0).unit();
     }
-    if(delta_a.abs() != 0)
-        qDebug("delta_a = %lf,%lf", delta_a.x, delta_a.y);
     delta_a = delta_a.unit();
-    if(delta_a.abs() != 0)
-        qDebug("delta_a.unit = %lf,%lf", delta_a.x, delta_a.y);
-
     delta_a = (self->getMaxAcceleration()) * delta_a;
     event.acc = event.acc + delta_a;
 }

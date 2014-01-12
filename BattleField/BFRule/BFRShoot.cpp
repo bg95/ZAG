@@ -80,7 +80,7 @@ void BFRShoot::processInput()
         (*iter)->setProperty("shoot", "");
     }
     static bool pspace = false;
-    if (!pspace && (manager->getKeysPressed().find(Qt::Key_Space) != manager->getKeysPressed().end()))
+    if (!pspace && (manager->getKeysPressed().find(Qt::Key_Insert) != manager->getKeysPressed().end()))
     {
         BFOColoredCircle *circle;
         //BFCAIRandom *controller;

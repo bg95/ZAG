@@ -105,6 +105,8 @@ void BattleField::initializeGL()
     //glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     //glBlendFunc(GL_ONE, GL_ONE);
     //glDepthMask(GL_FALSE);
+
+    glEnable(GL_COLOR_MATERIAL);
 }
 
 void BattleField::paintGL()

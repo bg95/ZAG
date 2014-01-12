@@ -15,13 +15,15 @@ public:
 protected:
     void shoot(ControlEvent &event, BFObject *aim);
     void shoot(ControlEvent &event, double theta);
-    void dodge(ControlEvent &event, BFObject *bullet);
+    void dodge(ControlEvent &event);
     void randomWalk(ControlEvent &event);
     double bulletv;
     int count;
     double theta, a;
     BFObject *obj;
 
+private:
+    Vector2d intersectionPosition(Vector2d p1, Vector2d p2, Vector2d v1, Vector2d v2);
 };
 
 #endif // BFCRANDOMSHOOTDODGE_H

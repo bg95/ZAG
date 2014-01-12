@@ -411,8 +411,8 @@ void Server::prepareInitialState(){
         circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
         circle->p = Vector2d(i / 8.0 - 0.8, 0.9);
         bf->getManager()->insertObject(circle);
-        controller = new BFCAIRandom(bf->getManager(), circle->getID());
-        bf->getManager()->registerController(controller);
+        //controller = new BFCAIRandom(bf->getManager(), circle->getID());
+        //bf->getManager()->registerController(controller);
         //circles[i] = circle;
     }
     for (int i = 0; i < 5; i++)
@@ -421,8 +421,8 @@ void Server::prepareInitialState(){
         circle = (BFOColoredCircle *)fac->decodeNewObject(buf);
         circle->p = Vector2d(-(i / 8.0 - 0.9), 0.9);
         bf->getManager()->insertObject(circle);
-        controller = new BFCAIRandom(bf->getManager(), circle->getID());
-        bf->getManager()->registerController(controller);
+        //controller = new BFCAIRandom(bf->getManager(), circle->getID());
+        //bf->getManager()->registerController(controller);
         //circles[i] = circle;
     }
     buf->close();
@@ -483,8 +483,10 @@ void Server::updateClientControl(QTcpSocket *client){
     qDebug("Decoding control");
     std::vector<ControlEvent> eventList;
     ControlEvent::decodeAppendControlEventList(eventList, client);
+    for (auto iter = eventList.begin(); iter != eventList.end(); iter++)
+        qDebug("control acc = %lf,%lf", (*iter).acc.x, (*iter).acc.y);
     qDebug("Decoding finished");
-    //bf->getManager()->applyControlEvents(eventList);
+    bf->getManager()->applyControlEvents(eventList);
 
 }
 

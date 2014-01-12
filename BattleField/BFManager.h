@@ -24,6 +24,7 @@ class BFManager
 {
 public:
     static int process_independent_intersections;
+    static int frame_group_size;
     static double epsi;
 
     BFManager(BattleField *bf);
@@ -115,6 +116,7 @@ private:
 
     BFFactory factory;
 
+    void nextOneFrame();
     void findAllIntersections();
     void processAllIntersections();
     void processIndependentIntersections();

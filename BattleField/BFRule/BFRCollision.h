@@ -4,7 +4,8 @@
 #include "BFRule.h"
 #include "../BFController/BFController.h"
 
-class BFRCollision : public BFRule //Simple rigid body collision & keyboard control
+//Simple rigid body collision & keyboard control
+class BFRCollision : public BFRule
 {
 public:
     explicit BFRCollision(BFManager *_manager);

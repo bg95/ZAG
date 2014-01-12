@@ -14,6 +14,7 @@ class Scene;
 #include "Scene.h"
 //#include "BattleFieldOverlay.h"
 
+//The widget to show the battle field
 class BattleField : public QGLWidget
 {
     Q_OBJECT
@@ -35,6 +36,7 @@ public:
     void rotate(double dangle); //in degree, rotate stands for positive degree
     double getRotation() const;
 
+    //setting the object to be centered on the screen
     void setFocusObject(BFObjectID objid);
     void resetFocus();
 

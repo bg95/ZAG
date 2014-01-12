@@ -3,6 +3,7 @@
 
 #include "BFCRandomShootDodge.h"
 
+//Random walk
 class BFCAIRandom : public BFCRandomShootDodge
 {
 public:

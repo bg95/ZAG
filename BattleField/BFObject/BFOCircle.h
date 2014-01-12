@@ -5,6 +5,8 @@
 #include "../BFManager.h"
 #include "../Vector2d.h"
 
+//The class representing a circle (drawn as a cylinder)
+//See BFObject for details
 class BFOCircle : public BFObject
 {
     friend class BFManager;

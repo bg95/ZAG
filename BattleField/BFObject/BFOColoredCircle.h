@@ -3,6 +3,8 @@
 
 #include "BFOCircle.h"
 
+//Same as BFOCircle, but we can set its color
+//See BFOCircle for details
 class BFOColoredCircle : public BFOCircle
 {
 public:

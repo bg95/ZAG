@@ -8,6 +8,7 @@ class BFObject;
 class BFManager;
 class IntersectionEvent;
 
+//A quadtree to calculate intersections quickly
 class QuadTreeNode
 {
 public:

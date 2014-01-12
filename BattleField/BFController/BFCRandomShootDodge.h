@@ -3,6 +3,9 @@
 
 #include "BFController.h"
 
+//An AI including random walk, shooting and dodging bullets
+//mostly used inherited
+//Also see BFController
 class BFCRandomShootDodge : public BFController
 {
 public:
@@ -14,9 +17,13 @@ public:
     virtual void applyControl(); //apply control to the object
 
 protected:
+    //Shoot at an object
     void shoot(ControlEvent &event, BFObject *aim);
+    //Shoot at a specified angle
     void shoot(ControlEvent &event, double theta);
+    //Dodge bullets
     void dodge(ControlEvent &event);
+    //Walk randomly
     void randomWalk(ControlEvent &event);
     double bulletv;
     int count;

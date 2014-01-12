@@ -29,12 +29,16 @@ enum BFObjectShape
     BFO_CIRCULAR = 0
 };
 
+//A class representing the objects on the battlefield
 class BFObject
 {
 public:
+    //some constants for convenience
     static const std::string empty_string;
     static const QVariant QVariant_Invalid;
+    //the number of objects in history
     static BFObjectID count;
+    //encoding/decoding some commonly used classes
     static void readStdString(QIODevice *device, std::string &str); //read a string from device
     static void writeStdString(QIODevice *device, const std::string &str); //write a string to device
     static void readQVariant(QIODevice *device, QVariant &var); //read a QVariant
@@ -45,44 +49,62 @@ public:
     BFObject();
     //BFObject(BFManager *_manager = 0);
     virtual ~BFObject();
+    //create an object
     virtual BFObject *newObject() = 0;
+    //duplicate this object
     virtual BFObject *duplicate();
 
+    //draw the object on the QGLWidget
     virtual void draw(QGLWidget *) = 0;
+    //set color. This function converts unsigned to 4 doubles and calls setColor(double, double, double, double)
     void setColor(unsigned color);
+    //set color. now used by only BFOColoredCircle
     virtual void setColor(double r, double g, double b, double a);
+    //set opacity. Not used.
     virtual void setAlpha(double a);
 
+    //get the Type(Class) of the object. Should return typeid(CLASS).hash_code()
     virtual BFObjectType getType() const = 0;
+    //get the shape for intersection detecting
     virtual BFObjectShape getShape() const = 0;
+    //get/set parameters of the object
     virtual double getMass() const = 0;
-    virtual double getRoughRadius() const = 0; //The radius of a circle centered at the object's center, large enough to cover the whole object, used for Quadtree
+    //The rough radius is the radius of a circle centered at the object's center,
+    //large enough to cover the whole object, used for Quadtree
+    virtual double getRoughRadius() const = 0;
     virtual Vector2d getPosition() const = 0;
     virtual Vector2d getVelocity() const = 0;
     virtual void setVelocity(Vector2d vel) = 0;
     virtual double getMaxAcceleration() const = 0;
     virtual void setAcceleration(Vector2d acc) = 0;
 
+    //calculate the objects status after time time
     virtual void move(double time) = 0;
 
-    //encode, decode not tested
-    virtual void encode(QIODevice *device); //must be called if overwritten by subclasses
-    virtual void decode(QIODevice *device); //must be called if overwritten by subclasses
+    //encode, decode
+    //must be called if overwritten by subclasses
+    virtual void encode(QIODevice *device);
+    virtual void decode(QIODevice *device);
 
     friend class BFController;
     //BFController *getController();
 
+    //get ID. ID is unique for each object
     BFObjectID getID();
+    //comparing ID's
     bool operator <(BFObject &b)
     {
         return id < b.id;
     }
 
+    //property operations. Properties are a map from a std::string to a QVariant, used for storing misc properties
     void setProperty(const std::string &prop, const QVariant &val);
     const QVariant &getProperty(const std::string &prop);
     //void setProperty(const std::string &prop, const std::string &val);
+    //overloaded operator for convenience. Not preferred when getting property
     QVariant &operator[](const std::string &prop);
 
+    //apply a ControlEvent to this object, modifying the acceleration and properties
     void applyControlEvent(ControlEvent &ce);
 
 private:

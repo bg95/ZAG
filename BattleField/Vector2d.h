@@ -1,6 +1,7 @@
 #ifndef VECTOR2D_H
 #define VECTOR2D_H
 
+//Vector class. For convenient manipulations of vectors.
 class Vector2d
 {
 public:
@@ -9,7 +10,7 @@ public:
     Vector2d &operator =(Vector2d b);
     double abs(); //the length of the vector
     double arg(); //the argument (angle between this and the x-axis) of the vector (in radians)
-    Vector2d unit();
+    Vector2d unit(); //unit vector in the same direction
     Vector2d rotate(double theta); //rotate the vector by theta radians
 
     double c[2];

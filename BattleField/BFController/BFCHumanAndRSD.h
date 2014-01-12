@@ -3,6 +3,8 @@
 
 #include "BFController.h"
 
+//This controller controls multiple objects.
+//It uses BFCHuman to control one of them and BFCRandomShootDodge to control the others
 class BFCHumanAndRSD : public BFController
 {
 public:

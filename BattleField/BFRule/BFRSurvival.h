@@ -3,6 +3,7 @@
 
 #include "BFRShoot.h"
 
+//Survival mode. Steadily generates enemy objects
 class BFRSurvival : public BFRShoot
 {
 public:

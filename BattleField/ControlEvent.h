@@ -7,6 +7,7 @@
 
 #include "BFObject/BFObject.h"
 
+//Information of controlling an object by a BFController
 class ControlEvent
 {
 public:
@@ -15,8 +16,10 @@ public:
     void encode(QIODevice *device);
     void decode(QIODevice *device);
 
+    //just for convenience
     void addPropertyChange(const std::string &prop, const QVariant &val);
 
+    //for encoding/decoding a bunch of ControlEvent's
     static void encodeControlEventList(std::vector<ControlEvent> &list, QIODevice *device);
     static void decodeAppendControlEventList(std::vector<ControlEvent> &list, QIODevice *device);
 

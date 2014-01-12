@@ -25,10 +25,15 @@ public:
     virtual ~BFController();
     //virtual BFControllerType getType() const = 0;
     //virtual void applyControl() = 0; //apply control to the object
+
+    //apply control to the object and return a vector of ControlEvent's
     virtual std::vector<ControlEvent> &getControl();
+    //used to set the value of keys, mousepos, mousebut. Should not be overwritten
     void setKeysAndMouse(std::set<Qt::Key> keyspressed, Vector2d mouseposition, Qt::MouseButtons mousebuttons);
 
+    //returns true if no objects is on the battlefield
     bool lostAllObjects();
+    //return the object controlled by human, if any.
     BFObject *getObjectControlledByHuman();
 protected:
     BFManager *manager;

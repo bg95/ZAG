@@ -8,6 +8,7 @@
 #include "BFObject/BFObject.h"
 #include "BFController/BFController.h"
 
+//A factory to create/destruct/find objects
 //Should be able to find an object by id (for constructing bullets e.g.)
 //Avoid trasmitting addresses while networking
 //Should store all object prototypes (find classes by std::string or BFObjectType) and manage all objects (by id)

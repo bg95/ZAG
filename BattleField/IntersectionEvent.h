@@ -3,6 +3,7 @@
 
 class BFObject;
 
+//Information of an intersection
 class IntersectionEvent
 {
 public:
@@ -15,7 +16,9 @@ public:
     IntersectionEvent();
     IntersectionEvent(BFObject *_obj, Boundary _b, double _time);
     IntersectionEvent(BFObject *_obj1, BFObject *_obj2, double _time);
-    bool operator <(const IntersectionEvent &b) const; //earlier than
+    //earlier than
+    bool operator <(const IntersectionEvent &b) const;
+    //identical to
     bool operator ==(const IntersectionEvent &b) const;
     union
     {

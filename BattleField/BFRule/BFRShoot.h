@@ -3,6 +3,7 @@
 
 #include "BFRule.h"
 
+//Simple rule that allow shooting
 class BFRShoot : public BFRule
 {
 public:

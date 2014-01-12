@@ -20,6 +20,8 @@ class BattleField;
 #include "Vector2d.h"
 #include "BFFactory.h"
 
+//This controls everything on the battlefield
+//Calculates intersections events, call BFRule, receive controls, and draw on BattleField
 class BFManager
 {
 public:

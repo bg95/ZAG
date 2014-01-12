@@ -166,22 +166,6 @@ void Server::sessionOpened(){
     statusLabel -> setText(tr("The server is running on \n\n IP: %1\nport: %2\n\n").arg(ipAddress).arg(tcpServer -> serverPort()));
 }
 
-/*
-void Server::encodeMessage(){
-    messages = sentMessage->text();
-}
-*/
-/*
-QByteArray *Server::getMessage(){
-
-    QByteArray block = writeString(sentMessage->text());
-    //QDataStream out(block, QIODevice::WriteOnly);
-    //out.setVersion(QDataStream::Qt_4_0);
-
-    //out << sentMessage->text();
-    return block;
-}
-*/
 void Server::auth(){
     //qDebug("Verifying");
     debuggerLabel->setText(tr("Verifiring"));
@@ -343,11 +327,6 @@ void Server::gameBegin(){
     this->hide();
     bf->show();
 
-/*
-    networkTimer = new QTimer(this);
-    connect(networkTimer, SIGNAL(timeout()), this, SLOT(updateNetwork()));
-    networkTimer->start(1000);
-*/
 }
 
 void Server::prepareInitialState(){
@@ -498,13 +477,13 @@ void Server::newInterval(){
 void Server::updateClientControl(QTcpSocket *client){
     if(!readCheck(client))
         return;
-    client->readAll();
-/*
+    //client->readAll();
+
     qDebug("Decoding control");
     std::vector<ControlEvent> eventList;
     ControlEvent::decodeAppendControlEventList(eventList, client);
-    bf->getManager()->applyControlEvents(eventList);
-*/
+    //bf->getManager()->applyControlEvents(eventList);
+
 }
 
 

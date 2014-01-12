@@ -205,52 +205,6 @@ void Client::readMessage(){
         break;
     }
 
-/*
-    if(nextMessage[0] == '@'){
-        //QString mode;
-        //in >> mode;
-        if(nextMessage == "@Greeting"){
-        }
-        else if(nextMessage == "@GameBegin"){
-            tcpSocket->readAll();
-            disconnect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMessage()));
-
-            bf = new BattleField;
-            rule = new BFRShoot(bf->getManager());
-            bf->getManager()->setRule(rule);
-            connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
-            connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(clientGameUpdate()));
-            //write("Know");
-            QTimer::singleShot(1000, this, SLOT(sendAck()));
-
-            bf->show();
-            this->hide();
-
-            blockSize = 0;
-        }
-        else{
-            QStringList nameList = nextMessage.split('@', QString::SkipEmptyParts);
-            playerList->clear();
-            foreach(QString name, nameList){
-                playerList->addItem(name);
-            }
-        }
-    }
-    else if(nextMessage[0] == '#'){
-        //tcpSocket->write(*setMessage());
-        //statusLabel->setText(nextMessage);
-        QStringList mesList = nextMessage.split("#", QString::SkipEmptyParts);
-        foreach(QString mes, mesList){
-            messageList->addItem(mes);
-        }
-    }
-    else{
-        statusLabel->setText(nextMessage);
-    }
-*/
-    //Test part
-    //statusLabel -> setText(nextMessage);
-    //End test part
 }
 
 void Client::displayError(QAbstractSocket::SocketError socketError){
@@ -359,7 +313,19 @@ void Client::prepareGame(){
     bf->getManager()->setRule(rule);
     connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(clientGameUpdate()));
+
+    int frac = getFraction();
     bf->getManager()->decodeReplaceAllObjects(tcpSocket);
+    std::set<BFObject *> objList = bf->getManager()->getObjects();
+    std::vector<BFObjectID> fracObj;
+    for(std::set<BFObject *> ite = objList.begin(); ite != objList.end(); ite++){
+        if((**ite)["fraction"].toInt() == frac){
+            fracObj.push_back((*ite)->getID());
+        }
+    }
+
+
+
     bf->update();
     //write("Know");
     QTimer::singleShot(500, this, SLOT(sendAck()));
@@ -429,4 +395,12 @@ std::vector<ControlEvent> Client::getAllControls(){
         }
     }
     return events;
+}
+
+
+int Client::getFraction(){
+    quint16 frac;
+    QDataStream in(tcpSocket);
+    in >> frac;
+    return int(frac);
 }

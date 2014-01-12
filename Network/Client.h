@@ -80,6 +80,7 @@ private:
     void displayMessage();
     void displayPlayers();
     void prepareGame();
+    int getFraction();
     std::vector<ControlEvent> getAllControls();
 
     int counter; //counter used for test network complecity

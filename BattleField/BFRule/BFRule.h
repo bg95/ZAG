@@ -15,6 +15,7 @@ public:
     virtual ~BFRule();
     virtual BFRuleType getType() const; //deprecated
     virtual int getNumberFractions() const;
+    virtual void initialize();
     virtual void processInput();
     virtual void filterIntersections();
     virtual void processIntersections();

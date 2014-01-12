@@ -19,6 +19,10 @@ int BFRule::getNumberFractions() const
     return -1;
 }
 
+void BFRule::initialize()
+{
+}
+
 void BFRule::processInput()
 {
     std::set<BFController*> &controllers = manager->getControllers();

@@ -121,7 +121,7 @@ void BattleField::paintGL()
     {
         if (setfocus)
         {
-            qDebug("setfocus unit = %lf", unit);
+            //qDebug("setfocus unit = %lf", unit);
             BFObject *obj = manager.getFactory()->objectByID(focusobj);
             if (obj)
             {

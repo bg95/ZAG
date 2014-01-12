@@ -24,16 +24,16 @@ int BFRSurvival::getNumberFractions() const
     return 1;
 }
 
+void BFRSurvival::initialize()
+{
+    counter = 0;
+    difficulty = 0;
+    strength = 0;
+    generateInitialObjects();
+}
+
 void BFRSurvival::processInput()
 {
-    manager->destructObjects();
-    manager->destructControllers();
-    if (difficulty == 0)
-    {
-        generateInitialObjects();
-        difficulty = 1;
-    }
-
     BFRShoot::processInput();
 
     counter++;
@@ -46,6 +46,7 @@ void BFRSurvival::processInput()
 
 void BFRSurvival::generateInitialObjects()
 {
+    qDebug("gen init");
     BFOColoredCircle *circle;
     std::vector<BFObjectID> objid;
 
@@ -129,21 +130,6 @@ void BFRSurvival::generateInitialObjects()
     delete buf;
     BFController *ctrl = new BFCHumanAndRSD(manager, objid);
     manager->registerController(ctrl);
-/*
-    for (int i = 0; i < 10; i++)
-        for (int j = 0; j < 5; j++)
-        {
-            circle = new BFOColoredCircle;//(manager);
-            circle->p = Vector2d(i / 80.0 - 0.5, -0.9 + j / 80.0);
-            circle->r = 0.005;
-            circle->v = Vector2d(i / 350.0 - 0.5, 0.5 + i / 180.0 - 0.5);
-            circle->m = 0.0025;
-            circle->setProperty("shoot", "");
-            circle->setProperty("health", 0.4);
-            manager->insertObject(circle);
-        }
-    bf -> update();
-*/
 }
 
 void BFRSurvival::generateObjectByStrength(int str)
@@ -154,10 +140,11 @@ void BFRSurvival::generateObjectByStrength(int str)
     double m = 10.0 * r * r;
     double maxa = 0.05 / r;
     double health = m * 2;
+    r /= 2.0;
 
-    double bulletr = r / 10.0;
-    double bulletm = 1.0 * bulletr * bulletr;
-    double bulletv = 0.05 / bulletr;
+    double bulletr = r / 5.0;
+    double bulletm = 10.0 * bulletr * bulletr;
+    double bulletv = 0.015 / bulletr;
     double damage = bulletm * 20.0;
     double cooldown = 0.5;
 

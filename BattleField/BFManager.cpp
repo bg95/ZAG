@@ -185,6 +185,7 @@ void BFManager::paintAll(QGLWidget *glwidget)
 void BFManager::setRule(BFRule *_rule)
 {
     rule = _rule;
+    rule->initialize();
 }
 
 std::vector<IntersectionEvent> &BFManager::getIntersections()
@@ -384,6 +385,8 @@ bool BFManager::intersectingBoundary(BFOCircle *a, IntersectionEvent::Boundary b
 
 void BFManager::nextOneFrame()
 {
+    if (!objects.size())
+        return;
     std::set<BFObject *>::iterator iter;/*
     for (iter = objects.begin(); iter != objects.end(); iter++)
     {

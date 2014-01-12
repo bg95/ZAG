@@ -74,6 +74,8 @@ void MainWindow::singlePlayer(){
     bf->getManager()->setRule(rule);
     connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
 
+    BFManager *manager = bf->getManager();
+
     bf->show();
     this->hide();
     bf->start();

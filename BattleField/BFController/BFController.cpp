@@ -63,7 +63,8 @@ BFObject *BFController::getObjectControlledByHuman()
 {
     for(auto iter = objid.begin(); iter != objid.end(); iter ++)
     {
-        if( (* (getObjectPointer(*iter)) )["isHumanControlled"].toBool() )
+        BFObject *pobj = getObjectPointer(*iter);
+        if( pobj && (* (pobj) )["isHumanControlled"].toBool() )
         {
             qDebug("Find the object controlled!");
             return getObjectPointer(*iter);

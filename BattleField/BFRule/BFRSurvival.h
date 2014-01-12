@@ -10,6 +10,7 @@ public:
     virtual ~BFRSurvival();
     //virtual BFRuleType getType() const;
     virtual int getNumberFractions() const;
+    virtual void initialize();
     virtual void processInput();
     //virtual void filterIntersections();
     //virtual void processIntersections();

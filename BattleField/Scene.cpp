@@ -47,9 +47,16 @@ void Scene::drawMap(double mapSize)
     double unit = mapSize / 2.0;
     glScalef(unit, unit, unit);
     //hightlight the object controlled by human in the map
+    GLfloat mat_emission[4] = { 1.0, 1.0, 1.0, 1.0};
+    GLfloat no_mat[4] = { 0.0, 0.0, 0.0, 1.0};
     for(auto iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter ++) {
         if((*iter) != manager->getObjectControlled())
-        //if( (*iter) != manager->findObjectControlled() )
             (*iter)->draw(battlefield);
+        else
+        {
+            glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
+            (*iter)->draw(battlefield);
+            glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
+        }
     }
 }

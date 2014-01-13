@@ -116,6 +116,7 @@ private:
     friend class BFFactory;
     bool created_from_factory;
     bool deleting_from_factory;
+    void setID(BFObjectID newid);
 
 };
 

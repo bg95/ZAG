@@ -66,6 +66,7 @@ void BFRDuel::generateFraction(int frac)
 
     circle->setProperty("isHumanControlled", true);
     //mainobj = circle->getID();
+    qDebug("human controlled: %d", circle->getID());
 
     manager->insertObject(circle);
     objid.push_back(circle->getID());

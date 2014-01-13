@@ -50,7 +50,7 @@ BFObject *BFFactory::replaceObject(BFObjectID id, BFObjectType type)
     }
     std::map<BFObjectID, BFObject *>::iterator iter = objects.find(id);
     BFObject *p = (*piter).second->newObject();
-    p->id = id;
+    p->setID(id);
     if (iter == objects.end())
     {
         objects[id] = p;

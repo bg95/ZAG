@@ -181,3 +181,9 @@ void BFObject::applyControlEvent(ControlEvent &ce)
     for (auto iter = ce.difference.begin(); iter != ce.difference.end(); iter++)
         setProperty((*iter).first, (*iter).second);
 }
+
+void BFObject::setID(BFObjectID newid)
+{
+    id = newid;
+    count = id + 1;
+}

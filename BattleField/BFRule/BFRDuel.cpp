@@ -40,7 +40,7 @@ void BFRDuel::generateFraction(int frac)
     bullet->v = Vector2d(0, 6);
     bullet->m = 0.01;
     bullet->setProperty("isBullet", "Yes");
-    bullet->setProperty("damage", 0.0);             ////////ZERO DAMAGE!!!
+    bullet->setProperty("damage", 0.05);
     QBuffer bulletbuf;
     bulletbuf.open(QIODevice::ReadWrite);
     manager->getFactory()->encodeObject(bullet, &bulletbuf);

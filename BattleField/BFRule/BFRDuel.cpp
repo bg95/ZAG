@@ -22,6 +22,7 @@ void BFRDuel::initialize()
 {
     generateFraction(0);
     generateFraction(1);
+    manager->getBattleField()->setFocusObject(manager->getObjectControlled()->getID());
 }
 
 void BFRDuel::generateFraction(int frac)
@@ -68,10 +69,10 @@ void BFRDuel::generateFraction(int frac)
 
     manager->insertObject(circle);
     objid.push_back(circle->getID());
-
+/*
     if (frac == 0)
         manager->getBattleField()->setFocusObject(circle->getID());
-
+*/
     QBuffer *buf = new QBuffer;
     BFFactory *fac = manager->getFactory();
     circle = (BFOColoredCircle *)manager->getFactory()->newObject(typehash(BFOColoredCircle));//(manager);

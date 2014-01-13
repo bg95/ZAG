@@ -66,10 +66,11 @@ void BFRShoot::initialize()
         circle->setProperty("cooldowncount", 0.0);
         circle->setProperty("health", 1.0);
         circle->setProperty("fraction", 0);
+        circle->setProperty("isHumanControlled", true);
         manager->insertObject(circle);
         objid.push_back(circle->getID());
 
-        manager->getBattleField()->setFocusObject(circle->getID());
+        //manager->getBattleField()->setFocusObject(circle->getID());
 
         QBuffer *buf = new QBuffer;
         BFFactory *fac = manager->getFactory();

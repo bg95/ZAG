@@ -33,6 +33,7 @@ void BFRSurvival::initialize()
     difficulty = 0;
     strength = 0;
     generateInitialObjects();
+    manager->getBattleField()->setFocusObject(manager->getObjectControlled()->getID());
 }
 
 void BFRSurvival::processInput()
@@ -111,7 +112,7 @@ void BFRSurvival::generateInitialObjects()
     manager->insertObject(circle);
     objid.push_back(circle->getID());
 
-    manager->getBattleField()->setFocusObject(circle->getID());
+    //manager->getBattleField()->setFocusObject(circle->getID());
 
     QBuffer *buf = new QBuffer;
     BFFactory *fac = manager->getFactory();

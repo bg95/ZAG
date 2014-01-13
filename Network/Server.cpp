@@ -10,6 +10,7 @@
 
 #include "BattleField/BFRule/BFRCollision.h"
 #include "BattleField/BFRule/BFRShoot.h"
+#include "BattleField/BFRule/BFRDuel.h"
 #include "Network/Server.h"
 #include "Network/Connection.h"
 
@@ -329,14 +330,14 @@ void Server::gameBegin(){
     }
 
     bf = new BattleField(0);
-    bfRule = new BFRShoot(bf->getManager());
+    bfRule = new BFRDuel(bf->getManager());
     bf->getManager()->setRule(bfRule);
     connect(bf, SIGNAL(battleEnd()), this, SLOT(battleEnd()));
     connect(bf, SIGNAL(newInterval()), this, SLOT(newInterval()));
     //connect()
     //connect(bf, SIGNAL(sendMessage(QByteArray)), this, SLOT(updateClient(QByteArray)));
 
-    prepareInitialState();
+    //prepareInitialState();
 
     QByteArray message = sendInitialMessage();
     //qDebug("Block size sent is %d", int(message.size() - sizeof(quint32)));
@@ -456,7 +457,7 @@ QByteArray Server::sendInitialMessage(){
     QDataStream out(&message, QIODevice::WriteOnly);
     out << quint32(0);
     out << GAME_BEGIN;
-    out << quint16(2);
+    out << quint16(1);
 
     bf->getManager()->encodeAllObjects(out.device());
 

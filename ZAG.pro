@@ -40,7 +40,8 @@ SOURCES += main.cpp\
     BattleField/BFController/BFCHumanAndRSD.cpp \
     global.cpp \
     BattleField/Scene.cpp \
-    Network/Connection.cpp
+    Network/Connection.cpp \
+    BattleField/BFRule/BFRDuel.cpp
 
 HEADERS  += MainWindow.h \
     BattleField/BFObject/BFObject.h \
@@ -68,7 +69,8 @@ HEADERS  += MainWindow.h \
     global.h \
     BattleField/BFController/BFCHumanAndRSD.h \
     BattleField/Scene.h \
-    Network/Connection.h
+    Network/Connection.h \
+    BattleField/BFRule/BFRDuel.h
 
 FORMS    += MainWindow.ui
 

@@ -123,7 +123,10 @@ void BFManager::applyControlEvents(std::vector<ControlEvent> &events)
     {
         qDebug("Decoding an object of: %lf, %lf", (*iter).acc.x, (*iter).acc.y);
         obj = factory.objectByID((*iter).objid);
-        obj->applyControlEvent(*iter);
+        if (obj)
+            obj->applyControlEvent(*iter);
+        else
+            qDebug("controlling a non-existing object!");
     }
     qDebug("Apply end");
 }

@@ -139,7 +139,7 @@ void BFRShoot::processInput()
     for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
     {
         BFOCircle *cir = (BFOCircle *)(*iter);
-        cir->a = Vector2d(0, 0);
+        //cir->a = Vector2d(0, 0);
     }
     BFRule::processInput();
     for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)

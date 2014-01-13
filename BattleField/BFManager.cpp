@@ -73,8 +73,7 @@ void BFManager::destructObjects()
 bool BFManager::registerController(BFController *c)
 {
     auto iter = controllers.insert(c);
-    objectControlled = findObjectControlled();
-    qDebug("find object controlled");
+    objectControlled = findObjectControlled()->getID();
     return iter.second;
 }
 
@@ -576,7 +575,7 @@ BFObject* BFManager::findObjectControlled()
     return NULL;
 }
 
-BFObject* BFManager::getObjectControlled()
+BFObjectID BFManager::getObjectControlled()
 {
     return objectControlled;
 }

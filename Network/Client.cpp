@@ -351,7 +351,7 @@ void Client::prepareGame(){
     BFCHumanAndRSD *ctr = new BFCHumanAndRSD(bf->getManager(), fracObj);
     //BFCHuman *ctr = new BFCHuman(bf->getManager(), fracObj);
     bf->getManager()->registerController(ctr);
-    bf->setFocusObject(bf->getManager()->getObjectControlled()->getID());
+    bf->setFocusObject(bf->getManager()->getObjectControlled());
 
     //qDebug("Prepare finished");
     bf->update();

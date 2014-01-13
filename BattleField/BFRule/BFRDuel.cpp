@@ -22,7 +22,7 @@ void BFRDuel::initialize()
 {
     generateFraction(0);
     generateFraction(1);
-    manager->getBattleField()->setFocusObject(manager->getObjectControlled()->getID());
+    manager->getBattleField()->setFocusObject(manager->getObjectControlled());
 }
 
 void BFRDuel::generateFraction(int frac)

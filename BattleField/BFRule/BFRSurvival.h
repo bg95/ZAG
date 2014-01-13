@@ -17,12 +17,17 @@ public:
     //virtual void processIntersections();
 
 protected:
-    const int FRACTION_ENEMY = 16;
+    const int FRACTION_ENEMY = 17;
     void generateInitialObjects();
-    void generateObjectByStrength(int str);
+    void generateObjectByStrength(double str);
+    void modifyStrength(int str);
     int difficulty;
-    int strength;
+    double strength;
     int counter;
+    BFObjectID mainobj;
+    BFObject *bulletproto;
+    bool generating;
+    double diffleft;
 
 };
 

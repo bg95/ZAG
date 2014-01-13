@@ -4,6 +4,7 @@
 #include "global.h"
 
 #include <QBuffer>
+#include <cstdlib>
 
 #include "BFRSurvival.h"
 
@@ -13,10 +14,12 @@ BFRSurvival::BFRSurvival(BFManager *_manager):
     counter = 0;
     difficulty = 0;
     strength = 0;
+    generating = false;
 }
 
 BFRSurvival::~BFRSurvival()
 {
+    manager->getFactory()->deleteObject(bulletproto);
 }
 
 int BFRSurvival::getNumberFractions() const
@@ -36,11 +39,31 @@ void BFRSurvival::processInput()
 {
     BFRShoot::processInput();
 
-    counter++;
-    if (counter % 100 == 0)
+    auto iter = manager->getObjects().begin();
+    for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
+        if ((**iter)["fraction"] == FRACTION_ENEMY)
+            break;
+    if (iter == manager->getObjects().end() && !generating)
     {
-        generateObjectByStrength(difficulty);
-        difficulty++;
+        counter++;
+        if (counter % 20 == 0)
+        {
+            generating = true;
+            diffleft = difficulty;
+            difficulty += 20.0;
+            strength++;
+            counter = 0;
+        }
+    }
+    if (generating)
+    {
+        double num = (double)rand() / (double)RAND_MAX;
+        num *= num;
+        num = difficulty / (10 + 40 * num);
+        generateObjectByStrength(num);
+        diffleft -= num;
+        if (diffleft <= 0.0)
+            generating = false;
     }
 }
 
@@ -51,6 +74,8 @@ void BFRSurvival::generateInitialObjects()
     std::vector<BFObjectID> objid;
 
     BFOColoredCircle *bullet = (BFOColoredCircle *)manager->getFactory()->newObject(typehash(BFOColoredCircle));
+    bulletproto = bullet;
+
     bullet->setColor(1.0, 0, 0, 1.0);
     bullet->r = 0.01;
     bullet->v = Vector2d(0, 6);
@@ -61,7 +86,7 @@ void BFRSurvival::generateInitialObjects()
     bulletbuf.open(QIODevice::ReadWrite);
     manager->getFactory()->encodeObject(bullet, &bulletbuf);
     bulletbuf.seek(0);
-    manager->getFactory()->deleteObject(bullet);
+    //manager->getFactory()->deleteObject(bullet);
     //shooter property is set in BFRShoot
 
     //circle = new BFOColoredCircle;//(manager);
@@ -81,6 +106,8 @@ void BFRSurvival::generateInitialObjects()
     circle->setProperty("fraction", 0);
     manager->insertObject(circle);
     objid.push_back(circle->getID());
+
+    mainobj = circle->getID();
 
     manager->getBattleField()->setFocusObject(circle->getID());
 
@@ -132,21 +159,21 @@ void BFRSurvival::generateInitialObjects()
     manager->registerController(ctrl);
 }
 
-void BFRSurvival::generateObjectByStrength(int str)
+void BFRSurvival::generateObjectByStrength(double str)
 {
-    str++;
+    str += 1.0;
 
     double r = sqrt((double)str) / 30.0;
     double m = 10.0 * r * r;
-    double maxa = 0.05 / r;
-    double health = m * 2;
+    double maxa = 0.5 / r;
+    double health = m * 3;
     r /= 2.0;
 
     double bulletr = r / 5.0;
-    double bulletm = 10.0 * bulletr * bulletr;
-    double bulletv = 0.015 / bulletr;
+    double bulletm = 30.0 * bulletr * bulletr;
+    double bulletv = 3;
     double damage = bulletm * 20.0;
-    double cooldown = 0.5;
+    double cooldown = 0.5 / log(str);
 
     BFOColoredCircle *circle;
     BFController *controller;
@@ -188,4 +215,22 @@ void BFRSurvival::generateObjectByStrength(int str)
 
     controller = new BFCRandomShootDodge(manager, circle->getID());
     manager->registerController(controller);
+}
+
+void BFRSurvival::modifyStrength(int str)
+{
+    BFObject *obj = manager->getFactory()->objectByID(mainobj);
+    if (!obj)
+        return;
+    (*obj)["health"] = (*obj)["health"].toDouble() + 1.0;
+    (*obj)["cooldown"] = (*obj)["cooldown"].toDouble() / 1.01;
+
+    //(*bulletproto)["damage"] = (*bulletproto)["damage"].toDouble() + 0.1;
+    //((BFOColoredCircle *)bulletproto)->r *= 1.01;
+
+    QBuffer bulletbuf;
+    bulletbuf.open(QIODevice::ReadWrite);
+    manager->getFactory()->encodeObject(bulletproto, &bulletbuf);
+    bulletbuf.seek(0);
+    obj->setProperty("bullet prototype", bulletbuf.data());
 }

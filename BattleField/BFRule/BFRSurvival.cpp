@@ -104,10 +104,12 @@ void BFRSurvival::generateInitialObjects()
     circle->setProperty("cooldowncount", 0.0);
     circle->setProperty("health", 1.0);
     circle->setProperty("fraction", 0);
+
+    circle->setProperty("isHumanControlled", true);
+    mainobj = circle->getID();
+
     manager->insertObject(circle);
     objid.push_back(circle->getID());
-
-    mainobj = circle->getID();
 
     manager->getBattleField()->setFocusObject(circle->getID());
 

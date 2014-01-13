@@ -48,7 +48,7 @@ void Scene::drawMap(double mapSize)
     glScalef(unit, unit, unit);
     //hightlight the object controlled by human in the map
     for(auto iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter ++) {
-        if((*iter) != manager->getObjectControlled())
+        if((*iter)->getID() != manager->getObjectControlled())
         //if( (*iter) != manager->findObjectControlled() )
             (*iter)->draw(battlefield);
     }

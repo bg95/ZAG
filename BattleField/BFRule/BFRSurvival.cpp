@@ -33,7 +33,7 @@ void BFRSurvival::initialize()
     difficulty = 0;
     strength = 0;
     generateInitialObjects();
-    manager->getBattleField()->setFocusObject(manager->getObjectControlled()->getID());
+    manager->getBattleField()->setFocusObject(manager->getObjectControlled());
 }
 
 void BFRSurvival::processInput()

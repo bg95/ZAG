@@ -72,8 +72,10 @@ void BFManager::destructObjects()
 
 bool BFManager::registerController(BFController *c)
 {
+    auto iter = controllers.insert(c);
     objectControlled = findObjectControlled();
-    return controllers.insert(c).second;
+    qDebug("find object controlled");
+    return iter.second;
 }
 
 void BFManager::unregisterController(BFController *c)

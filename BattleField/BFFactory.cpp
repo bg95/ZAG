@@ -34,6 +34,7 @@ void BFFactory::deleteObject(BFObject *o)
     std::map<BFObjectID, BFObject *>::iterator iter = objects.find(o->getID());
     if (iter == objects.end())
         return;
+    qDebug("delete object %ld", o->getID());
     objects.erase(iter);
     o->deleting_from_factory = true;
     delete o;
@@ -53,6 +54,7 @@ BFObject *BFFactory::replaceObject(BFObjectID id, BFObjectType type)
     if (iter == objects.end())
     {
         objects[id] = p;
+        qDebug("replace non-existing object %ld->%lX. #obj=%d", id, (unsigned long)p, objects.size());
         return p;
     }
     (*iter).second->deleting_from_factory = true;

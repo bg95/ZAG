@@ -17,6 +17,7 @@ public:
     void draw(QGLWidget *glwidget);
     virtual BFObjectType getType() const;
     void setColor(double r, double g, double b, double a);
+    void setColor(double _br);
     void setAlpha(double a);
     //const double *getColor() const;
     //void onIntersection(BFObject *b, Vector2d impulse); //should be modified later
@@ -26,6 +27,7 @@ public:
 
     double c[4];
     double &red = c[0], &green = c[1], &blue = c[2], &alpha = c[3];
+    double br;
 };
 
 #endif // BFOCOLOREDCIRCLE_H

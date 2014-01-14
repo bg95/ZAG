@@ -34,6 +34,8 @@ void BFRSurvival::initialize()
     strength = 0;
     generateInitialObjects();
     manager->getBattleField()->setFocusObject(manager->getObjectControlled());
+
+    initializeColor();
 }
 
 void BFRSurvival::processInput()

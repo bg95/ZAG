@@ -23,6 +23,8 @@ void BFRDuel::initialize()
     generateFraction(0);
     generateFraction(1);
     manager->getBattleField()->setFocusObject(manager->getObjectControlled());
+
+    initializeColor();
 }
 
 void BFRDuel::generateFraction(int frac)

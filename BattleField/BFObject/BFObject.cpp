@@ -38,6 +38,10 @@ void BFObject::setColor(double r, double g, double b, double a)
 {
 }
 
+void BFObject::setColor(double br)
+{
+}
+
 void BFObject::setAlpha(double a)
 {
 }

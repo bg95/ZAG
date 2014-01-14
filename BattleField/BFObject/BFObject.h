@@ -60,6 +60,7 @@ public:
     void setColor(unsigned color);
     //set color. now used by only BFOColoredCircle
     virtual void setColor(double r, double g, double b, double a);
+    virtual void setColor(double br);
     //set opacity. Not used.
     virtual void setAlpha(double a);
 

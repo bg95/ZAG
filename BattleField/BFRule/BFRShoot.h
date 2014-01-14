@@ -21,6 +21,7 @@ protected:
     virtual void shoot(BFObject *obj, double theta);
     void processIntersection(BFOCircle *a, BFOCircle *b, double time);
     void processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Boundary b, double time);
+    void initializeColor();
 };
 
 #endif // BFRSHOOT_H

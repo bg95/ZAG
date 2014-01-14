@@ -118,6 +118,8 @@ void BFRShoot::initialize()
         delete buf;
         BFController *ctrl = new BFCHumanAndRSD(manager, objid);
         manager->registerController(ctrl);
+
+        initializeColor();
 }
 
 void BFRShoot::processInput()
@@ -132,11 +134,7 @@ void BFRShoot::processInput()
     manager->destructObjects();
     manager->decodeReplaceAllObjects(&buffer);
 */
-    std::set<BFObject *>::iterator iter;
-    for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
-    {
-        (*iter)->setColor(colorlist[(**iter)["fraction"].toInt() % colorlistsize]);
-    }
+    auto iter = manager->getObjects().begin();
     for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
     {
         BFOCircle *cir = (BFOCircle *)(*iter);
@@ -300,8 +298,8 @@ void BFRShoot::processIntersections()
                 {
                     //b->setProperty("health", newhealth);
                     (*b)["health"] = newhealth;
-                    b->setAlpha(newhealth);
-                    //((BFOCircle *)b)->v = (((BFOCircle *)b)->v * ((BFOCircle *)b)->m + ((BFOCircle *)a)->v * ((BFOCircle *)a)->m) / (((BFOCircle *)b)->m + ((BFOCircle *)a)->m);
+                    if (newhealth <= 1.0)
+                        b->setColor(newhealth);
                     b->setVelocity((b->getVelocity() * b->getMass() + a->getVelocity() * a->getMass()) / (b->getMass() + a->getMass()));
                 }
                 manager->destructObject(a);
@@ -417,4 +415,13 @@ void BFRShoot::processBoundaryIntersection(BFOCircle *a, IntersectionEvent::Boun
         break;
     }
     a->move(-time);
+}
+
+void BFRShoot::initializeColor()
+{
+    std::set<BFObject *>::iterator iter;
+    for (iter = manager->getObjects().begin(); iter != manager->getObjects().end(); iter++)
+    {
+        (*iter)->setColor(colorlist[(**iter)["fraction"].toInt() % colorlistsize]);
+    }
 }

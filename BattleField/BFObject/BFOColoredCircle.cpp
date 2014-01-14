@@ -8,6 +8,7 @@ BFOColoredCircle::BFOColoredCircle()
     green = 1;
     blue = 1;
     alpha = 1;
+    br = 1;
 }
 /*
 BFOColoredCircle::BFOColoredCircle(BFManager *manager) :
@@ -39,7 +40,7 @@ BFObject *BFOColoredCircle::duplicate()
 void BFOColoredCircle::draw(QGLWidget *glwidget)
 {
     glwidget->makeCurrent();
-    glColor4d(red, green, blue, alpha);/*
+    glColor4d(red * br + (1 - red) * (1 - br), green * br + (1 - green) * (1 - br), blue * br + (1 - blue) * (1 - br), alpha);/*
     red = 0.9 * red + 0.1;
     green = 0.9 * green + 0.1;
     blue = 0.9 * blue + 0.1;*/
@@ -58,6 +59,11 @@ void BFOColoredCircle::setColor(double r, double g, double b, double a)
     green = g;
     blue = b;
     alpha = a;
+}
+
+void BFOColoredCircle::setColor(double _br)
+{
+    br = _br;
 }
 
 void BFOColoredCircle::setAlpha(double a)

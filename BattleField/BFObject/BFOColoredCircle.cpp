@@ -82,6 +82,7 @@ void BFOColoredCircle::encode(QIODevice *device)
     BFOCircle::encode(device);
 
     device->write((const char *)c, sizeof(c));
+    device->write((const char *)&br, sizeof(br));
 }
 
 void BFOColoredCircle::decode(QIODevice *device)
@@ -89,4 +90,5 @@ void BFOColoredCircle::decode(QIODevice *device)
     BFOCircle::decode(device);
 
     device->read((char *)c, sizeof(c));
+    device->write((char *)&br, sizeof(br));
 }
